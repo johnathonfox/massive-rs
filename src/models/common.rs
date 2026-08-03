@@ -1,15 +1,12 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Serialize, Deserialize)]
 pub enum Sort {
     #[serde(rename = "asc")]
+    #[default]
     Asc,
     #[serde(rename = "desc")]
     Desc,
-}
-
-impl Default for Sort {
-    fn default() -> Self { Sort::Asc }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -154,4 +151,15 @@ pub enum SeriesType {
     High,
     #[serde(rename = "low")]
     Low,
+}
+
+/// Massive Edge launchpad header options.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum LaunchPadOptions {
+    #[serde(rename = "X-Massive-Edge-ID")]
+    XMassiveEdgeId,
+    #[serde(rename = "X-Massive-Edge-IP-Address")]
+    XMassiveIpAddress,
+    #[serde(rename = "X-Massive-Edge-User-Agent")]
+    XMassiveEdgeUserAgent,
 }

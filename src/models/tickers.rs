@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 
+/// Contains address data for a ticker detail.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct CompanyAddress {
     pub address1: Option<String>,
@@ -11,6 +12,7 @@ pub struct CompanyAddress {
     pub postal_code: Option<String>,
 }
 
+/// Contains branding data for a ticker detail.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct Branding {
     #[serde(rename = "icon_url")]
@@ -25,6 +27,7 @@ pub struct Branding {
     pub dark_color: Option<String>,
 }
 
+/// Contains the insights related to the article.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct Insight {
     pub sentiment: Option<String>,
@@ -33,6 +36,7 @@ pub struct Insight {
     pub ticker: Option<String>,
 }
 
+/// Contains publisher data for ticker news.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct Publisher {
     #[serde(rename = "favicon_url")]
@@ -44,6 +48,7 @@ pub struct Publisher {
     pub name: Option<String>,
 }
 
+/// Data for a specified ticker symbol.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct Ticker {
     pub active: Option<bool>,
@@ -76,6 +81,7 @@ pub struct Ticker {
     pub source_feed: Option<String>,
 }
 
+/// Detailed data for a specified ticker symbol.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct TickerDetails {
     pub active: Option<bool>,
@@ -129,6 +135,7 @@ pub struct TickerDetails {
     pub weighted_shares_outstanding: Option<i64>,
 }
 
+/// News article data relating to a stock ticker symbol.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct TickerNews {
     #[serde(rename = "amp_url")]
@@ -149,6 +156,7 @@ pub struct TickerNews {
     pub title: Option<String>,
 }
 
+/// Data for ticker types.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct TickerTypes {
     #[serde(rename = "asset_class")]
@@ -158,6 +166,7 @@ pub struct TickerTypes {
     pub locale: Option<String>,
 }
 
+/// A ticker related to the queried ticker based on News and Returns data.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct RelatedCompany {
     pub ticker: Option<String>,
@@ -186,6 +195,7 @@ pub struct TickerChangeResults {
     pub events: Option<Vec<TickerChangeEvent>>,
 }
 
+/// IPO Listing data as returned by the /vX/reference/ipos endpoint.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct IPOListing {
     #[serde(rename = "announced_date")]
@@ -228,6 +238,7 @@ pub struct IPOListing {
     pub us_code: Option<String>,
 }
 
+/// Short Interest data for a specific identifier.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct ShortInterest {
     #[serde(rename = "avg_daily_volume")]
@@ -241,6 +252,7 @@ pub struct ShortInterest {
     pub ticker: Option<String>,
 }
 
+/// Short Volume data for a specific identifier on a given date.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct ShortVolume {
     #[serde(rename = "adf_short_volume")]

@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 
+/// A single numeric or textual data point in the financials.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct DataPoint {
     pub label: Option<String>,
@@ -13,6 +14,7 @@ pub struct DataPoint {
     pub xpath: Option<String>,
 }
 
+/// Balance sheet statement with per-line-item data points.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct BalanceSheet {
     pub assets: Option<DataPoint>,
@@ -77,6 +79,7 @@ pub struct BalanceSheet {
     pub liabilities_and_equity: Option<DataPoint>,
 }
 
+/// Cash flow statement with per-line-item data points.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct CashFlowStatement {
     #[serde(rename = "net_cash_flow_from_operating_activities")]
@@ -107,6 +110,7 @@ pub struct CashFlowStatement {
     pub net_cash_flow_discontinued: Option<DataPoint>,
 }
 
+/// Comprehensive income statement with per-line-item data points.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct ComprehensiveIncome {
     #[serde(rename = "comprehensive_income_loss")]
@@ -123,6 +127,7 @@ pub struct ComprehensiveIncome {
     pub other_comprehensive_income_loss_attributable_to_parent: Option<DataPoint>,
 }
 
+/// Income statement with per-line-item data points.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct IncomeStatement {
     pub revenues: Option<DataPoint>,
@@ -226,6 +231,7 @@ pub struct IncomeStatement {
     pub common_stock_dividends: Option<DataPoint>,
 }
 
+/// Financial statements: balance sheet, cash flow, comprehensive income, income statement.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct Financials {
     #[serde(rename = "balance_sheet")]
@@ -238,6 +244,7 @@ pub struct Financials {
     pub income_statement: Option<IncomeStatement>,
 }
 
+/// Historical financial data for a stock ticker.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct StockFinancial {
     pub cik: Option<String>,
@@ -547,6 +554,7 @@ pub struct RiskFactorTaxonomy {
     pub tertiary_category: Option<String>,
 }
 
+/// A single tagged disclosure within an SEC 8-K filing.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct Disclosure {
     #[serde(rename = "accession_number")]
@@ -567,6 +575,7 @@ pub struct Disclosure {
     pub tickers: Option<Vec<String>>,
 }
 
+/// A single 8-K disclosure classification.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct DisclosureTaxonomy {
     pub description: Option<String>,
@@ -579,6 +588,7 @@ pub struct DisclosureTaxonomy {
     pub tertiary_category: Option<String>,
 }
 
+/// SEC Form 13F filings data showing institutional investment manager holdings.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct Filing13F {
     #[serde(rename = "accession_number")]
@@ -621,6 +631,7 @@ pub struct Filing13F {
     pub voting_authority_sole: Option<i64>,
 }
 
+/// SEC document text section from a 10-K/10-Q (raw text content).
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct FilingSection {
     pub cik: Option<String>,
@@ -635,12 +646,14 @@ pub struct FilingSection {
     pub ticker: Option<String>,
 }
 
+/// Footnote from SEC Form 3/4 filings.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct FilingFootnote {
     pub id: Option<String>,
     pub description: Option<String>,
 }
 
+/// SEC Form 3 filings reporting initial statements of beneficial ownership of securities.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct FilingForm3 {
     #[serde(rename = "accession_number")]
@@ -700,6 +713,7 @@ pub struct FilingForm3 {
     pub underlying_security_title: Option<String>,
 }
 
+/// SEC Form 4 filings reporting changes in beneficial ownership of securities.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct FilingForm4 {
     #[serde(rename = "accession_number")]
@@ -781,6 +795,7 @@ pub struct FilingForm4 {
     pub underlying_security_title: Option<String>,
 }
 
+/// Parsed 8-K filing with item-level text content.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct Filing8K {
     #[serde(rename = "accession_number")]
@@ -797,6 +812,7 @@ pub struct Filing8K {
     pub ticker: Option<String>,
 }
 
+/// Master index entry for any SEC filing (10-K, 8-K, 10-Q, etc.).
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct FilingIndex {
     #[serde(rename = "accession_number")]

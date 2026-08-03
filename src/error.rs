@@ -1,5 +1,4 @@
 use reqwest::StatusCode;
-use std::fmt;
 
 #[derive(Debug, thiserror::Error)]
 pub enum Error {

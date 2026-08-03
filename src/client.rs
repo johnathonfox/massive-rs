@@ -2,7 +2,7 @@ use crate::error::{Error, Result};
 use crate::paginate::PaginatedStream;
 use reqwest::header::{HeaderMap, HeaderValue, AUTHORIZATION, ACCEPT_ENCODING, USER_AGENT};
 use std::time::Duration;
-use tracing::{debug, info};
+use tracing::info;
 
 const DEFAULT_BASE: &str = "https://api.massive.com";
 const DEFAULT_TIMEOUT: Duration = Duration::from_secs(10);
@@ -97,7 +97,7 @@ impl Client {
     pub(crate) async fn get<T: serde::de::DeserializeOwned>(
         &self,
         path: &str,
-        params: Option<&[(&str, &str)]>,
+        params: Option<&[(&str, String)]>,
         options: Option<&RequestOptions>,
     ) -> Result<T> {
         let url = format!("{}{}", self.base, path);
@@ -137,72 +137,48 @@ impl Client {
         Ok(data)
     }
 
-    /// Get a raw response (for `raw=true` style usage).
-    pub(crate) async fn get_raw(
-        &self,
-        path: &str,
-        params: Option<&[(&str, &str)]>,
-        options: Option<&RequestOptions>,
-    ) -> Result<reqwest::Response> {
-        let url = format!("{}{}", self.base, path);
-        let mut req = self.http.get(&url);
-
+    /// Build the merged header set for a request (default + per-request options).
+    fn request_headers(&self, options: Option<&RequestOptions>) -> HeaderMap {
         let mut headers = self.default_headers();
         if let Some(opts) = options {
             for (k, v) in &opts.headers {
                 headers.insert(k, v.clone());
             }
         }
-        req = req.headers(headers);
+        headers
+    }
 
+    fn build_url(&self, path: &str, params: Option<&[(&str, String)]>) -> String {
+        let mut url = format!("{}{}", self.base, path);
         if let Some(p) = params {
-            req = req.query(p);
+            let query = serde_urlencoded::to_string(p).unwrap_or_default();
+            if !query.is_empty() {
+                url.push('?');
+                url.push_str(&query);
+            }
         }
-
-        if self.trace {
-            info!("Request URL: {}", url);
-        }
-
-        let resp = req.send().await?;
-        let status = resp.status();
-        if !status.is_success() {
-            let body = resp.text().await.unwrap_or_default();
-            return Err(Error::Http { status, body });
-        }
-        Ok(resp)
+        url
     }
 
     /// Start a paginated stream.
     pub(crate) fn paginate<T: serde::de::DeserializeOwned + Send + 'static>(
         &self,
         path: &str,
-        params: Option<&[(&str, &str)]>,
+        params: Option<&[(&str, String)]>,
+        options: Option<&RequestOptions>,
     ) -> PaginatedStream<T> {
-        let mut url = format!("{}{}", self.base, path);
-        if let Some(p) = params {
-            let query = serde_urlencoded::to_string(p).unwrap_or_default();
-            if !query.is_empty() {
-                url.push('?');
-                url.push_str(&query);
-            }
-        }
-        PaginatedStream::new(self.http.clone(), url)
+        let url = self.build_url(path, params);
+        PaginatedStream::new(self.http.clone(), self.request_headers(options), url)
     }
 
     /// Single page request (no pagination follow).
     pub(crate) fn single_page<T: serde::de::DeserializeOwned + Send + 'static>(
         &self,
         path: &str,
-        params: Option<&[(&str, &str)]>,
+        params: Option<&[(&str, String)]>,
+        options: Option<&RequestOptions>,
     ) -> PaginatedStream<T> {
-        let mut url = format!("{}{}", self.base, path);
-        if let Some(p) = params {
-            let query = serde_urlencoded::to_string(p).unwrap_or_default();
-            if !query.is_empty() {
-                url.push('?');
-                url.push_str(&query);
-            }
-        }
-        PaginatedStream::single_page(self.http.clone(), url)
+        let url = self.build_url(path, params);
+        PaginatedStream::single_page(self.http.clone(), self.request_headers(options), url)
     }
 }

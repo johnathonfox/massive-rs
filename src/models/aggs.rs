@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 
+/// Aggregate data for a given ticker symbol over a date range in a custom time window size.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct Agg {
     #[serde(rename = "o")]
@@ -22,6 +23,7 @@ pub struct Agg {
     pub otc: Option<bool>,
 }
 
+/// Daily open, high, low, and close (OHLC) data for a given date.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct GroupedDailyAgg {
     #[serde(rename = "T")]
@@ -46,6 +48,7 @@ pub struct GroupedDailyAgg {
     pub otc: Option<bool>,
 }
 
+/// Open, close and afterhours prices of a ticker symbol on a specified date.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct DailyOpenCloseAgg {
     #[serde(rename = "afterHours")]
@@ -64,13 +67,18 @@ pub struct DailyOpenCloseAgg {
     pub otc: Option<bool>,
 }
 
+/// Previous day's open, high, low, and close (OHLC) of the specified stock ticker.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct PreviousCloseAgg {
     #[serde(rename = "T")]
     pub ticker: Option<String>,
+    #[serde(rename = "c")]
     pub close: Option<f64>,
+    #[serde(rename = "h")]
     pub high: Option<f64>,
+    #[serde(rename = "l")]
     pub low: Option<f64>,
+    #[serde(rename = "o")]
     pub open: Option<f64>,
     #[serde(rename = "t")]
     pub timestamp: Option<f64>,

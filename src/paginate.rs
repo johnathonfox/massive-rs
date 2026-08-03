@@ -1,6 +1,8 @@
 use crate::error::{Error, Result};
 use futures::Stream;
+use reqwest::header::HeaderMap;
 use serde::de::DeserializeOwned;
+use std::future::Future;
 use std::pin::Pin;
 use std::task::{Context, Poll};
 
@@ -16,84 +18,98 @@ pub struct PaginatedResponse<T> {
     pub count: Option<i64>,
 }
 
+type PageFuture<T> = Pin<Box<dyn Future<Output = Result<PaginatedResponse<T>>> + Send>>;
+
 /// A stream that automatically follows `next_url` pagination.
 pub struct PaginatedStream<T> {
     client: reqwest::Client,
+    headers: HeaderMap,
     next_url: Option<String>,
-    buffer: Vec<T>,
-    pending: Option<Pin<Box<dyn Future<Output = Result<reqwest::Response>> + Send>>>,
+    follow_pages: bool,
+    buffer: std::collections::VecDeque<T>,
+    pending: Option<PageFuture<T>>,
 }
 
-use std::future::Future;
+// Safe: we never pin-project into the buffered items.
+impl<T> Unpin for PaginatedStream<T> {}
 
 impl<T: DeserializeOwned + Send + 'static> PaginatedStream<T> {
-    pub(crate) fn new(client: reqwest::Client, initial_url: String) -> Self {
+    pub(crate) fn new(client: reqwest::Client, headers: HeaderMap, initial_url: String) -> Self {
         Self {
             client,
+            headers,
             next_url: Some(initial_url),
-            buffer: Vec::new(),
+            follow_pages: true,
+            buffer: std::collections::VecDeque::new(),
             pending: None,
         }
     }
 
-    pub(crate) fn single_page(client: reqwest::Client, url: String) -> Self {
+    pub(crate) fn single_page(client: reqwest::Client, headers: HeaderMap, url: String) -> Self {
         Self {
             client,
+            headers,
             next_url: Some(url),
-            buffer: Vec::new(),
+            follow_pages: false,
+            buffer: std::collections::VecDeque::new(),
             pending: None,
         }
+    }
+
+    fn fetch_page(client: reqwest::Client, headers: HeaderMap, url: String) -> PageFuture<T> {
+        Box::pin(async move {
+            let resp = client.get(&url).headers(headers).send().await?;
+            let status = resp.status();
+            if !status.is_success() {
+                let body = resp.text().await.unwrap_or_default();
+                return Err(Error::Http { status, body });
+            }
+            Ok(resp.json::<PaginatedResponse<T>>().await?)
+        })
     }
 }
 
 impl<T: DeserializeOwned + Send + 'static> Stream for PaginatedStream<T> {
     type Item = Result<T>;
 
-    fn poll_next(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Option<Self::Item>> {
+    fn poll_next(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Option<Self::Item>> {
+        // All fields are Unpin, so mutable projection is safe.
+        let this = self.get_mut();
         loop {
-            // Return buffered items first
-            if let Some(item) = self.buffer.pop() {
+            // Return buffered items first.
+            if let Some(item) = this.buffer.pop_front() {
                 return Poll::Ready(Some(Ok(item)));
             }
 
-            // No more pages
-            if self.next_url.is_none() && self.pending.is_none() {
+            // No more pages to fetch.
+            if this.next_url.is_none() && this.pending.is_none() {
                 return Poll::Ready(None);
             }
 
-            // Start a new request if we have a URL and no pending request
-            if let Some(url) = self.next_url.take() {
-                let client = self.client.clone();
-                self.pending = Some(Box::pin(async move {
-                    client.get(&url).send().await.map_err(Error::from)
-                }));
+            // Start a new request if we have a URL and no pending request.
+            if let Some(url) = this.next_url.take() {
+                this.pending = Some(Self::fetch_page(
+                    this.client.clone(),
+                    this.headers.clone(),
+                    url,
+                ));
             }
 
-            // Poll the pending request
-            if let Some(ref mut fut) = self.pending {
+            // Poll the pending request.
+            if let Some(ref mut fut) = this.pending {
                 match fut.as_mut().poll(cx) {
                     Poll::Pending => return Poll::Pending,
                     Poll::Ready(Err(e)) => {
-                        self.pending = None;
+                        this.pending = None;
                         return Poll::Ready(Some(Err(e)));
                     }
-                    Poll::Ready(Ok(resp)) => {
-                        self.pending = None;
-                        let status = resp.status();
-                        if !status.is_success() {
-                            let body = resp.text().await.unwrap_or_default();
-                            return Poll::Ready(Some(Err(Error::Http { status, body })));
+                    Poll::Ready(Ok(page)) => {
+                        this.pending = None;
+                        this.next_url = if this.follow_pages { page.next_url } else { None };
+                        if let Some(results) = page.results {
+                            this.buffer = results.into();
                         }
-                        let page: PaginatedResponse<T> = match resp.json().await {
-                            Ok(p) => p,
-                            Err(e) => return Poll::Ready(Some(Err(Error::from(e)))),
-                        };
-                        self.next_url = page.next_url;
-                        if let Some(mut results) = page.results {
-                            results.reverse(); // so we can pop from the end
-                            self.buffer = results;
-                        }
-                        // If no results and no next_url, stream ends next loop
+                        // If no results and no next_url, stream ends next loop.
                     }
                 }
             }

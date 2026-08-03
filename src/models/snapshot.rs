@@ -3,6 +3,7 @@ use super::aggs::Agg;
 use super::quotes::LastQuote;
 use super::trades::LastTrade;
 
+/// Most recent minute bar.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct MinuteSnapshot {
     #[serde(rename = "av")]
@@ -30,6 +31,7 @@ pub struct MinuteSnapshot {
     pub fractional_accumulated_volume: Option<String>,
 }
 
+/// Data for the most recent daily bar in an index snapshot.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct IndicesSession {
     pub change: Option<f64>,
@@ -57,6 +59,7 @@ pub struct IndicesSnapshot {
     pub message: Option<String>,
 }
 
+/// The most up-to-date market data for a traded ticker symbol.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct TickerSnapshot {
     pub day: Option<Agg>,
@@ -78,6 +81,7 @@ pub struct TickerSnapshot {
     pub fair_market_value: Option<f64>,
 }
 
+/// Data for the most recent daily bar in an options contract.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct DayOptionContractSnapshot {
     pub change: Option<f64>,
@@ -95,6 +99,7 @@ pub struct DayOptionContractSnapshot {
     pub vwap: Option<f64>,
 }
 
+/// Details for an options contract.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct OptionDetails {
     #[serde(rename = "contract_type")]
@@ -110,6 +115,7 @@ pub struct OptionDetails {
     pub ticker: Option<String>,
 }
 
+/// Data for the most recent quote in an options contract.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct LastQuoteOptionContractSnapshot {
     pub ask: Option<f64>,
@@ -124,6 +130,7 @@ pub struct LastQuoteOptionContractSnapshot {
     pub timeframe: Option<String>,
 }
 
+/// Data for the most recent trade for an options contract.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct LastTradeOptionContractSnapshot {
     pub price: Option<f64>,
@@ -135,6 +142,7 @@ pub struct LastTradeOptionContractSnapshot {
     pub timeframe: Option<String>,
 }
 
+/// Greeks data for an options contract.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct Greeks {
     pub delta: Option<f64>,
@@ -143,6 +151,7 @@ pub struct Greeks {
     pub vega: Option<f64>,
 }
 
+/// Data for the underlying stock in an options contract.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct UnderlyingAsset {
     #[serde(rename = "change_to_break_even")]
@@ -155,6 +164,7 @@ pub struct UnderlyingAsset {
     pub timeframe: Option<String>,
 }
 
+/// Snapshot data of an option contract of a stock equity.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct OptionContractSnapshot {
     #[serde(rename = "break_even_price")]
@@ -176,13 +186,16 @@ pub struct OptionContractSnapshot {
     pub fair_market_value: Option<f64>,
 }
 
+/// Data for a book bid or ask.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct OrderBookQuote {
+    #[serde(rename = "p")]
     pub price: Option<f64>,
     #[serde(rename = "x")]
     pub exchange_shares: Option<std::collections::HashMap<String, f64>>,
 }
 
+/// Current level 2 book of a single ticker, combined from all exchanges.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct SnapshotTickerFullBook {
     pub ticker: Option<String>,
@@ -196,6 +209,7 @@ pub struct SnapshotTickerFullBook {
     pub updated: Option<i64>,
 }
 
+/// Data about the most recent trading session for an asset.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct UniversalSnapshotSession {
     pub price: Option<f64>,
@@ -228,6 +242,7 @@ pub struct UniversalSnapshotSession {
     pub fractional_volume: Option<String>,
 }
 
+/// The most recent quote for an asset.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct UniversalSnapshotLastQuote {
     pub ask: Option<f64>,
@@ -247,6 +262,7 @@ pub struct UniversalSnapshotLastQuote {
     pub last_updated: Option<i64>,
 }
 
+/// The most recent trade for an asset.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct UniversalSnapshotLastTrade {
     pub id: Option<i64>,
@@ -265,6 +281,7 @@ pub struct UniversalSnapshotLastTrade {
     pub fractional_size: Option<String>,
 }
 
+/// The most recent minute-level aggregate for the asset.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct UniversalSnapshotLastMinute {
     pub open: Option<f64>,
@@ -280,6 +297,7 @@ pub struct UniversalSnapshotLastMinute {
     pub fractional_volume: Option<String>,
 }
 
+/// Data for the underlying stock in an options contract.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct UniversalSnapshotUnderlyingAsset {
     pub ticker: Option<String>,
@@ -292,6 +310,7 @@ pub struct UniversalSnapshotUnderlyingAsset {
     pub last_updated: Option<i64>,
 }
 
+/// Details for an options contract.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct UniversalSnapshotDetails {
     #[serde(rename = "contract_type")]
@@ -306,6 +325,7 @@ pub struct UniversalSnapshotDetails {
     pub strike_price: Option<f64>,
 }
 
+/// Snapshot data for an asset (stocks, options, indices, fx, crypto).
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct UniversalSnapshot {
     pub ticker: Option<String>,

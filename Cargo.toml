@@ -2,10 +2,10 @@
 name = "massive"
 version = "0.1.0"
 edition = "2021"
-authors = ["Your Name <you@example.com>"]
+authors = ["Johnathon Fox <johnathon.fox@gmail.com>"]
 description = "Async Rust client for the Massive.com (formerly Polygon.io) REST and WebSocket API"
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/yourname/massive-rs"
+repository = "https://github.com/johnathonfox/massive-rs"
 keywords = ["massive", "polygon", "finance", "stocks", "api"]
 categories = ["api-bindings", "finance", "web-programming"]
 rust-version = "1.75"
