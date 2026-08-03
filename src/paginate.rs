@@ -20,10 +20,33 @@ pub struct PaginatedResponse<T> {
 
 type PageFuture<T> = Pin<Box<dyn Future<Output = Result<PaginatedResponse<T>>> + Send>>;
 
+/// Send a GET request, retrying on HTTP 429 and 5xx with exponential backoff.
+pub(crate) async fn send_with_retry(
+    client: &reqwest::Client,
+    url: &str,
+    headers: HeaderMap,
+    max_retries: u32,
+) -> Result<reqwest::Response> {
+    let mut attempt = 0u32;
+    loop {
+        let resp = client.get(url).headers(headers.clone()).send().await?;
+        let status = resp.status();
+        let retryable = status == reqwest::StatusCode::TOO_MANY_REQUESTS || status.is_server_error();
+        if !retryable || attempt >= max_retries {
+            return Ok(resp);
+        }
+        let backoff = std::time::Duration::from_millis(200 * 2u64.pow(attempt)).min(std::time::Duration::from_secs(5));
+        tracing::debug!("retrying {} after {} (attempt {})", url, status, attempt + 1);
+        tokio::time::sleep(backoff).await;
+        attempt += 1;
+    }
+}
+
 /// A stream that automatically follows `next_url` pagination.
 pub struct PaginatedStream<T> {
     client: reqwest::Client,
     headers: HeaderMap,
+    max_retries: u32,
     next_url: Option<String>,
     follow_pages: bool,
     buffer: std::collections::VecDeque<T>,
@@ -34,10 +57,16 @@ pub struct PaginatedStream<T> {
 impl<T> Unpin for PaginatedStream<T> {}
 
 impl<T: DeserializeOwned + Send + 'static> PaginatedStream<T> {
-    pub(crate) fn new(client: reqwest::Client, headers: HeaderMap, initial_url: String) -> Self {
+    pub(crate) fn new(
+        client: reqwest::Client,
+        headers: HeaderMap,
+        initial_url: String,
+        max_retries: u32,
+    ) -> Self {
         Self {
             client,
             headers,
+            max_retries,
             next_url: Some(initial_url),
             follow_pages: true,
             buffer: std::collections::VecDeque::new(),
@@ -45,10 +74,16 @@ impl<T: DeserializeOwned + Send + 'static> PaginatedStream<T> {
         }
     }
 
-    pub(crate) fn single_page(client: reqwest::Client, headers: HeaderMap, url: String) -> Self {
+    pub(crate) fn single_page(
+        client: reqwest::Client,
+        headers: HeaderMap,
+        url: String,
+        max_retries: u32,
+    ) -> Self {
         Self {
             client,
             headers,
+            max_retries,
             next_url: Some(url),
             follow_pages: false,
             buffer: std::collections::VecDeque::new(),
@@ -56,9 +91,9 @@ impl<T: DeserializeOwned + Send + 'static> PaginatedStream<T> {
         }
     }
 
-    fn fetch_page(client: reqwest::Client, headers: HeaderMap, url: String) -> PageFuture<T> {
+    fn fetch_page(client: reqwest::Client, headers: HeaderMap, max_retries: u32, url: String) -> PageFuture<T> {
         Box::pin(async move {
-            let resp = client.get(&url).headers(headers).send().await?;
+            let resp = send_with_retry(&client, &url, headers, max_retries).await?;
             let status = resp.status();
             if !status.is_success() {
                 let body = resp.text().await.unwrap_or_default();
@@ -91,6 +126,7 @@ impl<T: DeserializeOwned + Send + 'static> Stream for PaginatedStream<T> {
                 this.pending = Some(Self::fetch_page(
                     this.client.clone(),
                     this.headers.clone(),
+                    this.max_retries,
                     url,
                 ));
             }

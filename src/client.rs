@@ -37,6 +37,7 @@ pub struct Client {
     pub(crate) http: reqwest::Client,
     pub(crate) pagination: bool,
     pub(crate) trace: bool,
+    pub(crate) max_retries: u32,
 }
 
 impl Client {
@@ -56,6 +57,7 @@ impl Client {
             http,
             pagination: true,
             trace: false,
+            max_retries: 0,
         })
     }
 
@@ -83,6 +85,13 @@ impl Client {
         self
     }
 
+    /// Retry failed requests up to `max_retries` times on HTTP 429 and 5xx
+    /// responses, with exponential backoff (default: 0, matching the Python client).
+    pub fn with_max_retries(mut self, max_retries: u32) -> Self {
+        self.max_retries = max_retries;
+        self
+    }
+
     /// Build default headers including auth.
     fn default_headers(&self) -> HeaderMap {
         let mut headers = HeaderMap::new();
@@ -100,28 +109,14 @@ impl Client {
         params: Option<&[(&str, String)]>,
         options: Option<&RequestOptions>,
     ) -> Result<T> {
-        let url = format!("{}{}", self.base, path);
-        let mut req = self.http.get(&url);
-
-        let mut headers = self.default_headers();
-        if let Some(opts) = options {
-            for (k, v) in &opts.headers {
-                headers.insert(k, v.clone());
-            }
-        }
-        req = req.headers(headers);
-
-        if let Some(p) = params {
-            req = req.query(p);
-        }
+        let url = self.build_url(path, params);
+        let headers = self.request_headers(options);
 
         if self.trace {
             info!("Request URL: {}", url);
-            let redacted = self.default_headers();
-            info!("Request Headers: {:?}", redacted);
         }
 
-        let resp = req.send().await?;
+        let resp = crate::paginate::send_with_retry(&self.http, &url, headers, self.max_retries).await?;
         let status = resp.status();
 
         if self.trace {
@@ -168,7 +163,7 @@ impl Client {
         options: Option<&RequestOptions>,
     ) -> PaginatedStream<T> {
         let url = self.build_url(path, params);
-        PaginatedStream::new(self.http.clone(), self.request_headers(options), url)
+        PaginatedStream::new(self.http.clone(), self.request_headers(options), url, self.max_retries)
     }
 
     /// Single page request (no pagination follow).
@@ -179,6 +174,6 @@ impl Client {
         options: Option<&RequestOptions>,
     ) -> PaginatedStream<T> {
         let url = self.build_url(path, params);
-        PaginatedStream::single_page(self.http.clone(), self.request_headers(options), url)
+        PaginatedStream::single_page(self.http.clone(), self.request_headers(options), url, self.max_retries)
     }
 }

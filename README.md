@@ -75,6 +75,15 @@ Python's `params={"ticker.gte": "A"}` filters are typed optional arguments, e.g.
 `list_dividends(.., ex_dividend_date_gte: Some("2024-01-01"), ..)` serializes as
 `ex_dividend_date.gte=2024-01-01`.
 
+## Rate limiting
+
+Retries are opt-in (the Python client has none). Enable exponential backoff on
+HTTP 429 and 5xx responses:
+
+```rust
+let client = RESTClient::from_env()?.with_max_retries(3);
+```
+
 ## WebSocket
 
 ```rust
@@ -124,6 +133,11 @@ cargo doc --open
 ## Testing
 
 `cargo test` runs the full wiremock-based integration suite (no API key required).
+Live tests against the real API are `#[ignore]`d and require a key:
+
+```sh
+MASSIVE_API_KEY=<key> cargo test --test live -- --ignored
+```
 
 ## Parity notes and deliberate deviations
 
