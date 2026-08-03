@@ -1,0 +1,62 @@
+name: Weekly
+
+# Scheduled chores: dependency drift build + Python-client parity check.
+# Runs Tuesday 06:23 UTC and on demand.
+on:
+  schedule:
+    - cron: "23 6 * * 2"
+  workflow_dispatch:
+
+env:
+  CARGO_TERM_COLOR: always
+  # Commit of massive-com/client-python that parity was verified against
+  # (also recorded in CLAUDE.md and CHANGELOG.md — keep all three in sync).
+  PARITY_COMMIT: 481e5c270ea85e8eae5e96f8b9fda34e5e2a674a
+
+jobs:
+  dependency-drift:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustdoc
+      - uses: Swatinem/rust-cache@v2
+      - name: Update dependencies to latest compatible versions
+        run: cargo update
+      - name: Build with updated dependencies
+        run: cargo check --all-targets
+      - name: Clippy
+        run: cargo clippy --all-targets -- -D warnings
+      - name: Test
+        run: cargo test
+      - name: Docs
+        run: RUSTDOCFLAGS="-D warnings" cargo doc --no-deps
+      - name: Report outdated dependencies
+        run: |
+          if command -v cargo-outdated >/dev/null 2>&1; then
+            cargo outdated --exit-code 0 || true
+          else
+            echo "cargo-outdated not installed; skipping (dependabot covers version bumps)"
+          fi
+
+  parity-watch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check massive-com/client-python for new commits since parity snapshot
+        run: |
+          git clone --quiet https://github.com/massive-com/client-python /tmp/client-python
+          cd /tmp/client-python
+          if git merge-base --is-ancestor "$PARITY_COMMIT" HEAD && [ "$(git rev-parse HEAD)" = "$PARITY_COMMIT" ]; then
+            echo "Python client unchanged since parity snapshot."
+            exit 0
+          fi
+          NEW=$(git log --oneline "$PARITY_COMMIT"..HEAD -- massive/rest massive/websocket | wc -l)
+          if [ "$NEW" -eq 0 ]; then
+            echo "Python client moved, but no changes under massive/rest or massive/websocket."
+            exit 0
+          fi
+          echo "::warning title=Parity drift::$NEW new commit(s) touching massive/rest or massive/websocket since $PARITY_COMMIT"
+          git log --oneline "$PARITY_COMMIT"..HEAD -- massive/rest massive/websocket | head -20
+          echo "Parity review needed: see the workflow in CLAUDE.md."
+          exit 1
