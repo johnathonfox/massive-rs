@@ -1,5 +1,5 @@
 [package]
-name = "massive"
+name = "massive-rs"
 version = "0.1.0"
 edition = "2021"
 authors = ["Johnathon Fox <johnathon.fox@gmail.com>"]
@@ -7,10 +7,15 @@ description = "Async Rust client for the Massive.com (formerly Polygon.io) REST 
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/johnathonfox/massive-rs"
 homepage = "https://github.com/johnathonfox/massive-rs"
-documentation = "https://docs.rs/massive"
+documentation = "https://docs.rs/massive-rs"
 keywords = ["massive", "polygon", "finance", "stocks", "api"]
 categories = ["api-bindings", "finance", "web-programming"]
-rust-version = "1.75"
+rust-version = "1.88"
+
+[lib]
+# The package is `massive-rs` on crates.io, but the library keeps the `massive`
+# crate name so existing `use massive::...` imports keep working.
+name = "massive"
 
 [dependencies]
 reqwest = { version = "0.12", features = ["json", "gzip", "rustls-tls"], default-features = false }

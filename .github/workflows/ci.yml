@@ -25,3 +25,21 @@ jobs:
         run: cargo test
       - name: Docs
         run: RUSTDOCFLAGS="-D warnings" cargo doc --no-deps
+
+  # Runs the #[ignore]d live tests against the real API. Secret-gated: skips
+  # cleanly when the MASSIVE_API_KEY repo secret is not configured (e.g. forks).
+  live:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Live tests
+        env:
+          MASSIVE_API_KEY: ${{ secrets.MASSIVE_API_KEY }}
+        run: |
+          if [ -z "$MASSIVE_API_KEY" ]; then
+            echo "MASSIVE_API_KEY secret not configured; skipping live tests"
+            exit 0
+          fi
+          cargo test --test live -- --ignored

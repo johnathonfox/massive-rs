@@ -22,10 +22,13 @@ Add to `Cargo.toml`:
 
 ```toml
 [dependencies]
-massive = { path = "..." } # crates.io release pending
+massive-rs = "0.1"
 tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
 futures = "0.3"
 ```
+
+The package is named `massive-rs` on crates.io, but the library itself is
+imported in code as `massive` (e.g. `use massive::RESTClient`).
 
 Set your API key in the `MASSIVE_API_KEY` environment variable, or pass it directly.
 
@@ -58,7 +61,33 @@ async fn main() -> massive::Result<()> {
 Each REST module is a trait implemented on `Client` (`RESTClient` is an alias):
 `AggsApi`, `TradesApi`, `QuotesApi`, `SnapshotApi`, `ReferenceApi`, `FinancialsApi`,
 `IndicatorsApi`, `FuturesApi`, `EconomyApi`, `EtfGlobalApi`, `TmxApi`,
-`SummariesApi`, `BenzingaApi`, `VxApi`. Import the traits you use.
+`SummariesApi`, `BenzingaApi`, `VxApi`. Import the traits you use. All traits are
+object-safe (methods return boxed `Future`/`Stream`), so `Box<dyn AggsApi>` and
+friends work for mocking or dependency injection.
+
+## Params builder
+
+The flat positional methods above mirror the Python client 1:1. Every method with
+optional arguments also has an additive `{method}_with_params` variant that takes
+the required arguments positionally plus a chainable params struct:
+
+```rust
+use massive::rest::{ListAggsParams, ListDividendsParams};
+
+// Same request as the positional list_aggs(..) call in the example above.
+let mut aggs = client.list_aggs_with_params(
+    "AAPL", 1, "minute", "2023-01-01", "2023-06-13",
+    ListAggsParams::new().adjusted(true).sort("asc").limit(50000),
+);
+
+// Filter operators become setters: serializes ex_dividend_date.gte=2024-01-01.
+let mut dividends = client.list_dividends_with_params(
+    ListDividendsParams::new().ex_dividend_date_gte("2024-01-01"),
+);
+```
+
+Unset fields are omitted from the request (server defaults apply), exactly like
+passing `None` in the positional form.
 
 ## Pagination
 
@@ -112,14 +141,32 @@ Feeds (`Feed::RealTime`, `Feed::Delayed`, …) and markets (including
 reconciles `subscribe`/`unsubscribe` calls live, and reconnects with resubscribe
 on connection loss (`with_max_reconnects`, default 5).
 
+Because `connect(&mut self)` runs the connection loop, live subscription changes
+go through a channel-based control handle (obtain it before calling `connect`):
+
+```rust
+let control = client.control();
+let handle = tokio::spawn(async move { client.connect(|msgs| async move { /* ... */ }).await });
+control.subscribe(&["T.MSFT"])?;      // applied on the live connection
+control.unsubscribe(&["T.AAPL"])?;
+```
+
+`WebSocketClient::with_host` overrides the server host for testing against a
+local server or alternate endpoints.
+
 ## Examples
 
 ```sh
 cargo run --example aggs              # list aggregate bars
 cargo run --example last_trade_quote  # last trade/quote
 cargo run --example snapshot          # market snapshot + options chain
+cargo run --example reference         # tickers, ticker details, market status
+cargo run --example financials        # income statements + share float
+cargo run --example indicators        # SMA/RSI/MACD
 cargo run --example websocket         # streaming trades/quotes
 ```
+
+Minimum supported Rust version: **1.88**.
 
 ## API documentation
 

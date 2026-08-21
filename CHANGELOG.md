@@ -8,6 +8,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Additive `{method}_with_params` variants for every REST method with optional
+  arguments, taking the required arguments positionally plus a chainable
+  `{CamelName}Params` struct (owned fields, `options` included). The flat
+  positional methods remain the Python-parity surface and delegate to these.
+- `WebSocketControl` handle (`WebSocketClient::control()`) for live
+  subscribe/unsubscribe/unsubscribe-all while `connect` is running, and
+  `WebSocketClient::with_host` for testing against alternate endpoints.
+- Examples: `financials`, `indicators`, `reference`.
+- Integration tests for the params builders (`tests/rest_params.rs`) and for the
+  WebSocket auth handshake, live reconcile, and reconnect/resubscribe against a
+  local server (`tests/websocket.rs`).
+
+### Changed
+
+- REST traits are now object-safe: `get_*` methods return `BoxFuture<'a, T>`
+  and `list_*` methods return `BoxStream<'a, T>` (aliases in `massive::rest`),
+  so `Box<dyn AggsApi>` and friends work for mocking and dependency injection.
+
 - `CLAUDE.md` with crate conventions and the parity-maintenance workflow.
 - GitHub Actions CI (check, clippy, test, docs).
 - Env-gated live tests (`tests/live.rs`, run with `--ignored` and `MASSIVE_API_KEY`).

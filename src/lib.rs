@@ -3,9 +3,6 @@
 //! Feature parity target: the official Python client
 //! (<https://github.com/massive-com/client-python>).
 
-// The per-module API traits use `async fn` by design (mirroring the Python client's
-// method-per-endpoint surface); they are only implemented for `Client`.
-#![allow(async_fn_in_trait)]
 // Flat positional `Option` args mirror the Python client's kwargs by design.
 #![allow(clippy::too_many_arguments)]
 

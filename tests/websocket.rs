@@ -129,3 +129,236 @@ fn unknown_event_type_is_skipped() {
     let msgs = parse(json!({"ev":"ZZZ","foo":1}), Market::Stocks);
     assert!(msgs.is_empty());
 }
+
+// --- Local test-server harness --------------------------------------------
+//
+// These tests run the real `WebSocketClient` against a local
+// tokio-tungstenite server to cover the auth handshake, live
+// subscribe/unsubscribe reconciliation, and reconnect-with-resubscribe.
+
+use futures::{SinkExt, StreamExt};
+use massive::websocket::WebSocketClient;
+use massive::Error;
+use std::time::Duration;
+use tokio::net::{TcpListener, TcpStream};
+use tokio::sync::mpsc;
+use tokio::time::timeout;
+use tokio_tungstenite::tungstenite::Message;
+use tokio_tungstenite::WebSocketStream;
+
+const TEST_TIMEOUT: Duration = Duration::from_secs(10);
+
+type ServerWs = WebSocketStream<TcpStream>;
+
+/// Bind a localhost websocket server; returns the listener and `host:port`.
+async fn bind_server() -> (TcpListener, String) {
+    let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
+    let host = listener.local_addr().unwrap().to_string();
+    (listener, host)
+}
+
+async fn accept_ws(listener: &TcpListener) -> ServerWs {
+    let (stream, _) = listener.accept().await.unwrap();
+    tokio_tungstenite::accept_async(stream).await.unwrap()
+}
+
+fn status_frame(status: &str, message: &str) -> Message {
+    Message::Text(json!([{"ev":"status","status":status,"message":message}]).to_string())
+}
+
+/// Read the next text frame as JSON, skipping non-text frames.
+async fn next_json(ws: &mut ServerWs) -> serde_json::Value {
+    loop {
+        match timeout(TEST_TIMEOUT, ws.next()).await.unwrap() {
+            Some(Ok(Message::Text(t))) => return serde_json::from_str(&t).unwrap(),
+            Some(Ok(_)) => continue,
+            other => panic!("unexpected frame: {:?}", other),
+        }
+    }
+}
+
+/// Perform the server side of the auth handshake, asserting the API key.
+async fn expect_auth(ws: &mut ServerWs, expected_key: &str) {
+    let auth = next_json(ws).await;
+    assert_eq!(auth["action"], "auth");
+    assert_eq!(auth["params"], expected_key);
+    ws.send(status_frame("auth_success", "authenticated"))
+        .await
+        .unwrap();
+}
+
+#[tokio::test]
+async fn auth_handshake_succeeds_and_subscribes() {
+    let (listener, host) = bind_server().await;
+    let server = tokio::spawn(async move {
+        let mut ws = accept_ws(&listener).await;
+        ws.send(status_frame("connected", "Connected Successfully"))
+            .await
+            .unwrap();
+        expect_auth(&mut ws, "test-key").await;
+        let sub = next_json(&mut ws).await;
+        assert_eq!(sub["action"], "subscribe");
+        assert_eq!(sub["params"], "T.AAPL");
+        ws.send(Message::Close(None)).await.unwrap();
+    });
+
+    let mut client = WebSocketClient::new("test-key")
+        .unwrap()
+        .with_secure(false)
+        .with_host(host)
+        .with_subscriptions(&["T.AAPL"]);
+    timeout(
+        TEST_TIMEOUT,
+        client.connect(|_: Vec<WebSocketMessage>| async {}),
+    )
+    .await
+    .unwrap()
+    .unwrap();
+    timeout(TEST_TIMEOUT, server).await.unwrap().unwrap();
+}
+
+#[tokio::test]
+async fn auth_failure_returns_auth_error() {
+    let (listener, host) = bind_server().await;
+    let server = tokio::spawn(async move {
+        let mut ws = accept_ws(&listener).await;
+        ws.send(status_frame("connected", "Connected Successfully"))
+            .await
+            .unwrap();
+        let auth = next_json(&mut ws).await;
+        assert_eq!(auth["action"], "auth");
+        ws.send(status_frame("auth_failed", "Invalid API key"))
+            .await
+            .unwrap();
+    });
+
+    let mut client = WebSocketClient::new("bad-key")
+        .unwrap()
+        .with_secure(false)
+        .with_host(host);
+    let err = timeout(
+        TEST_TIMEOUT,
+        client.connect(|_: Vec<WebSocketMessage>| async {}),
+    )
+    .await
+    .unwrap()
+    .unwrap_err();
+    match err {
+        Error::Auth(msg) => assert_eq!(msg, "Invalid API key"),
+        other => panic!("expected auth error, got {:?}", other),
+    }
+    timeout(TEST_TIMEOUT, server).await.unwrap().unwrap();
+}
+
+#[tokio::test]
+async fn live_subscribe_unsubscribe_reconciles_on_server() {
+    let (listener, host) = bind_server().await;
+    let (observed_tx, mut observed_rx) = mpsc::unbounded_channel::<serde_json::Value>();
+
+    let server = tokio::spawn(async move {
+        let mut ws = accept_ws(&listener).await;
+        ws.send(status_frame("connected", "Connected Successfully"))
+            .await
+            .unwrap();
+        expect_auth(&mut ws, "test-key").await;
+        // Report every action frame the client sends, then close after three.
+        for _ in 0..3 {
+            let msg = next_json(&mut ws).await;
+            observed_tx.send(msg).unwrap();
+        }
+        ws.send(Message::Close(None)).await.unwrap();
+    });
+
+    let mut client = WebSocketClient::new("test-key")
+        .unwrap()
+        .with_secure(false)
+        .with_host(host)
+        .with_subscriptions(&["T.AAPL"]);
+    let control = client.control();
+    let client_task =
+        tokio::spawn(async move { client.connect(|_: Vec<WebSocketMessage>| async {}).await });
+
+    // Initial subscription from connect.
+    let msg = timeout(TEST_TIMEOUT, observed_rx.recv())
+        .await
+        .unwrap()
+        .unwrap();
+    assert_eq!(msg["action"], "subscribe");
+    assert_eq!(msg["params"], "T.AAPL");
+
+    // A live subscribe is pushed to the open connection.
+    control.subscribe(&["Q.AAPL"]).unwrap();
+    let msg = timeout(TEST_TIMEOUT, observed_rx.recv())
+        .await
+        .unwrap()
+        .unwrap();
+    assert_eq!(msg["action"], "subscribe");
+    assert_eq!(msg["params"], "Q.AAPL");
+
+    // A live unsubscribe reconciles only the removed channel.
+    control.unsubscribe(&["T.AAPL"]).unwrap();
+    let msg = timeout(TEST_TIMEOUT, observed_rx.recv())
+        .await
+        .unwrap()
+        .unwrap();
+    assert_eq!(msg["action"], "unsubscribe");
+    assert_eq!(msg["params"], "T.AAPL");
+
+    timeout(TEST_TIMEOUT, client_task)
+        .await
+        .unwrap()
+        .unwrap()
+        .unwrap();
+    timeout(TEST_TIMEOUT, server).await.unwrap().unwrap();
+}
+
+#[tokio::test]
+async fn reconnect_resubscribes_active_subscriptions() {
+    let (listener, host) = bind_server().await;
+    let (observed_tx, mut observed_rx) = mpsc::unbounded_channel::<serde_json::Value>();
+
+    let server = tokio::spawn(async move {
+        // First connection: auth + initial subscribe, then drop the socket
+        // abruptly (no Close frame).
+        let mut ws = accept_ws(&listener).await;
+        ws.send(status_frame("connected", "Connected Successfully"))
+            .await
+            .unwrap();
+        expect_auth(&mut ws, "test-key").await;
+        let sub = next_json(&mut ws).await;
+        observed_tx.send(sub).unwrap();
+        drop(ws);
+
+        // Second connection: auth again + resubscribe of the same channel.
+        let mut ws = accept_ws(&listener).await;
+        ws.send(status_frame("connected", "Connected Successfully"))
+            .await
+            .unwrap();
+        expect_auth(&mut ws, "test-key").await;
+        let sub = next_json(&mut ws).await;
+        observed_tx.send(sub).unwrap();
+        ws.send(Message::Close(None)).await.unwrap();
+    });
+
+    let mut client = WebSocketClient::new("test-key")
+        .unwrap()
+        .with_secure(false)
+        .with_host(host)
+        .with_max_reconnects(Some(1))
+        .with_subscriptions(&["T.AAPL"]);
+    timeout(
+        TEST_TIMEOUT,
+        client.connect(|_: Vec<WebSocketMessage>| async {}),
+    )
+    .await
+    .unwrap()
+    .unwrap();
+    timeout(TEST_TIMEOUT, server).await.unwrap().unwrap();
+
+    let first = observed_rx.recv().await.unwrap();
+    let second = observed_rx.recv().await.unwrap();
+    assert_eq!(first["action"], "subscribe");
+    assert_eq!(first["params"], "T.AAPL");
+    assert_eq!(second["action"], "subscribe");
+    assert_eq!(second["params"], "T.AAPL");
+}

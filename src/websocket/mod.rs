@@ -10,6 +10,7 @@ pub mod models;
 pub use models::*;
 
 use crate::error::{Error, Result};
+use futures::channel::mpsc::{self, UnboundedReceiver, UnboundedSender};
 use futures::{SinkExt, StreamExt};
 use std::collections::HashSet;
 use std::time::Duration;
@@ -24,6 +25,55 @@ const RECV_TIMEOUT: Duration = Duration::from_secs(1);
 type WsStream = WebSocketStream<MaybeTlsStream<TcpStream>>;
 type WsSink = futures::stream::SplitSink<WsStream, Message>;
 
+/// Subscription command sent from a [`WebSocketControl`] handle to a running
+/// [`WebSocketClient::connect`] loop.
+#[derive(Debug)]
+enum SubCommand {
+    Subscribe(Vec<String>),
+    Unsubscribe(Vec<String>),
+    UnsubscribeAll,
+}
+
+/// A handle for controlling subscriptions while [`WebSocketClient::connect`] is
+/// running.
+///
+/// Mirrors the Python client, where `subscribe`/`unsubscribe` may be called from
+/// another task during an active connection; Rust's borrow rules require this
+/// channel-based handle instead. Cheap to clone.
+#[derive(Debug, Clone)]
+pub struct WebSocketControl {
+    tx: UnboundedSender<SubCommand>,
+}
+
+impl WebSocketControl {
+    fn send(&self, cmd: SubCommand) -> Result<()> {
+        self.tx
+            .unbounded_send(cmd)
+            .map_err(|e| Error::WebSocket(e.to_string()))
+    }
+
+    /// Schedule subscriptions on the live connection, applying `X.*` wildcard
+    /// semantics (see [`WebSocketClient::subscribe`]).
+    pub fn subscribe(&self, subscriptions: &[&str]) -> Result<()> {
+        self.send(SubCommand::Subscribe(
+            subscriptions.iter().map(|s| s.to_string()).collect(),
+        ))
+    }
+
+    /// Schedule unsubscriptions on the live connection (see
+    /// [`WebSocketClient::unsubscribe`]).
+    pub fn unsubscribe(&self, subscriptions: &[&str]) -> Result<()> {
+        self.send(SubCommand::Unsubscribe(
+            subscriptions.iter().map(|s| s.to_string()).collect(),
+        ))
+    }
+
+    /// Unsubscribe from all subscriptions on the live connection.
+    pub fn unsubscribe_all(&self) -> Result<()> {
+        self.send(SubCommand::UnsubscribeAll)
+    }
+}
+
 /// WebSocket streaming client, mirroring the Python client's `WebSocketClient`.
 #[derive(Debug)]
 pub struct WebSocketClient {
@@ -33,10 +83,13 @@ pub struct WebSocketClient {
     secure: bool,
     trace: bool,
     max_reconnects: Option<u64>,
+    host: Option<String>,
     scheduled_subs: HashSet<String>,
     subs: HashSet<String>,
     schedule_resub: bool,
     sink: Option<WsSink>,
+    cmd_tx: UnboundedSender<SubCommand>,
+    cmd_rx: UnboundedReceiver<SubCommand>,
 }
 
 impl WebSocketClient {
@@ -46,6 +99,7 @@ impl WebSocketClient {
         if api_key.is_empty() {
             return Err(Error::MissingApiKey);
         }
+        let (cmd_tx, cmd_rx) = mpsc::unbounded();
         Ok(Self {
             api_key,
             feed: Feed::RealTime,
@@ -53,10 +107,13 @@ impl WebSocketClient {
             secure: true,
             trace: false,
             max_reconnects: Some(5),
+            host: None,
             scheduled_subs: HashSet::new(),
             subs: HashSet::new(),
             schedule_resub: true,
             sink: None,
+            cmd_tx,
+            cmd_rx,
         })
     }
 
@@ -96,18 +153,35 @@ impl WebSocketClient {
         self
     }
 
+    /// Override the server host (default: the feed's host, e.g.
+    /// `socket.massive.com`). Useful for testing against a local server or
+    /// alternate endpoints.
+    pub fn with_host(mut self, host: impl Into<String>) -> Self {
+        self.host = Some(host.into());
+        self
+    }
+
     /// Log status and connection messages at info level (default: false).
     pub fn with_trace(mut self, trace: bool) -> Self {
         self.trace = trace;
         self
     }
 
-    /// The WebSocket URL: `ws{s}://{feed}/{market}`.
+    /// Get a handle for live subscribe/unsubscribe control while [`Self::connect`]
+    /// is running.
+    pub fn control(&self) -> WebSocketControl {
+        WebSocketControl {
+            tx: self.cmd_tx.clone(),
+        }
+    }
+
+    /// The WebSocket URL: `ws{s}://{feed|host}/{market}`.
     fn url(&self) -> String {
+        let host = self.host.as_deref().unwrap_or(self.feed.as_str());
         format!(
             "ws{}://{}/{}",
             if self.secure { "s" } else { "" },
-            self.feed.as_str(),
+            host,
             self.market.as_str()
         )
     }
@@ -187,13 +261,19 @@ impl WebSocketClient {
                 loop {
                     if self.schedule_resub {
                         debug!("reconciling: {:?} {:?}", self.subs, self.scheduled_subs);
-                        let new_subs: Vec<String> =
-                            self.scheduled_subs.difference(&self.subs).cloned().collect();
+                        let new_subs: Vec<String> = self
+                            .scheduled_subs
+                            .difference(&self.subs)
+                            .cloned()
+                            .collect();
                         if !new_subs.is_empty() {
                             self.send_action("subscribe", &new_subs.join(",")).await?;
                         }
-                        let old_subs: Vec<String> =
-                            self.subs.difference(&self.scheduled_subs).cloned().collect();
+                        let old_subs: Vec<String> = self
+                            .subs
+                            .difference(&self.scheduled_subs)
+                            .cloned()
+                            .collect();
                         if !old_subs.is_empty() {
                             self.send_action("unsubscribe", &old_subs.join(",")).await?;
                         }
@@ -201,7 +281,15 @@ impl WebSocketClient {
                         self.schedule_resub = false;
                     }
 
-                    let frame = match tokio::time::timeout(RECV_TIMEOUT, stream.next()).await {
+                    let frame = tokio::select! {
+                        // Live subscription commands are applied immediately.
+                        Some(cmd) = self.cmd_rx.next() => {
+                            self.apply_command(cmd);
+                            continue;
+                        }
+                        frame = tokio::time::timeout(RECV_TIMEOUT, stream.next()) => frame,
+                    };
+                    let frame = match frame {
                         Ok(Some(frame)) => frame,
                         // No frame within the timeout; loop to reconcile subs.
                         Ok(None) => return Err(Error::WebSocket("connection closed".into())),
@@ -246,6 +334,19 @@ impl WebSocketClient {
                     }
                 }
             }
+        }
+    }
+
+    /// Apply a subscription command received from a [`WebSocketControl`] handle.
+    fn apply_command(&mut self, cmd: SubCommand) {
+        match cmd {
+            SubCommand::Subscribe(subs) => {
+                self.subscribe(&subs.iter().map(String::as_str).collect::<Vec<_>>());
+            }
+            SubCommand::Unsubscribe(subs) => {
+                self.unsubscribe(&subs.iter().map(String::as_str).collect::<Vec<_>>());
+            }
+            SubCommand::UnsubscribeAll => self.unsubscribe_all(),
         }
     }
 
@@ -345,6 +446,12 @@ mod tests {
     }
 
     #[test]
+    fn url_uses_host_override() {
+        let c = client().with_secure(false).with_host("127.0.0.1:9999");
+        assert_eq!(c.url(), "ws://127.0.0.1:9999/stocks");
+    }
+
+    #[test]
     fn subscribe_wildcard_replaces_same_topic_symbols() {
         let mut c = client().with_subscriptions(&["T.AAPL"]);
         // Simulate an active subscription, then subscribe to the wildcard.
@@ -376,4 +483,3 @@ mod tests {
         assert!(c.scheduled_subs.is_empty());
     }
 }
-
