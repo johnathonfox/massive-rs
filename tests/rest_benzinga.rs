@@ -1,5 +1,8 @@
 use futures::TryStreamExt;
-use massive::{rest::BenzingaApi, Client};
+use massive::{
+    rest::{BenzingaApi, ListBenzingaEarningsParams},
+    Client,
+};
 use wiremock::matchers::{header, method, path, query_param};
 use wiremock::{Mock, MockServer, ResponseTemplate};
 
@@ -138,9 +141,9 @@ async fn list_benzinga_analysts_hits_expected_path() {
             None,
             None,
             None,
-            None,                    // limit
-            Some("full_name.asc"),   // sort
-            None,                    // options
+            None,                  // limit
+            Some("full_name.asc"), // sort
+            None,                  // options
         )
         .try_collect::<Vec<_>>()
         .await
@@ -177,13 +180,13 @@ async fn list_benzinga_consensus_ratings_hits_expected_path() {
     let ratings = client
         .list_benzinga_consensus_ratings(
             "AAPL",
-            None,                // date
-            Some("2024-01-01"),  // date_gt
-            None,                // date_gte
-            None,                // date_lt
-            None,                // date_lte
-            None,                // limit
-            None,                // options
+            None,               // date
+            Some("2024-01-01"), // date_gt
+            None,               // date_gte
+            None,               // date_lt
+            None,               // date_lte
+            None,               // limit
+            None,               // options
         )
         .try_collect::<Vec<_>>()
         .await
@@ -447,13 +450,13 @@ async fn list_benzinga_news_hits_expected_path() {
     let client = Client::new("test-key").unwrap().with_base(server.uri());
     let news = client
         .list_benzinga_news(
-            None,                          // published
-            None,                          // published_any_of
-            None,                          // published_gt
-            Some("2024-01-01T00:00:00Z"),  // published_gte
-            None,                          // published_lt
-            None,                          // published_lte
-            None,                          // last_updated
+            None,                         // published
+            None,                         // published_any_of
+            None,                         // published_gt
+            Some("2024-01-01T00:00:00Z"), // published_gte
+            None,                         // published_lt
+            None,                         // published_lte
+            None,                         // last_updated
             None,
             None,
             None,
@@ -583,13 +586,13 @@ async fn list_benzinga_ratings_hits_expected_path() {
     let client = Client::new("test-key").unwrap().with_base(server.uri());
     let ratings = client
         .list_benzinga_ratings(
-            None,              // date
-            None,              // date_any_of
-            None,              // date_gt
+            None,               // date
+            None,               // date_any_of
+            None,               // date_gt
             Some("2024-01-01"), // date_gte
-            None,              // date_lt
-            None,              // date_lte
-            Some("AAPL"),      // ticker
+            None,               // date_lt
+            None,               // date_lte
+            Some("AAPL"),       // ticker
             None,
             None,
             None,
@@ -706,4 +709,153 @@ async fn list_benzinga_bulls_bears_say_hits_expected_path() {
     assert_eq!(say[0].ticker.as_deref(), Some("TSLA"));
     assert!(say[0].bull_case.as_deref().unwrap().contains("EV"));
     assert!(say[0].bear_case.as_deref().unwrap().contains("Margin"));
+}
+
+#[tokio::test]
+async fn list_benzinga_earnings_with_params_sends_every_query_param() {
+    let server = MockServer::start().await;
+    Mock::given(method("GET"))
+        .and(path("/benzinga/v1/earnings"))
+        .and(header("Authorization", "Bearer test-key"))
+        .and(query_param("date", "2024-01-15"))
+        .and(query_param("date.any_of", "2024-01-15,2024-01-16"))
+        .and(query_param("date.gt", "2024-01-01"))
+        .and(query_param("date.gte", "2024-01-02"))
+        .and(query_param("date.lt", "2024-12-31"))
+        .and(query_param("date.lte", "2024-12-30"))
+        .and(query_param("ticker", "AAPL"))
+        .and(query_param("ticker.any_of", "AAPL,MSFT"))
+        .and(query_param("ticker.gt", "A"))
+        .and(query_param("ticker.gte", "B"))
+        .and(query_param("ticker.lt", "Z"))
+        .and(query_param("ticker.lte", "Y"))
+        .and(query_param("importance", "3"))
+        .and(query_param("importance.any_of", "3,4"))
+        .and(query_param("importance.gt", "1"))
+        .and(query_param("importance.gte", "2"))
+        .and(query_param("importance.lt", "5"))
+        .and(query_param("importance.lte", "4"))
+        .and(query_param("last_updated", "2024-01-15T00:00:00Z"))
+        .and(query_param("last_updated.any_of", "2024-01-15T00:00:00Z"))
+        .and(query_param("last_updated.gt", "2024-01-01T00:00:00Z"))
+        .and(query_param("last_updated.gte", "2024-01-02T00:00:00Z"))
+        .and(query_param("last_updated.lt", "2024-12-31T00:00:00Z"))
+        .and(query_param("last_updated.lte", "2024-12-30T00:00:00Z"))
+        .and(query_param("date_status", "confirmed"))
+        .and(query_param("date_status.any_of", "confirmed,projected"))
+        .and(query_param("date_status.gt", "a"))
+        .and(query_param("date_status.gte", "b"))
+        .and(query_param("date_status.lt", "z"))
+        .and(query_param("date_status.lte", "y"))
+        // Whole-number floats must serialize as "5"/"10", not "5.0"/"10.0".
+        .and(query_param("eps_surprise_percent", "5"))
+        .and(query_param("eps_surprise_percent.any_of", "5,6"))
+        .and(query_param("eps_surprise_percent.gt", "1.5"))
+        .and(query_param("eps_surprise_percent.gte", "2.5"))
+        .and(query_param("eps_surprise_percent.lt", "9.5"))
+        .and(query_param("eps_surprise_percent.lte", "8.5"))
+        .and(query_param("revenue_surprise_percent", "10"))
+        .and(query_param("revenue_surprise_percent.any_of", "10,11"))
+        .and(query_param("revenue_surprise_percent.gt", "1.25"))
+        .and(query_param("revenue_surprise_percent.gte", "2.25"))
+        .and(query_param("revenue_surprise_percent.lt", "9.75"))
+        .and(query_param("revenue_surprise_percent.lte", "8.75"))
+        .and(query_param("fiscal_year", "2024"))
+        .and(query_param("fiscal_year.any_of", "2023,2024"))
+        .and(query_param("fiscal_year.gt", "2022"))
+        .and(query_param("fiscal_year.gte", "2023"))
+        .and(query_param("fiscal_year.lt", "2026"))
+        .and(query_param("fiscal_year.lte", "2025"))
+        .and(query_param("fiscal_period", "Q1"))
+        .and(query_param("fiscal_period.any_of", "Q1,Q2"))
+        .and(query_param("fiscal_period.gt", "Q1"))
+        .and(query_param("fiscal_period.gte", "Q2"))
+        .and(query_param("fiscal_period.lt", "Q4"))
+        .and(query_param("fiscal_period.lte", "Q3"))
+        .and(query_param("limit", "25"))
+        .and(query_param("sort", "date.desc"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(serde_json::json!({
+            "status": "OK",
+            "count": 1,
+            "results": [{
+                "benzinga_id": "earn-1",
+                "ticker": "AAPL",
+                "date": "2024-01-15",
+                "fiscal_period": "Q1",
+                "fiscal_year": 2024,
+                "importance": 3,
+                "eps_surprise_percent": 5.0
+            }]
+        })))
+        .expect(1)
+        .mount(&server)
+        .await;
+
+    let client = Client::new("test-key").unwrap().with_base(server.uri());
+    let earnings = client
+        .list_benzinga_earnings_with_params(
+            ListBenzingaEarningsParams::new()
+                .date("2024-01-15")
+                .date_any_of("2024-01-15,2024-01-16")
+                .date_gt("2024-01-01")
+                .date_gte("2024-01-02")
+                .date_lt("2024-12-31")
+                .date_lte("2024-12-30")
+                .ticker("AAPL")
+                .ticker_any_of("AAPL,MSFT")
+                .ticker_gt("A")
+                .ticker_gte("B")
+                .ticker_lt("Z")
+                .ticker_lte("Y")
+                .importance(3)
+                .importance_any_of("3,4")
+                .importance_gt(1)
+                .importance_gte(2)
+                .importance_lt(5)
+                .importance_lte(4)
+                .last_updated("2024-01-15T00:00:00Z")
+                .last_updated_any_of("2024-01-15T00:00:00Z")
+                .last_updated_gt("2024-01-01T00:00:00Z")
+                .last_updated_gte("2024-01-02T00:00:00Z")
+                .last_updated_lt("2024-12-31T00:00:00Z")
+                .last_updated_lte("2024-12-30T00:00:00Z")
+                .date_status("confirmed")
+                .date_status_any_of("confirmed,projected")
+                .date_status_gt("a")
+                .date_status_gte("b")
+                .date_status_lt("z")
+                .date_status_lte("y")
+                .eps_surprise_percent(5.0)
+                .eps_surprise_percent_any_of("5,6")
+                .eps_surprise_percent_gt(1.5)
+                .eps_surprise_percent_gte(2.5)
+                .eps_surprise_percent_lt(9.5)
+                .eps_surprise_percent_lte(8.5)
+                .revenue_surprise_percent(10.0)
+                .revenue_surprise_percent_any_of("10,11")
+                .revenue_surprise_percent_gt(1.25)
+                .revenue_surprise_percent_gte(2.25)
+                .revenue_surprise_percent_lt(9.75)
+                .revenue_surprise_percent_lte(8.75)
+                .fiscal_year(2024)
+                .fiscal_year_any_of("2023,2024")
+                .fiscal_year_gt(2022)
+                .fiscal_year_gte(2023)
+                .fiscal_year_lt(2026)
+                .fiscal_year_lte(2025)
+                .fiscal_period("Q1")
+                .fiscal_period_any_of("Q1,Q2")
+                .fiscal_period_gt("Q1")
+                .fiscal_period_gte("Q2")
+                .fiscal_period_lt("Q4")
+                .fiscal_period_lte("Q3")
+                .limit(25)
+                .sort("date.desc"),
+        )
+        .try_collect::<Vec<_>>()
+        .await
+        .unwrap();
+
+    assert_eq!(earnings.len(), 1);
+    assert_eq!(earnings[0].ticker.as_deref(), Some("AAPL"));
 }

@@ -1,4 +1,4 @@
-use super::BoxStream;
+use super::{encode_query, BoxStream};
 use crate::client::{Client, RequestOptions};
 use crate::models::{IPOListing, StockFinancial};
 
@@ -115,111 +115,9 @@ impl VxApi for Client {
         params: ListStockFinancialsParams,
     ) -> BoxStream<'a, StockFinancial> {
         Box::pin({
-            let ListStockFinancialsParams {
-                ticker,
-                cik,
-                company_name,
-                company_name_search,
-                sic,
-                filing_date,
-                filing_date_lt,
-                filing_date_lte,
-                filing_date_gt,
-                filing_date_gte,
-                period_of_report_date,
-                period_of_report_date_lt,
-                period_of_report_date_lte,
-                period_of_report_date_gt,
-                period_of_report_date_gte,
-                timeframe,
-                include_sources,
-                limit,
-                sort,
-                order,
-                options,
-            } = params;
-            let ticker = ticker.as_deref();
-            let cik = cik.as_deref();
-            let company_name = company_name.as_deref();
-            let company_name_search = company_name_search.as_deref();
-            let sic = sic.as_deref();
-            let filing_date = filing_date.as_deref();
-            let filing_date_lt = filing_date_lt.as_deref();
-            let filing_date_lte = filing_date_lte.as_deref();
-            let filing_date_gt = filing_date_gt.as_deref();
-            let filing_date_gte = filing_date_gte.as_deref();
-            let period_of_report_date = period_of_report_date.as_deref();
-            let period_of_report_date_lt = period_of_report_date_lt.as_deref();
-            let period_of_report_date_lte = period_of_report_date_lte.as_deref();
-            let period_of_report_date_gt = period_of_report_date_gt.as_deref();
-            let period_of_report_date_gte = period_of_report_date_gte.as_deref();
-            let timeframe = timeframe.as_deref();
-            let sort = sort.as_deref();
-            let order = order.as_deref();
-            let options = options.as_ref();
             let path = "/vX/reference/financials".to_string();
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(t) = ticker {
-                query.push(("ticker", t.to_string()));
-            }
-            if let Some(c) = cik {
-                query.push(("cik", c.to_string()));
-            }
-            if let Some(c) = company_name {
-                query.push(("company_name", c.to_string()));
-            }
-            if let Some(c) = company_name_search {
-                query.push(("company_name_search", c.to_string()));
-            }
-            if let Some(s) = sic {
-                query.push(("sic", s.to_string()));
-            }
-            if let Some(f) = filing_date {
-                query.push(("filing_date", f.to_string()));
-            }
-            if let Some(f) = filing_date_lt {
-                query.push(("filing_date.lt", f.to_string()));
-            }
-            if let Some(f) = filing_date_lte {
-                query.push(("filing_date.lte", f.to_string()));
-            }
-            if let Some(f) = filing_date_gt {
-                query.push(("filing_date.gt", f.to_string()));
-            }
-            if let Some(f) = filing_date_gte {
-                query.push(("filing_date.gte", f.to_string()));
-            }
-            if let Some(p) = period_of_report_date {
-                query.push(("period_of_report_date", p.to_string()));
-            }
-            if let Some(p) = period_of_report_date_lt {
-                query.push(("period_of_report_date.lt", p.to_string()));
-            }
-            if let Some(p) = period_of_report_date_lte {
-                query.push(("period_of_report_date.lte", p.to_string()));
-            }
-            if let Some(p) = period_of_report_date_gt {
-                query.push(("period_of_report_date.gt", p.to_string()));
-            }
-            if let Some(p) = period_of_report_date_gte {
-                query.push(("period_of_report_date.gte", p.to_string()));
-            }
-            if let Some(t) = timeframe {
-                query.push(("timeframe", t.to_string()));
-            }
-            if let Some(i) = include_sources {
-                query.push(("include_sources", i.to_string()));
-            }
-            if let Some(l) = limit {
-                query.push(("limit", l.to_string()));
-            }
-            if let Some(s) = sort {
-                query.push(("sort", s.to_string()));
-            }
-            if let Some(o) = order {
-                query.push(("order", o.to_string()));
-            }
-            self.list::<StockFinancial>(&path, Some(&query), options)
+            let query = encode_query(&params);
+            self.list::<StockFinancial>(&path, &query, params.options.as_ref())
         })
     }
 
@@ -258,72 +156,9 @@ impl VxApi for Client {
 
     fn list_ipos_with_params<'a>(&'a self, params: ListIposParams) -> BoxStream<'a, IPOListing> {
         Box::pin({
-            let ListIposParams {
-                ticker,
-                us_code,
-                isin,
-                listing_date,
-                listing_date_lt,
-                listing_date_lte,
-                listing_date_gt,
-                listing_date_gte,
-                ipo_status,
-                limit,
-                sort,
-                order,
-                options,
-            } = params;
-            let ticker = ticker.as_deref();
-            let us_code = us_code.as_deref();
-            let isin = isin.as_deref();
-            let listing_date = listing_date.as_deref();
-            let listing_date_lt = listing_date_lt.as_deref();
-            let listing_date_lte = listing_date_lte.as_deref();
-            let listing_date_gt = listing_date_gt.as_deref();
-            let listing_date_gte = listing_date_gte.as_deref();
-            let ipo_status = ipo_status.as_deref();
-            let sort = sort.as_deref();
-            let order = order.as_deref();
-            let options = options.as_ref();
             let path = "/vX/reference/ipos".to_string();
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(t) = ticker {
-                query.push(("ticker", t.to_string()));
-            }
-            if let Some(u) = us_code {
-                query.push(("us_code", u.to_string()));
-            }
-            if let Some(i) = isin {
-                query.push(("isin", i.to_string()));
-            }
-            if let Some(l) = listing_date {
-                query.push(("listing_date", l.to_string()));
-            }
-            if let Some(l) = listing_date_lt {
-                query.push(("listing_date.lt", l.to_string()));
-            }
-            if let Some(l) = listing_date_lte {
-                query.push(("listing_date.lte", l.to_string()));
-            }
-            if let Some(l) = listing_date_gt {
-                query.push(("listing_date.gt", l.to_string()));
-            }
-            if let Some(l) = listing_date_gte {
-                query.push(("listing_date.gte", l.to_string()));
-            }
-            if let Some(i) = ipo_status {
-                query.push(("ipo_status", i.to_string()));
-            }
-            if let Some(l) = limit {
-                query.push(("limit", l.to_string()));
-            }
-            if let Some(s) = sort {
-                query.push(("sort", s.to_string()));
-            }
-            if let Some(o) = order {
-                query.push(("order", o.to_string()));
-            }
-            self.list::<IPOListing>(&path, Some(&query), options)
+            let query = encode_query(&params);
+            self.list::<IPOListing>(&path, &query, params.options.as_ref())
         })
     }
 }
@@ -331,49 +166,70 @@ impl VxApi for Client {
 // --- Params structs (additive builder API) ---
 
 /// Optional arguments for [`VxApi::list_stock_financials`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct ListStockFinancialsParams {
     /// The `ticker` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub ticker: Option<String>,
     /// The `cik` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub cik: Option<String>,
     /// The `company_name` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub company_name: Option<String>,
     /// The `company_name_search` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub company_name_search: Option<String>,
     /// The `sic` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sic: Option<String>,
     /// The `filing_date` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub filing_date: Option<String>,
     /// The `filing_date_lt` argument.
+    #[serde(rename = "filing_date.lt", skip_serializing_if = "Option::is_none")]
     pub filing_date_lt: Option<String>,
     /// The `filing_date_lte` argument.
+    #[serde(rename = "filing_date.lte", skip_serializing_if = "Option::is_none")]
     pub filing_date_lte: Option<String>,
     /// The `filing_date_gt` argument.
+    #[serde(rename = "filing_date.gt", skip_serializing_if = "Option::is_none")]
     pub filing_date_gt: Option<String>,
     /// The `filing_date_gte` argument.
+    #[serde(rename = "filing_date.gte", skip_serializing_if = "Option::is_none")]
     pub filing_date_gte: Option<String>,
     /// The `period_of_report_date` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub period_of_report_date: Option<String>,
     /// The `period_of_report_date_lt` argument.
+    #[serde(rename = "period_of_report_date.lt", skip_serializing_if = "Option::is_none")]
     pub period_of_report_date_lt: Option<String>,
     /// The `period_of_report_date_lte` argument.
+    #[serde(rename = "period_of_report_date.lte", skip_serializing_if = "Option::is_none")]
     pub period_of_report_date_lte: Option<String>,
     /// The `period_of_report_date_gt` argument.
+    #[serde(rename = "period_of_report_date.gt", skip_serializing_if = "Option::is_none")]
     pub period_of_report_date_gt: Option<String>,
     /// The `period_of_report_date_gte` argument.
+    #[serde(rename = "period_of_report_date.gte", skip_serializing_if = "Option::is_none")]
     pub period_of_report_date_gte: Option<String>,
     /// The `timeframe` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub timeframe: Option<String>,
     /// The `include_sources` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub include_sources: Option<bool>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `sort` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sort: Option<String>,
     /// The `order` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub order: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -517,33 +373,46 @@ impl ListStockFinancialsParams {
 }
 
 /// Optional arguments for [`VxApi::list_ipos`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct ListIposParams {
     /// The `ticker` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub ticker: Option<String>,
     /// The `us_code` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub us_code: Option<String>,
     /// The `isin` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub isin: Option<String>,
     /// The `listing_date` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub listing_date: Option<String>,
     /// The `listing_date_lt` argument.
+    #[serde(rename = "listing_date.lt", skip_serializing_if = "Option::is_none")]
     pub listing_date_lt: Option<String>,
     /// The `listing_date_lte` argument.
+    #[serde(rename = "listing_date.lte", skip_serializing_if = "Option::is_none")]
     pub listing_date_lte: Option<String>,
     /// The `listing_date_gt` argument.
+    #[serde(rename = "listing_date.gt", skip_serializing_if = "Option::is_none")]
     pub listing_date_gt: Option<String>,
     /// The `listing_date_gte` argument.
+    #[serde(rename = "listing_date.gte", skip_serializing_if = "Option::is_none")]
     pub listing_date_gte: Option<String>,
     /// The `ipo_status` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub ipo_status: Option<String>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `sort` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sort: Option<String>,
     /// The `order` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub order: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 

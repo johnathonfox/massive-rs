@@ -1,4 +1,4 @@
-use super::BoxFuture;
+use super::{encode_query, BoxFuture};
 use crate::client::{Client, RequestOptions};
 use crate::models::{MacdIndicatorResults, SingleIndicatorResults};
 
@@ -159,73 +159,15 @@ impl IndicatorsApi for Client {
         params: GetSmaParams,
     ) -> BoxFuture<'a, SingleIndicatorResults> {
         Box::pin(async move {
-            let GetSmaParams {
-                timestamp,
-                timestamp_lt,
-                timestamp_lte,
-                timestamp_gt,
-                timestamp_gte,
-                timespan,
-                window,
-                adjusted,
-                expand_underlying,
-                order,
-                limit,
-                series_type,
-                options,
-            } = params;
-            let timestamp = timestamp.as_deref();
-            let timestamp_lt = timestamp_lt.as_deref();
-            let timestamp_lte = timestamp_lte.as_deref();
-            let timestamp_gt = timestamp_gt.as_deref();
-            let timestamp_gte = timestamp_gte.as_deref();
-            let timespan = timespan.as_deref();
-            let order = order.as_deref();
-            let series_type = series_type.as_deref();
-            let options = options.as_ref();
             let path = format!("/v1/indicators/sma/{}", ticker);
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(t) = timestamp {
-                query.push(("timestamp", t.to_string()));
-            }
-            if let Some(t) = timestamp_lt {
-                query.push(("timestamp.lt", t.to_string()));
-            }
-            if let Some(t) = timestamp_lte {
-                query.push(("timestamp.lte", t.to_string()));
-            }
-            if let Some(t) = timestamp_gt {
-                query.push(("timestamp.gt", t.to_string()));
-            }
-            if let Some(t) = timestamp_gte {
-                query.push(("timestamp.gte", t.to_string()));
-            }
-            if let Some(t) = timespan {
-                query.push(("timespan", t.to_string()));
-            }
-            if let Some(w) = window {
-                query.push(("window", w.to_string()));
-            }
-            if let Some(a) = adjusted {
-                query.push(("adjusted", a.to_string()));
-            }
-            if let Some(e) = expand_underlying {
-                query.push(("expand_underlying", e.to_string()));
-            }
-            if let Some(o) = order {
-                query.push(("order", o.to_string()));
-            }
-            if let Some(l) = limit {
-                query.push(("limit", l.to_string()));
-            }
-            if let Some(s) = series_type {
-                query.push(("series_type", s.to_string()));
-            }
+            let query = encode_query(&params);
             #[derive(serde::Deserialize)]
             struct Resp {
                 results: SingleIndicatorResults,
             }
-            let resp: Resp = self.get(&path, Some(&query), options).await?;
+            let resp: Resp = self
+                .get(&path, &query, params.options.as_ref())
+                .await?;
             Ok(resp.results)
         })
     }
@@ -273,73 +215,15 @@ impl IndicatorsApi for Client {
         params: GetEmaParams,
     ) -> BoxFuture<'a, SingleIndicatorResults> {
         Box::pin(async move {
-            let GetEmaParams {
-                timestamp,
-                timestamp_lt,
-                timestamp_lte,
-                timestamp_gt,
-                timestamp_gte,
-                timespan,
-                window,
-                adjusted,
-                expand_underlying,
-                order,
-                limit,
-                series_type,
-                options,
-            } = params;
-            let timestamp = timestamp.as_deref();
-            let timestamp_lt = timestamp_lt.as_deref();
-            let timestamp_lte = timestamp_lte.as_deref();
-            let timestamp_gt = timestamp_gt.as_deref();
-            let timestamp_gte = timestamp_gte.as_deref();
-            let timespan = timespan.as_deref();
-            let order = order.as_deref();
-            let series_type = series_type.as_deref();
-            let options = options.as_ref();
             let path = format!("/v1/indicators/ema/{}", ticker);
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(t) = timestamp {
-                query.push(("timestamp", t.to_string()));
-            }
-            if let Some(t) = timestamp_lt {
-                query.push(("timestamp.lt", t.to_string()));
-            }
-            if let Some(t) = timestamp_lte {
-                query.push(("timestamp.lte", t.to_string()));
-            }
-            if let Some(t) = timestamp_gt {
-                query.push(("timestamp.gt", t.to_string()));
-            }
-            if let Some(t) = timestamp_gte {
-                query.push(("timestamp.gte", t.to_string()));
-            }
-            if let Some(t) = timespan {
-                query.push(("timespan", t.to_string()));
-            }
-            if let Some(w) = window {
-                query.push(("window", w.to_string()));
-            }
-            if let Some(a) = adjusted {
-                query.push(("adjusted", a.to_string()));
-            }
-            if let Some(e) = expand_underlying {
-                query.push(("expand_underlying", e.to_string()));
-            }
-            if let Some(o) = order {
-                query.push(("order", o.to_string()));
-            }
-            if let Some(l) = limit {
-                query.push(("limit", l.to_string()));
-            }
-            if let Some(s) = series_type {
-                query.push(("series_type", s.to_string()));
-            }
+            let query = encode_query(&params);
             #[derive(serde::Deserialize)]
             struct Resp {
                 results: SingleIndicatorResults,
             }
-            let resp: Resp = self.get(&path, Some(&query), options).await?;
+            let resp: Resp = self
+                .get(&path, &query, params.options.as_ref())
+                .await?;
             Ok(resp.results)
         })
     }
@@ -387,73 +271,15 @@ impl IndicatorsApi for Client {
         params: GetRsiParams,
     ) -> BoxFuture<'a, SingleIndicatorResults> {
         Box::pin(async move {
-            let GetRsiParams {
-                timestamp,
-                timestamp_lt,
-                timestamp_lte,
-                timestamp_gt,
-                timestamp_gte,
-                timespan,
-                window,
-                adjusted,
-                expand_underlying,
-                order,
-                limit,
-                series_type,
-                options,
-            } = params;
-            let timestamp = timestamp.as_deref();
-            let timestamp_lt = timestamp_lt.as_deref();
-            let timestamp_lte = timestamp_lte.as_deref();
-            let timestamp_gt = timestamp_gt.as_deref();
-            let timestamp_gte = timestamp_gte.as_deref();
-            let timespan = timespan.as_deref();
-            let order = order.as_deref();
-            let series_type = series_type.as_deref();
-            let options = options.as_ref();
             let path = format!("/v1/indicators/rsi/{}", ticker);
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(t) = timestamp {
-                query.push(("timestamp", t.to_string()));
-            }
-            if let Some(t) = timestamp_lt {
-                query.push(("timestamp.lt", t.to_string()));
-            }
-            if let Some(t) = timestamp_lte {
-                query.push(("timestamp.lte", t.to_string()));
-            }
-            if let Some(t) = timestamp_gt {
-                query.push(("timestamp.gt", t.to_string()));
-            }
-            if let Some(t) = timestamp_gte {
-                query.push(("timestamp.gte", t.to_string()));
-            }
-            if let Some(t) = timespan {
-                query.push(("timespan", t.to_string()));
-            }
-            if let Some(w) = window {
-                query.push(("window", w.to_string()));
-            }
-            if let Some(a) = adjusted {
-                query.push(("adjusted", a.to_string()));
-            }
-            if let Some(e) = expand_underlying {
-                query.push(("expand_underlying", e.to_string()));
-            }
-            if let Some(o) = order {
-                query.push(("order", o.to_string()));
-            }
-            if let Some(l) = limit {
-                query.push(("limit", l.to_string()));
-            }
-            if let Some(s) = series_type {
-                query.push(("series_type", s.to_string()));
-            }
+            let query = encode_query(&params);
             #[derive(serde::Deserialize)]
             struct Resp {
                 results: SingleIndicatorResults,
             }
-            let resp: Resp = self.get(&path, Some(&query), options).await?;
+            let resp: Resp = self
+                .get(&path, &query, params.options.as_ref())
+                .await?;
             Ok(resp.results)
         })
     }
@@ -505,81 +331,15 @@ impl IndicatorsApi for Client {
         params: GetMacdParams,
     ) -> BoxFuture<'a, MacdIndicatorResults> {
         Box::pin(async move {
-            let GetMacdParams {
-                timestamp,
-                timestamp_lt,
-                timestamp_lte,
-                timestamp_gt,
-                timestamp_gte,
-                timespan,
-                short_window,
-                long_window,
-                signal_window,
-                adjusted,
-                expand_underlying,
-                order,
-                limit,
-                series_type,
-                options,
-            } = params;
-            let timestamp = timestamp.as_deref();
-            let timestamp_lt = timestamp_lt.as_deref();
-            let timestamp_lte = timestamp_lte.as_deref();
-            let timestamp_gt = timestamp_gt.as_deref();
-            let timestamp_gte = timestamp_gte.as_deref();
-            let timespan = timespan.as_deref();
-            let order = order.as_deref();
-            let series_type = series_type.as_deref();
-            let options = options.as_ref();
             let path = format!("/v1/indicators/macd/{}", ticker);
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(t) = timestamp {
-                query.push(("timestamp", t.to_string()));
-            }
-            if let Some(t) = timestamp_lt {
-                query.push(("timestamp.lt", t.to_string()));
-            }
-            if let Some(t) = timestamp_lte {
-                query.push(("timestamp.lte", t.to_string()));
-            }
-            if let Some(t) = timestamp_gt {
-                query.push(("timestamp.gt", t.to_string()));
-            }
-            if let Some(t) = timestamp_gte {
-                query.push(("timestamp.gte", t.to_string()));
-            }
-            if let Some(t) = timespan {
-                query.push(("timespan", t.to_string()));
-            }
-            if let Some(w) = short_window {
-                query.push(("short_window", w.to_string()));
-            }
-            if let Some(w) = long_window {
-                query.push(("long_window", w.to_string()));
-            }
-            if let Some(w) = signal_window {
-                query.push(("signal_window", w.to_string()));
-            }
-            if let Some(a) = adjusted {
-                query.push(("adjusted", a.to_string()));
-            }
-            if let Some(e) = expand_underlying {
-                query.push(("expand_underlying", e.to_string()));
-            }
-            if let Some(o) = order {
-                query.push(("order", o.to_string()));
-            }
-            if let Some(l) = limit {
-                query.push(("limit", l.to_string()));
-            }
-            if let Some(s) = series_type {
-                query.push(("series_type", s.to_string()));
-            }
+            let query = encode_query(&params);
             #[derive(serde::Deserialize)]
             struct Resp {
                 results: MacdIndicatorResults,
             }
-            let resp: Resp = self.get(&path, Some(&query), options).await?;
+            let resp: Resp = self
+                .get(&path, &query, params.options.as_ref())
+                .await?;
             Ok(resp.results)
         })
     }
@@ -588,33 +348,46 @@ impl IndicatorsApi for Client {
 // --- Params structs (additive builder API) ---
 
 /// Optional arguments for [`IndicatorsApi::get_sma`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct GetSmaParams {
     /// The `timestamp` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub timestamp: Option<String>,
     /// The `timestamp_lt` argument.
+    #[serde(rename = "timestamp.lt", skip_serializing_if = "Option::is_none")]
     pub timestamp_lt: Option<String>,
     /// The `timestamp_lte` argument.
+    #[serde(rename = "timestamp.lte", skip_serializing_if = "Option::is_none")]
     pub timestamp_lte: Option<String>,
     /// The `timestamp_gt` argument.
+    #[serde(rename = "timestamp.gt", skip_serializing_if = "Option::is_none")]
     pub timestamp_gt: Option<String>,
     /// The `timestamp_gte` argument.
+    #[serde(rename = "timestamp.gte", skip_serializing_if = "Option::is_none")]
     pub timestamp_gte: Option<String>,
     /// The `timespan` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub timespan: Option<String>,
     /// The `window` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub window: Option<i64>,
     /// The `adjusted` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub adjusted: Option<bool>,
     /// The `expand_underlying` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub expand_underlying: Option<bool>,
     /// The `order` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub order: Option<String>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `series_type` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub series_type: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -704,33 +477,46 @@ impl GetSmaParams {
 }
 
 /// Optional arguments for [`IndicatorsApi::get_ema`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct GetEmaParams {
     /// The `timestamp` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub timestamp: Option<String>,
     /// The `timestamp_lt` argument.
+    #[serde(rename = "timestamp.lt", skip_serializing_if = "Option::is_none")]
     pub timestamp_lt: Option<String>,
     /// The `timestamp_lte` argument.
+    #[serde(rename = "timestamp.lte", skip_serializing_if = "Option::is_none")]
     pub timestamp_lte: Option<String>,
     /// The `timestamp_gt` argument.
+    #[serde(rename = "timestamp.gt", skip_serializing_if = "Option::is_none")]
     pub timestamp_gt: Option<String>,
     /// The `timestamp_gte` argument.
+    #[serde(rename = "timestamp.gte", skip_serializing_if = "Option::is_none")]
     pub timestamp_gte: Option<String>,
     /// The `timespan` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub timespan: Option<String>,
     /// The `window` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub window: Option<i64>,
     /// The `adjusted` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub adjusted: Option<bool>,
     /// The `expand_underlying` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub expand_underlying: Option<bool>,
     /// The `order` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub order: Option<String>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `series_type` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub series_type: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -820,33 +606,46 @@ impl GetEmaParams {
 }
 
 /// Optional arguments for [`IndicatorsApi::get_rsi`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct GetRsiParams {
     /// The `timestamp` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub timestamp: Option<String>,
     /// The `timestamp_lt` argument.
+    #[serde(rename = "timestamp.lt", skip_serializing_if = "Option::is_none")]
     pub timestamp_lt: Option<String>,
     /// The `timestamp_lte` argument.
+    #[serde(rename = "timestamp.lte", skip_serializing_if = "Option::is_none")]
     pub timestamp_lte: Option<String>,
     /// The `timestamp_gt` argument.
+    #[serde(rename = "timestamp.gt", skip_serializing_if = "Option::is_none")]
     pub timestamp_gt: Option<String>,
     /// The `timestamp_gte` argument.
+    #[serde(rename = "timestamp.gte", skip_serializing_if = "Option::is_none")]
     pub timestamp_gte: Option<String>,
     /// The `timespan` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub timespan: Option<String>,
     /// The `window` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub window: Option<i64>,
     /// The `adjusted` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub adjusted: Option<bool>,
     /// The `expand_underlying` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub expand_underlying: Option<bool>,
     /// The `order` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub order: Option<String>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `series_type` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub series_type: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -936,37 +735,52 @@ impl GetRsiParams {
 }
 
 /// Optional arguments for [`IndicatorsApi::get_macd`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct GetMacdParams {
     /// The `timestamp` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub timestamp: Option<String>,
     /// The `timestamp_lt` argument.
+    #[serde(rename = "timestamp.lt", skip_serializing_if = "Option::is_none")]
     pub timestamp_lt: Option<String>,
     /// The `timestamp_lte` argument.
+    #[serde(rename = "timestamp.lte", skip_serializing_if = "Option::is_none")]
     pub timestamp_lte: Option<String>,
     /// The `timestamp_gt` argument.
+    #[serde(rename = "timestamp.gt", skip_serializing_if = "Option::is_none")]
     pub timestamp_gt: Option<String>,
     /// The `timestamp_gte` argument.
+    #[serde(rename = "timestamp.gte", skip_serializing_if = "Option::is_none")]
     pub timestamp_gte: Option<String>,
     /// The `timespan` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub timespan: Option<String>,
     /// The `short_window` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub short_window: Option<i64>,
     /// The `long_window` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub long_window: Option<i64>,
     /// The `signal_window` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub signal_window: Option<i64>,
     /// The `adjusted` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub adjusted: Option<bool>,
     /// The `expand_underlying` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub expand_underlying: Option<bool>,
     /// The `order` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub order: Option<String>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `series_type` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub series_type: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 

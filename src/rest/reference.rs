@@ -1,4 +1,4 @@
-use super::{BoxFuture, BoxStream};
+use super::{encode_query, BoxFuture, BoxStream};
 use crate::client::{Client, RequestOptions};
 use crate::models::{
     Condition, Disclosure, DisclosureTaxonomy, Dividend, Exchange, Filing13F, Filing8K,
@@ -803,10 +803,9 @@ impl ReferenceApi for Client {
         params: GetMarketHolidaysParams,
     ) -> BoxFuture<'a, Vec<MarketHoliday>> {
         Box::pin(async move {
-            let GetMarketHolidaysParams { options } = params;
-            let options = options.as_ref();
             let path = "/v1/marketstatus/upcoming".to_string();
-            self.get(&path, None, options).await
+            let query = encode_query(&params);
+            self.get(&path, &query, params.options.as_ref()).await
         })
     }
 
@@ -824,10 +823,9 @@ impl ReferenceApi for Client {
         params: GetMarketStatusParams,
     ) -> BoxFuture<'a, MarketStatus> {
         Box::pin(async move {
-            let GetMarketStatusParams { options } = params;
-            let options = options.as_ref();
             let path = "/v1/marketstatus/now".to_string();
-            self.get(&path, None, options).await
+            let query = encode_query(&params);
+            self.get(&path, &query, params.options.as_ref()).await
         })
     }
 
@@ -874,89 +872,9 @@ impl ReferenceApi for Client {
 
     fn list_tickers_with_params<'a>(&'a self, params: ListTickersParams) -> BoxStream<'a, Ticker> {
         Box::pin({
-            let ListTickersParams {
-                ticker,
-                ticker_lt,
-                ticker_lte,
-                ticker_gt,
-                ticker_gte,
-                r#type,
-                market,
-                exchange,
-                cusip,
-                cik,
-                date,
-                active,
-                search,
-                limit,
-                sort,
-                order,
-                options,
-            } = params;
-            let ticker = ticker.as_deref();
-            let ticker_lt = ticker_lt.as_deref();
-            let ticker_lte = ticker_lte.as_deref();
-            let ticker_gt = ticker_gt.as_deref();
-            let ticker_gte = ticker_gte.as_deref();
-            let r#type = r#type.as_deref();
-            let market = market.as_deref();
-            let exchange = exchange.as_deref();
-            let date = date.as_deref();
-            let search = search.as_deref();
-            let sort = sort.as_deref();
-            let order = order.as_deref();
-            let options = options.as_ref();
             let path = "/v3/reference/tickers".to_string();
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(v) = ticker {
-                query.push(("ticker", v.to_string()));
-            }
-            if let Some(v) = ticker_lt {
-                query.push(("ticker.lt", v.to_string()));
-            }
-            if let Some(v) = ticker_lte {
-                query.push(("ticker.lte", v.to_string()));
-            }
-            if let Some(v) = ticker_gt {
-                query.push(("ticker.gt", v.to_string()));
-            }
-            if let Some(v) = ticker_gte {
-                query.push(("ticker.gte", v.to_string()));
-            }
-            if let Some(v) = r#type {
-                query.push(("type", v.to_string()));
-            }
-            if let Some(v) = market {
-                query.push(("market", v.to_string()));
-            }
-            if let Some(v) = exchange {
-                query.push(("exchange", v.to_string()));
-            }
-            if let Some(v) = cusip {
-                query.push(("cusip", v.to_string()));
-            }
-            if let Some(v) = cik {
-                query.push(("cik", v.to_string()));
-            }
-            if let Some(v) = date {
-                query.push(("date", v.to_string()));
-            }
-            if let Some(v) = active {
-                query.push(("active", v.to_string()));
-            }
-            if let Some(v) = search {
-                query.push(("search", v.to_string()));
-            }
-            if let Some(v) = limit {
-                query.push(("limit", v.to_string()));
-            }
-            if let Some(v) = sort {
-                query.push(("sort", v.to_string()));
-            }
-            if let Some(v) = order {
-                query.push(("order", v.to_string()));
-            }
-            self.list::<Ticker>(&path, Some(&query), options)
+            let query = encode_query(&params);
+            self.list::<Ticker>(&path, &query, params.options.as_ref())
         })
     }
 
@@ -981,19 +899,13 @@ impl ReferenceApi for Client {
         params: GetTickerDetailsParams,
     ) -> BoxFuture<'a, TickerDetails> {
         Box::pin(async move {
-            let GetTickerDetailsParams { date, options } = params;
-            let date = date.as_deref();
-            let options = options.as_ref();
             let path = format!("/v3/reference/tickers/{}", ticker);
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(v) = date {
-                query.push(("date", v.to_string()));
-            }
+            let query = encode_query(&params);
             #[derive(serde::Deserialize)]
             struct Resp {
                 results: TickerDetails,
             }
-            let resp: Resp = self.get(&path, Some(&query), options).await?;
+            let resp: Resp = self.get(&path, &query, params.options.as_ref()).await?;
             Ok(resp.results)
         })
     }
@@ -1019,19 +931,13 @@ impl ReferenceApi for Client {
         params: GetTickerEventsParams,
     ) -> BoxFuture<'a, TickerChangeResults> {
         Box::pin(async move {
-            let GetTickerEventsParams { types, options } = params;
-            let types = types.as_deref();
-            let options = options.as_ref();
             let path = format!("/vX/reference/tickers/{}/events", ticker);
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(v) = types {
-                query.push(("types", v.to_string()));
-            }
+            let query = encode_query(&params);
             #[derive(serde::Deserialize)]
             struct Resp {
                 results: TickerChangeResults,
             }
-            let resp: Resp = self.get(&path, Some(&query), options).await?;
+            let resp: Resp = self.get(&path, &query, params.options.as_ref()).await?;
             Ok(resp.results)
         })
     }
@@ -1076,77 +982,9 @@ impl ReferenceApi for Client {
         params: ListTickerNewsParams,
     ) -> BoxStream<'a, TickerNews> {
         Box::pin({
-            let ListTickerNewsParams {
-                ticker,
-                ticker_lt,
-                ticker_lte,
-                ticker_gt,
-                ticker_gte,
-                published_utc,
-                published_utc_lt,
-                published_utc_lte,
-                published_utc_gt,
-                published_utc_gte,
-                limit,
-                sort,
-                order,
-                options,
-            } = params;
-            let ticker = ticker.as_deref();
-            let ticker_lt = ticker_lt.as_deref();
-            let ticker_lte = ticker_lte.as_deref();
-            let ticker_gt = ticker_gt.as_deref();
-            let ticker_gte = ticker_gte.as_deref();
-            let published_utc = published_utc.as_deref();
-            let published_utc_lt = published_utc_lt.as_deref();
-            let published_utc_lte = published_utc_lte.as_deref();
-            let published_utc_gt = published_utc_gt.as_deref();
-            let published_utc_gte = published_utc_gte.as_deref();
-            let sort = sort.as_deref();
-            let order = order.as_deref();
-            let options = options.as_ref();
             let path = "/v2/reference/news".to_string();
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(v) = ticker {
-                query.push(("ticker", v.to_string()));
-            }
-            if let Some(v) = ticker_lt {
-                query.push(("ticker.lt", v.to_string()));
-            }
-            if let Some(v) = ticker_lte {
-                query.push(("ticker.lte", v.to_string()));
-            }
-            if let Some(v) = ticker_gt {
-                query.push(("ticker.gt", v.to_string()));
-            }
-            if let Some(v) = ticker_gte {
-                query.push(("ticker.gte", v.to_string()));
-            }
-            if let Some(v) = published_utc {
-                query.push(("published_utc", v.to_string()));
-            }
-            if let Some(v) = published_utc_lt {
-                query.push(("published_utc.lt", v.to_string()));
-            }
-            if let Some(v) = published_utc_lte {
-                query.push(("published_utc.lte", v.to_string()));
-            }
-            if let Some(v) = published_utc_gt {
-                query.push(("published_utc.gt", v.to_string()));
-            }
-            if let Some(v) = published_utc_gte {
-                query.push(("published_utc.gte", v.to_string()));
-            }
-            if let Some(v) = limit {
-                query.push(("limit", v.to_string()));
-            }
-            if let Some(v) = sort {
-                query.push(("sort", v.to_string()));
-            }
-            if let Some(v) = order {
-                query.push(("order", v.to_string()));
-            }
-            self.list::<TickerNews>(&path, Some(&query), options)
+            let query = encode_query(&params);
+            self.list::<TickerNews>(&path, &query, params.options.as_ref())
         })
     }
 
@@ -1168,27 +1006,13 @@ impl ReferenceApi for Client {
         params: GetTickerTypesParams,
     ) -> BoxFuture<'a, Vec<TickerTypes>> {
         Box::pin(async move {
-            let GetTickerTypesParams {
-                asset_class,
-                locale,
-                options,
-            } = params;
-            let asset_class = asset_class.as_deref();
-            let locale = locale.as_deref();
-            let options = options.as_ref();
             let path = "/v3/reference/tickers/types".to_string();
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(v) = asset_class {
-                query.push(("asset_class", v.to_string()));
-            }
-            if let Some(v) = locale {
-                query.push(("locale", v.to_string()));
-            }
+            let query = encode_query(&params);
             #[derive(serde::Deserialize)]
             struct Resp {
                 results: Option<Vec<TickerTypes>>,
             }
-            let resp: Resp = self.get(&path, Some(&query), options).await?;
+            let resp: Resp = self.get(&path, &query, params.options.as_ref()).await?;
             Ok(resp.results.unwrap_or_default())
         })
     }
@@ -1212,14 +1036,13 @@ impl ReferenceApi for Client {
         params: GetRelatedCompaniesParams,
     ) -> BoxFuture<'a, RelatedCompany> {
         Box::pin(async move {
-            let GetRelatedCompaniesParams { options } = params;
-            let options = options.as_ref();
             let path = format!("/v1/related-companies/{}", ticker);
+            let query = encode_query(&params);
             #[derive(serde::Deserialize)]
             struct Resp {
                 results: RelatedCompany,
             }
-            let resp: Resp = self.get(&path, None, options).await?;
+            let resp: Resp = self.get(&path, &query, params.options.as_ref()).await?;
             Ok(resp.results)
         })
     }
@@ -1263,81 +1086,9 @@ impl ReferenceApi for Client {
 
     fn list_splits_with_params<'a>(&'a self, params: ListSplitsParams) -> BoxStream<'a, Split> {
         Box::pin({
-            let ListSplitsParams {
-                ticker,
-                ticker_lt,
-                ticker_lte,
-                ticker_gt,
-                ticker_gte,
-                execution_date,
-                execution_date_lt,
-                execution_date_lte,
-                execution_date_gt,
-                execution_date_gte,
-                reverse_split,
-                limit,
-                sort,
-                order,
-                options,
-            } = params;
-            let ticker = ticker.as_deref();
-            let ticker_lt = ticker_lt.as_deref();
-            let ticker_lte = ticker_lte.as_deref();
-            let ticker_gt = ticker_gt.as_deref();
-            let ticker_gte = ticker_gte.as_deref();
-            let execution_date = execution_date.as_deref();
-            let execution_date_lt = execution_date_lt.as_deref();
-            let execution_date_lte = execution_date_lte.as_deref();
-            let execution_date_gt = execution_date_gt.as_deref();
-            let execution_date_gte = execution_date_gte.as_deref();
-            let sort = sort.as_deref();
-            let order = order.as_deref();
-            let options = options.as_ref();
             let path = "/v3/reference/splits".to_string();
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(v) = ticker {
-                query.push(("ticker", v.to_string()));
-            }
-            if let Some(v) = ticker_lt {
-                query.push(("ticker.lt", v.to_string()));
-            }
-            if let Some(v) = ticker_lte {
-                query.push(("ticker.lte", v.to_string()));
-            }
-            if let Some(v) = ticker_gt {
-                query.push(("ticker.gt", v.to_string()));
-            }
-            if let Some(v) = ticker_gte {
-                query.push(("ticker.gte", v.to_string()));
-            }
-            if let Some(v) = execution_date {
-                query.push(("execution_date", v.to_string()));
-            }
-            if let Some(v) = execution_date_lt {
-                query.push(("execution_date.lt", v.to_string()));
-            }
-            if let Some(v) = execution_date_lte {
-                query.push(("execution_date.lte", v.to_string()));
-            }
-            if let Some(v) = execution_date_gt {
-                query.push(("execution_date.gt", v.to_string()));
-            }
-            if let Some(v) = execution_date_gte {
-                query.push(("execution_date.gte", v.to_string()));
-            }
-            if let Some(v) = reverse_split {
-                query.push(("reverse_split", v.to_string()));
-            }
-            if let Some(v) = limit {
-                query.push(("limit", v.to_string()));
-            }
-            if let Some(v) = sort {
-                query.push(("sort", v.to_string()));
-            }
-            if let Some(v) = order {
-                query.push(("order", v.to_string()));
-            }
-            self.list::<Split>(&path, Some(&query), options)
+            let query = encode_query(&params);
+            self.list::<Split>(&path, &query, params.options.as_ref())
         })
     }
 
@@ -1425,181 +1176,9 @@ impl ReferenceApi for Client {
         params: ListDividendsParams,
     ) -> BoxStream<'a, Dividend> {
         Box::pin({
-            let ListDividendsParams {
-                ticker,
-                ticker_lt,
-                ticker_lte,
-                ticker_gt,
-                ticker_gte,
-                ex_dividend_date,
-                ex_dividend_date_lt,
-                ex_dividend_date_lte,
-                ex_dividend_date_gt,
-                ex_dividend_date_gte,
-                record_date,
-                record_date_lt,
-                record_date_lte,
-                record_date_gt,
-                record_date_gte,
-                declaration_date,
-                declaration_date_lt,
-                declaration_date_lte,
-                declaration_date_gt,
-                declaration_date_gte,
-                pay_date,
-                pay_date_lt,
-                pay_date_lte,
-                pay_date_gt,
-                pay_date_gte,
-                frequency,
-                cash_amount,
-                cash_amount_lt,
-                cash_amount_lte,
-                cash_amount_gt,
-                cash_amount_gte,
-                dividend_type,
-                limit,
-                sort,
-                order,
-                options,
-            } = params;
-            let ticker = ticker.as_deref();
-            let ticker_lt = ticker_lt.as_deref();
-            let ticker_lte = ticker_lte.as_deref();
-            let ticker_gt = ticker_gt.as_deref();
-            let ticker_gte = ticker_gte.as_deref();
-            let ex_dividend_date = ex_dividend_date.as_deref();
-            let ex_dividend_date_lt = ex_dividend_date_lt.as_deref();
-            let ex_dividend_date_lte = ex_dividend_date_lte.as_deref();
-            let ex_dividend_date_gt = ex_dividend_date_gt.as_deref();
-            let ex_dividend_date_gte = ex_dividend_date_gte.as_deref();
-            let record_date = record_date.as_deref();
-            let record_date_lt = record_date_lt.as_deref();
-            let record_date_lte = record_date_lte.as_deref();
-            let record_date_gt = record_date_gt.as_deref();
-            let record_date_gte = record_date_gte.as_deref();
-            let declaration_date = declaration_date.as_deref();
-            let declaration_date_lt = declaration_date_lt.as_deref();
-            let declaration_date_lte = declaration_date_lte.as_deref();
-            let declaration_date_gt = declaration_date_gt.as_deref();
-            let declaration_date_gte = declaration_date_gte.as_deref();
-            let pay_date = pay_date.as_deref();
-            let pay_date_lt = pay_date_lt.as_deref();
-            let pay_date_lte = pay_date_lte.as_deref();
-            let pay_date_gt = pay_date_gt.as_deref();
-            let pay_date_gte = pay_date_gte.as_deref();
-            let dividend_type = dividend_type.as_deref();
-            let sort = sort.as_deref();
-            let order = order.as_deref();
-            let options = options.as_ref();
             let path = "/v3/reference/dividends".to_string();
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(v) = ticker {
-                query.push(("ticker", v.to_string()));
-            }
-            if let Some(v) = ticker_lt {
-                query.push(("ticker.lt", v.to_string()));
-            }
-            if let Some(v) = ticker_lte {
-                query.push(("ticker.lte", v.to_string()));
-            }
-            if let Some(v) = ticker_gt {
-                query.push(("ticker.gt", v.to_string()));
-            }
-            if let Some(v) = ticker_gte {
-                query.push(("ticker.gte", v.to_string()));
-            }
-            if let Some(v) = ex_dividend_date {
-                query.push(("ex_dividend_date", v.to_string()));
-            }
-            if let Some(v) = ex_dividend_date_lt {
-                query.push(("ex_dividend_date.lt", v.to_string()));
-            }
-            if let Some(v) = ex_dividend_date_lte {
-                query.push(("ex_dividend_date.lte", v.to_string()));
-            }
-            if let Some(v) = ex_dividend_date_gt {
-                query.push(("ex_dividend_date.gt", v.to_string()));
-            }
-            if let Some(v) = ex_dividend_date_gte {
-                query.push(("ex_dividend_date.gte", v.to_string()));
-            }
-            if let Some(v) = record_date {
-                query.push(("record_date", v.to_string()));
-            }
-            if let Some(v) = record_date_lt {
-                query.push(("record_date.lt", v.to_string()));
-            }
-            if let Some(v) = record_date_lte {
-                query.push(("record_date.lte", v.to_string()));
-            }
-            if let Some(v) = record_date_gt {
-                query.push(("record_date.gt", v.to_string()));
-            }
-            if let Some(v) = record_date_gte {
-                query.push(("record_date.gte", v.to_string()));
-            }
-            if let Some(v) = declaration_date {
-                query.push(("declaration_date", v.to_string()));
-            }
-            if let Some(v) = declaration_date_lt {
-                query.push(("declaration_date.lt", v.to_string()));
-            }
-            if let Some(v) = declaration_date_lte {
-                query.push(("declaration_date.lte", v.to_string()));
-            }
-            if let Some(v) = declaration_date_gt {
-                query.push(("declaration_date.gt", v.to_string()));
-            }
-            if let Some(v) = declaration_date_gte {
-                query.push(("declaration_date.gte", v.to_string()));
-            }
-            if let Some(v) = pay_date {
-                query.push(("pay_date", v.to_string()));
-            }
-            if let Some(v) = pay_date_lt {
-                query.push(("pay_date.lt", v.to_string()));
-            }
-            if let Some(v) = pay_date_lte {
-                query.push(("pay_date.lte", v.to_string()));
-            }
-            if let Some(v) = pay_date_gt {
-                query.push(("pay_date.gt", v.to_string()));
-            }
-            if let Some(v) = pay_date_gte {
-                query.push(("pay_date.gte", v.to_string()));
-            }
-            if let Some(v) = frequency {
-                query.push(("frequency", v.to_string()));
-            }
-            if let Some(v) = cash_amount {
-                query.push(("cash_amount", v.to_string()));
-            }
-            if let Some(v) = cash_amount_lt {
-                query.push(("cash_amount.lt", v.to_string()));
-            }
-            if let Some(v) = cash_amount_lte {
-                query.push(("cash_amount.lte", v.to_string()));
-            }
-            if let Some(v) = cash_amount_gt {
-                query.push(("cash_amount.gt", v.to_string()));
-            }
-            if let Some(v) = cash_amount_gte {
-                query.push(("cash_amount.gte", v.to_string()));
-            }
-            if let Some(v) = dividend_type {
-                query.push(("dividend_type", v.to_string()));
-            }
-            if let Some(v) = limit {
-                query.push(("limit", v.to_string()));
-            }
-            if let Some(v) = sort {
-                query.push(("sort", v.to_string()));
-            }
-            if let Some(v) = order {
-                query.push(("order", v.to_string()));
-            }
-            self.list::<Dividend>(&path, Some(&query), options)
+            let query = encode_query(&params);
+            self.list::<Dividend>(&path, &query, params.options.as_ref())
         })
     }
 
@@ -1631,46 +1210,9 @@ impl ReferenceApi for Client {
         params: ListConditionsParams,
     ) -> BoxStream<'a, Condition> {
         Box::pin({
-            let ListConditionsParams {
-                asset_class,
-                data_type,
-                id,
-                sip,
-                limit,
-                sort,
-                order,
-                options,
-            } = params;
-            let asset_class = asset_class.as_deref();
-            let data_type = data_type.as_deref();
-            let sip = sip.as_deref();
-            let sort = sort.as_deref();
-            let order = order.as_deref();
-            let options = options.as_ref();
             let path = "/v3/reference/conditions".to_string();
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(v) = asset_class {
-                query.push(("asset_class", v.to_string()));
-            }
-            if let Some(v) = data_type {
-                query.push(("data_type", v.to_string()));
-            }
-            if let Some(v) = id {
-                query.push(("id", v.to_string()));
-            }
-            if let Some(v) = sip {
-                query.push(("sip", v.to_string()));
-            }
-            if let Some(v) = limit {
-                query.push(("limit", v.to_string()));
-            }
-            if let Some(v) = sort {
-                query.push(("sort", v.to_string()));
-            }
-            if let Some(v) = order {
-                query.push(("order", v.to_string()));
-            }
-            self.list::<Condition>(&path, Some(&query), options)
+            let query = encode_query(&params);
+            self.list::<Condition>(&path, &query, params.options.as_ref())
         })
     }
 
@@ -1692,27 +1234,13 @@ impl ReferenceApi for Client {
         params: GetExchangesParams,
     ) -> BoxFuture<'a, Vec<Exchange>> {
         Box::pin(async move {
-            let GetExchangesParams {
-                asset_class,
-                locale,
-                options,
-            } = params;
-            let asset_class = asset_class.as_deref();
-            let locale = locale.as_deref();
-            let options = options.as_ref();
             let path = "/v3/reference/exchanges".to_string();
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(v) = asset_class {
-                query.push(("asset_class", v.to_string()));
-            }
-            if let Some(v) = locale {
-                query.push(("locale", v.to_string()));
-            }
+            let query = encode_query(&params);
             #[derive(serde::Deserialize)]
             struct Resp {
                 results: Option<Vec<Exchange>>,
             }
-            let resp: Resp = self.get(&path, Some(&query), options).await?;
+            let resp: Resp = self.get(&path, &query, params.options.as_ref()).await?;
             Ok(resp.results.unwrap_or_default())
         })
     }
@@ -1738,19 +1266,13 @@ impl ReferenceApi for Client {
         params: GetOptionsContractParams,
     ) -> BoxFuture<'a, OptionsContract> {
         Box::pin(async move {
-            let GetOptionsContractParams { as_of, options } = params;
-            let as_of = as_of.as_deref();
-            let options = options.as_ref();
             let path = format!("/v3/reference/options/contracts/{}", ticker);
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(v) = as_of {
-                query.push(("as_of", v.to_string()));
-            }
+            let query = encode_query(&params);
             #[derive(serde::Deserialize)]
             struct Resp {
                 results: OptionsContract,
             }
-            let resp: Resp = self.get(&path, Some(&query), options).await?;
+            let resp: Resp = self.get(&path, &query, params.options.as_ref()).await?;
             Ok(resp.results)
         })
     }
@@ -1811,111 +1333,9 @@ impl ReferenceApi for Client {
         params: ListOptionsContractsParams,
     ) -> BoxStream<'a, OptionsContract> {
         Box::pin({
-            let ListOptionsContractsParams {
-                underlying_ticker,
-                underlying_ticker_lt,
-                underlying_ticker_lte,
-                underlying_ticker_gt,
-                underlying_ticker_gte,
-                contract_type,
-                expiration_date,
-                expiration_date_lt,
-                expiration_date_lte,
-                expiration_date_gt,
-                expiration_date_gte,
-                as_of,
-                strike_price,
-                strike_price_lt,
-                strike_price_lte,
-                strike_price_gt,
-                strike_price_gte,
-                expired,
-                limit,
-                sort,
-                order,
-                options,
-            } = params;
-            let underlying_ticker = underlying_ticker.as_deref();
-            let underlying_ticker_lt = underlying_ticker_lt.as_deref();
-            let underlying_ticker_lte = underlying_ticker_lte.as_deref();
-            let underlying_ticker_gt = underlying_ticker_gt.as_deref();
-            let underlying_ticker_gte = underlying_ticker_gte.as_deref();
-            let contract_type = contract_type.as_deref();
-            let expiration_date = expiration_date.as_deref();
-            let expiration_date_lt = expiration_date_lt.as_deref();
-            let expiration_date_lte = expiration_date_lte.as_deref();
-            let expiration_date_gt = expiration_date_gt.as_deref();
-            let expiration_date_gte = expiration_date_gte.as_deref();
-            let as_of = as_of.as_deref();
-            let sort = sort.as_deref();
-            let order = order.as_deref();
-            let options = options.as_ref();
             let path = "/v3/reference/options/contracts".to_string();
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(v) = underlying_ticker {
-                query.push(("underlying_ticker", v.to_string()));
-            }
-            if let Some(v) = underlying_ticker_lt {
-                query.push(("underlying_ticker.lt", v.to_string()));
-            }
-            if let Some(v) = underlying_ticker_lte {
-                query.push(("underlying_ticker.lte", v.to_string()));
-            }
-            if let Some(v) = underlying_ticker_gt {
-                query.push(("underlying_ticker.gt", v.to_string()));
-            }
-            if let Some(v) = underlying_ticker_gte {
-                query.push(("underlying_ticker.gte", v.to_string()));
-            }
-            if let Some(v) = contract_type {
-                query.push(("contract_type", v.to_string()));
-            }
-            if let Some(v) = expiration_date {
-                query.push(("expiration_date", v.to_string()));
-            }
-            if let Some(v) = expiration_date_lt {
-                query.push(("expiration_date.lt", v.to_string()));
-            }
-            if let Some(v) = expiration_date_lte {
-                query.push(("expiration_date.lte", v.to_string()));
-            }
-            if let Some(v) = expiration_date_gt {
-                query.push(("expiration_date.gt", v.to_string()));
-            }
-            if let Some(v) = expiration_date_gte {
-                query.push(("expiration_date.gte", v.to_string()));
-            }
-            if let Some(v) = as_of {
-                query.push(("as_of", v.to_string()));
-            }
-            if let Some(v) = strike_price {
-                query.push(("strike_price", v.to_string()));
-            }
-            if let Some(v) = strike_price_lt {
-                query.push(("strike_price.lt", v.to_string()));
-            }
-            if let Some(v) = strike_price_lte {
-                query.push(("strike_price.lte", v.to_string()));
-            }
-            if let Some(v) = strike_price_gt {
-                query.push(("strike_price.gt", v.to_string()));
-            }
-            if let Some(v) = strike_price_gte {
-                query.push(("strike_price.gte", v.to_string()));
-            }
-            if let Some(v) = expired {
-                query.push(("expired", v.to_string()));
-            }
-            if let Some(v) = limit {
-                query.push(("limit", v.to_string()));
-            }
-            if let Some(v) = sort {
-                query.push(("sort", v.to_string()));
-            }
-            if let Some(v) = order {
-                query.push(("order", v.to_string()));
-            }
-            self.list::<OptionsContract>(&path, Some(&query), options)
+            let query = encode_query(&params);
+            self.list::<OptionsContract>(&path, &query, params.options.as_ref())
         })
     }
 
@@ -1971,107 +1391,9 @@ impl ReferenceApi for Client {
         params: ListShortInterestParams,
     ) -> BoxStream<'a, ShortInterest> {
         Box::pin({
-            let ListShortInterestParams {
-                ticker,
-                days_to_cover,
-                days_to_cover_lt,
-                days_to_cover_lte,
-                days_to_cover_gt,
-                days_to_cover_gte,
-                settlement_date,
-                settlement_date_lt,
-                settlement_date_lte,
-                settlement_date_gt,
-                settlement_date_gte,
-                avg_daily_volume,
-                avg_daily_volume_lt,
-                avg_daily_volume_lte,
-                avg_daily_volume_gt,
-                avg_daily_volume_gte,
-                limit,
-                sort,
-                order,
-                options,
-            } = params;
-            let ticker = ticker.as_deref();
-            let days_to_cover = days_to_cover.as_deref();
-            let days_to_cover_lt = days_to_cover_lt.as_deref();
-            let days_to_cover_lte = days_to_cover_lte.as_deref();
-            let days_to_cover_gt = days_to_cover_gt.as_deref();
-            let days_to_cover_gte = days_to_cover_gte.as_deref();
-            let settlement_date = settlement_date.as_deref();
-            let settlement_date_lt = settlement_date_lt.as_deref();
-            let settlement_date_lte = settlement_date_lte.as_deref();
-            let settlement_date_gt = settlement_date_gt.as_deref();
-            let settlement_date_gte = settlement_date_gte.as_deref();
-            let avg_daily_volume = avg_daily_volume.as_deref();
-            let avg_daily_volume_lt = avg_daily_volume_lt.as_deref();
-            let avg_daily_volume_lte = avg_daily_volume_lte.as_deref();
-            let avg_daily_volume_gt = avg_daily_volume_gt.as_deref();
-            let avg_daily_volume_gte = avg_daily_volume_gte.as_deref();
-            let sort = sort.as_deref();
-            let order = order.as_deref();
-            let options = options.as_ref();
             let path = "/stocks/v1/short-interest".to_string();
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(v) = ticker {
-                query.push(("ticker", v.to_string()));
-            }
-            if let Some(v) = days_to_cover {
-                query.push(("days_to_cover", v.to_string()));
-            }
-            if let Some(v) = days_to_cover_lt {
-                query.push(("days_to_cover.lt", v.to_string()));
-            }
-            if let Some(v) = days_to_cover_lte {
-                query.push(("days_to_cover.lte", v.to_string()));
-            }
-            if let Some(v) = days_to_cover_gt {
-                query.push(("days_to_cover.gt", v.to_string()));
-            }
-            if let Some(v) = days_to_cover_gte {
-                query.push(("days_to_cover.gte", v.to_string()));
-            }
-            if let Some(v) = settlement_date {
-                query.push(("settlement_date", v.to_string()));
-            }
-            if let Some(v) = settlement_date_lt {
-                query.push(("settlement_date.lt", v.to_string()));
-            }
-            if let Some(v) = settlement_date_lte {
-                query.push(("settlement_date.lte", v.to_string()));
-            }
-            if let Some(v) = settlement_date_gt {
-                query.push(("settlement_date.gt", v.to_string()));
-            }
-            if let Some(v) = settlement_date_gte {
-                query.push(("settlement_date.gte", v.to_string()));
-            }
-            if let Some(v) = avg_daily_volume {
-                query.push(("avg_daily_volume", v.to_string()));
-            }
-            if let Some(v) = avg_daily_volume_lt {
-                query.push(("avg_daily_volume.lt", v.to_string()));
-            }
-            if let Some(v) = avg_daily_volume_lte {
-                query.push(("avg_daily_volume.lte", v.to_string()));
-            }
-            if let Some(v) = avg_daily_volume_gt {
-                query.push(("avg_daily_volume.gt", v.to_string()));
-            }
-            if let Some(v) = avg_daily_volume_gte {
-                query.push(("avg_daily_volume.gte", v.to_string()));
-            }
-            if let Some(v) = limit {
-                query.push(("limit", v.to_string()));
-            }
-            if let Some(v) = sort {
-                query.push(("sort", v.to_string()));
-            }
-            if let Some(v) = order {
-                query.push(("order", v.to_string()));
-            }
-            self.list::<ShortInterest>(&path, Some(&query), options)
+            let query = encode_query(&params);
+            self.list::<ShortInterest>(&path, &query, params.options.as_ref())
         })
     }
 
@@ -2127,107 +1449,9 @@ impl ReferenceApi for Client {
         params: ListShortVolumeParams,
     ) -> BoxStream<'a, ShortVolume> {
         Box::pin({
-            let ListShortVolumeParams {
-                ticker,
-                date,
-                date_lt,
-                date_lte,
-                date_gt,
-                date_gte,
-                short_volume_ratio,
-                short_volume_ratio_lt,
-                short_volume_ratio_lte,
-                short_volume_ratio_gt,
-                short_volume_ratio_gte,
-                total_volume,
-                total_volume_lt,
-                total_volume_lte,
-                total_volume_gt,
-                total_volume_gte,
-                limit,
-                sort,
-                order,
-                options,
-            } = params;
-            let ticker = ticker.as_deref();
-            let date = date.as_deref();
-            let date_lt = date_lt.as_deref();
-            let date_lte = date_lte.as_deref();
-            let date_gt = date_gt.as_deref();
-            let date_gte = date_gte.as_deref();
-            let short_volume_ratio = short_volume_ratio.as_deref();
-            let short_volume_ratio_lt = short_volume_ratio_lt.as_deref();
-            let short_volume_ratio_lte = short_volume_ratio_lte.as_deref();
-            let short_volume_ratio_gt = short_volume_ratio_gt.as_deref();
-            let short_volume_ratio_gte = short_volume_ratio_gte.as_deref();
-            let total_volume = total_volume.as_deref();
-            let total_volume_lt = total_volume_lt.as_deref();
-            let total_volume_lte = total_volume_lte.as_deref();
-            let total_volume_gt = total_volume_gt.as_deref();
-            let total_volume_gte = total_volume_gte.as_deref();
-            let sort = sort.as_deref();
-            let order = order.as_deref();
-            let options = options.as_ref();
             let path = "/stocks/v1/short-volume".to_string();
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(v) = ticker {
-                query.push(("ticker", v.to_string()));
-            }
-            if let Some(v) = date {
-                query.push(("date", v.to_string()));
-            }
-            if let Some(v) = date_lt {
-                query.push(("date.lt", v.to_string()));
-            }
-            if let Some(v) = date_lte {
-                query.push(("date.lte", v.to_string()));
-            }
-            if let Some(v) = date_gt {
-                query.push(("date.gt", v.to_string()));
-            }
-            if let Some(v) = date_gte {
-                query.push(("date.gte", v.to_string()));
-            }
-            if let Some(v) = short_volume_ratio {
-                query.push(("short_volume_ratio", v.to_string()));
-            }
-            if let Some(v) = short_volume_ratio_lt {
-                query.push(("short_volume_ratio.lt", v.to_string()));
-            }
-            if let Some(v) = short_volume_ratio_lte {
-                query.push(("short_volume_ratio.lte", v.to_string()));
-            }
-            if let Some(v) = short_volume_ratio_gt {
-                query.push(("short_volume_ratio.gt", v.to_string()));
-            }
-            if let Some(v) = short_volume_ratio_gte {
-                query.push(("short_volume_ratio.gte", v.to_string()));
-            }
-            if let Some(v) = total_volume {
-                query.push(("total_volume", v.to_string()));
-            }
-            if let Some(v) = total_volume_lt {
-                query.push(("total_volume.lt", v.to_string()));
-            }
-            if let Some(v) = total_volume_lte {
-                query.push(("total_volume.lte", v.to_string()));
-            }
-            if let Some(v) = total_volume_gt {
-                query.push(("total_volume.gt", v.to_string()));
-            }
-            if let Some(v) = total_volume_gte {
-                query.push(("total_volume.gte", v.to_string()));
-            }
-            if let Some(v) = limit {
-                query.push(("limit", v.to_string()));
-            }
-            if let Some(v) = sort {
-                query.push(("sort", v.to_string()));
-            }
-            if let Some(v) = order {
-                query.push(("order", v.to_string()));
-            }
-            self.list::<ShortVolume>(&path, Some(&query), options)
+            let query = encode_query(&params);
+            self.list::<ShortVolume>(&path, &query, params.options.as_ref())
         })
     }
 
@@ -2275,87 +1499,9 @@ impl ReferenceApi for Client {
         params: ListStocksSplitsParams,
     ) -> BoxStream<'a, StockSplit> {
         Box::pin({
-            let ListStocksSplitsParams {
-                ticker,
-                ticker_any_of,
-                ticker_gt,
-                ticker_gte,
-                ticker_lt,
-                ticker_lte,
-                execution_date,
-                execution_date_gt,
-                execution_date_gte,
-                execution_date_lt,
-                execution_date_lte,
-                adjustment_type,
-                adjustment_type_any_of,
-                limit,
-                sort,
-                options,
-            } = params;
-            let ticker = ticker.as_deref();
-            let ticker_any_of = ticker_any_of.as_deref();
-            let ticker_gt = ticker_gt.as_deref();
-            let ticker_gte = ticker_gte.as_deref();
-            let ticker_lt = ticker_lt.as_deref();
-            let ticker_lte = ticker_lte.as_deref();
-            let execution_date = execution_date.as_deref();
-            let execution_date_gt = execution_date_gt.as_deref();
-            let execution_date_gte = execution_date_gte.as_deref();
-            let execution_date_lt = execution_date_lt.as_deref();
-            let execution_date_lte = execution_date_lte.as_deref();
-            let adjustment_type = adjustment_type.as_deref();
-            let adjustment_type_any_of = adjustment_type_any_of.as_deref();
-            let sort = sort.as_deref();
-            let options = options.as_ref();
             let path = "/stocks/v1/splits".to_string();
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(v) = ticker {
-                query.push(("ticker", v.to_string()));
-            }
-            if let Some(v) = ticker_any_of {
-                query.push(("ticker.any_of", v.to_string()));
-            }
-            if let Some(v) = ticker_gt {
-                query.push(("ticker.gt", v.to_string()));
-            }
-            if let Some(v) = ticker_gte {
-                query.push(("ticker.gte", v.to_string()));
-            }
-            if let Some(v) = ticker_lt {
-                query.push(("ticker.lt", v.to_string()));
-            }
-            if let Some(v) = ticker_lte {
-                query.push(("ticker.lte", v.to_string()));
-            }
-            if let Some(v) = execution_date {
-                query.push(("execution_date", v.to_string()));
-            }
-            if let Some(v) = execution_date_gt {
-                query.push(("execution_date.gt", v.to_string()));
-            }
-            if let Some(v) = execution_date_gte {
-                query.push(("execution_date.gte", v.to_string()));
-            }
-            if let Some(v) = execution_date_lt {
-                query.push(("execution_date.lt", v.to_string()));
-            }
-            if let Some(v) = execution_date_lte {
-                query.push(("execution_date.lte", v.to_string()));
-            }
-            if let Some(v) = adjustment_type {
-                query.push(("adjustment_type", v.to_string()));
-            }
-            if let Some(v) = adjustment_type_any_of {
-                query.push(("adjustment_type.any_of", v.to_string()));
-            }
-            if let Some(v) = limit {
-                query.push(("limit", v.to_string()));
-            }
-            if let Some(v) = sort {
-                query.push(("sort", v.to_string()));
-            }
-            self.list::<StockSplit>(&path, Some(&query), options)
+            let query = encode_query(&params);
+            self.list::<StockSplit>(&path, &query, params.options.as_ref())
         })
     }
 
@@ -2413,107 +1559,9 @@ impl ReferenceApi for Client {
         params: ListStocksDividendsParams,
     ) -> BoxStream<'a, StockDividend> {
         Box::pin({
-            let ListStocksDividendsParams {
-                ticker,
-                ticker_any_of,
-                ticker_gt,
-                ticker_gte,
-                ticker_lt,
-                ticker_lte,
-                ex_dividend_date,
-                ex_dividend_date_gt,
-                ex_dividend_date_gte,
-                ex_dividend_date_lt,
-                ex_dividend_date_lte,
-                frequency,
-                frequency_gt,
-                frequency_gte,
-                frequency_lt,
-                frequency_lte,
-                distribution_type,
-                distribution_type_any_of,
-                limit,
-                sort,
-                options,
-            } = params;
-            let ticker = ticker.as_deref();
-            let ticker_any_of = ticker_any_of.as_deref();
-            let ticker_gt = ticker_gt.as_deref();
-            let ticker_gte = ticker_gte.as_deref();
-            let ticker_lt = ticker_lt.as_deref();
-            let ticker_lte = ticker_lte.as_deref();
-            let ex_dividend_date = ex_dividend_date.as_deref();
-            let ex_dividend_date_gt = ex_dividend_date_gt.as_deref();
-            let ex_dividend_date_gte = ex_dividend_date_gte.as_deref();
-            let ex_dividend_date_lt = ex_dividend_date_lt.as_deref();
-            let ex_dividend_date_lte = ex_dividend_date_lte.as_deref();
-            let distribution_type = distribution_type.as_deref();
-            let distribution_type_any_of = distribution_type_any_of.as_deref();
-            let sort = sort.as_deref();
-            let options = options.as_ref();
             let path = "/stocks/v1/dividends".to_string();
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(v) = ticker {
-                query.push(("ticker", v.to_string()));
-            }
-            if let Some(v) = ticker_any_of {
-                query.push(("ticker.any_of", v.to_string()));
-            }
-            if let Some(v) = ticker_gt {
-                query.push(("ticker.gt", v.to_string()));
-            }
-            if let Some(v) = ticker_gte {
-                query.push(("ticker.gte", v.to_string()));
-            }
-            if let Some(v) = ticker_lt {
-                query.push(("ticker.lt", v.to_string()));
-            }
-            if let Some(v) = ticker_lte {
-                query.push(("ticker.lte", v.to_string()));
-            }
-            if let Some(v) = ex_dividend_date {
-                query.push(("ex_dividend_date", v.to_string()));
-            }
-            if let Some(v) = ex_dividend_date_gt {
-                query.push(("ex_dividend_date.gt", v.to_string()));
-            }
-            if let Some(v) = ex_dividend_date_gte {
-                query.push(("ex_dividend_date.gte", v.to_string()));
-            }
-            if let Some(v) = ex_dividend_date_lt {
-                query.push(("ex_dividend_date.lt", v.to_string()));
-            }
-            if let Some(v) = ex_dividend_date_lte {
-                query.push(("ex_dividend_date.lte", v.to_string()));
-            }
-            if let Some(v) = frequency {
-                query.push(("frequency", v.to_string()));
-            }
-            if let Some(v) = frequency_gt {
-                query.push(("frequency.gt", v.to_string()));
-            }
-            if let Some(v) = frequency_gte {
-                query.push(("frequency.gte", v.to_string()));
-            }
-            if let Some(v) = frequency_lt {
-                query.push(("frequency.lt", v.to_string()));
-            }
-            if let Some(v) = frequency_lte {
-                query.push(("frequency.lte", v.to_string()));
-            }
-            if let Some(v) = distribution_type {
-                query.push(("distribution_type", v.to_string()));
-            }
-            if let Some(v) = distribution_type_any_of {
-                query.push(("distribution_type.any_of", v.to_string()));
-            }
-            if let Some(v) = limit {
-                query.push(("limit", v.to_string()));
-            }
-            if let Some(v) = sort {
-                query.push(("sort", v.to_string()));
-            }
-            self.list::<StockDividend>(&path, Some(&query), options)
+            let query = encode_query(&params);
+            self.list::<StockDividend>(&path, &query, params.options.as_ref())
         })
     }
 
@@ -2571,112 +1619,9 @@ impl ReferenceApi for Client {
         params: ListStocksFilingsRiskFactorsParams,
     ) -> BoxStream<'a, RiskFactor> {
         Box::pin({
-            let ListStocksFilingsRiskFactorsParams {
-                filing_date,
-                filing_date_any_of,
-                filing_date_gt,
-                filing_date_gte,
-                filing_date_lt,
-                filing_date_lte,
-                ticker,
-                ticker_any_of,
-                ticker_gt,
-                ticker_gte,
-                ticker_lt,
-                ticker_lte,
-                cik,
-                cik_any_of,
-                cik_gt,
-                cik_gte,
-                cik_lt,
-                cik_lte,
-                limit,
-                sort,
-                options,
-            } = params;
-            let filing_date = filing_date.as_deref();
-            let filing_date_any_of = filing_date_any_of.as_deref();
-            let filing_date_gt = filing_date_gt.as_deref();
-            let filing_date_gte = filing_date_gte.as_deref();
-            let filing_date_lt = filing_date_lt.as_deref();
-            let filing_date_lte = filing_date_lte.as_deref();
-            let ticker = ticker.as_deref();
-            let ticker_any_of = ticker_any_of.as_deref();
-            let ticker_gt = ticker_gt.as_deref();
-            let ticker_gte = ticker_gte.as_deref();
-            let ticker_lt = ticker_lt.as_deref();
-            let ticker_lte = ticker_lte.as_deref();
-            let cik = cik.as_deref();
-            let cik_any_of = cik_any_of.as_deref();
-            let cik_gt = cik_gt.as_deref();
-            let cik_gte = cik_gte.as_deref();
-            let cik_lt = cik_lt.as_deref();
-            let cik_lte = cik_lte.as_deref();
-            let sort = sort.as_deref();
-            let options = options.as_ref();
             let path = "/stocks/filings/vX/risk-factors".to_string();
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(v) = filing_date {
-                query.push(("filing_date", v.to_string()));
-            }
-            if let Some(v) = filing_date_any_of {
-                query.push(("filing_date.any_of", v.to_string()));
-            }
-            if let Some(v) = filing_date_gt {
-                query.push(("filing_date.gt", v.to_string()));
-            }
-            if let Some(v) = filing_date_gte {
-                query.push(("filing_date.gte", v.to_string()));
-            }
-            if let Some(v) = filing_date_lt {
-                query.push(("filing_date.lt", v.to_string()));
-            }
-            if let Some(v) = filing_date_lte {
-                query.push(("filing_date.lte", v.to_string()));
-            }
-            if let Some(v) = ticker {
-                query.push(("ticker", v.to_string()));
-            }
-            if let Some(v) = ticker_any_of {
-                query.push(("ticker.any_of", v.to_string()));
-            }
-            if let Some(v) = ticker_gt {
-                query.push(("ticker.gt", v.to_string()));
-            }
-            if let Some(v) = ticker_gte {
-                query.push(("ticker.gte", v.to_string()));
-            }
-            if let Some(v) = ticker_lt {
-                query.push(("ticker.lt", v.to_string()));
-            }
-            if let Some(v) = ticker_lte {
-                query.push(("ticker.lte", v.to_string()));
-            }
-            if let Some(v) = cik {
-                query.push(("cik", v.to_string()));
-            }
-            if let Some(v) = cik_any_of {
-                query.push(("cik.any_of", v.to_string()));
-            }
-            if let Some(v) = cik_gt {
-                query.push(("cik.gt", v.to_string()));
-            }
-            if let Some(v) = cik_gte {
-                query.push(("cik.gte", v.to_string()));
-            }
-            if let Some(v) = cik_lt {
-                query.push(("cik.lt", v.to_string()));
-            }
-            if let Some(v) = cik_lte {
-                query.push(("cik.lte", v.to_string()));
-            }
-            if let Some(v) = limit {
-                query.push(("limit", v.to_string()));
-            }
-            if let Some(v) = sort {
-                query.push(("sort", v.to_string()));
-            }
-            self.list::<RiskFactor>(&path, Some(&query), options)
+            let query = encode_query(&params);
+            self.list::<RiskFactor>(&path, &query, params.options.as_ref())
         })
     }
 
@@ -2746,132 +1691,9 @@ impl ReferenceApi for Client {
         params: ListStocksTaxonomiesRiskFactorsParams,
     ) -> BoxStream<'a, RiskFactorTaxonomy> {
         Box::pin({
-            let ListStocksTaxonomiesRiskFactorsParams {
-                taxonomy,
-                taxonomy_gt,
-                taxonomy_gte,
-                taxonomy_lt,
-                taxonomy_lte,
-                primary_category,
-                primary_category_any_of,
-                primary_category_gt,
-                primary_category_gte,
-                primary_category_lt,
-                primary_category_lte,
-                secondary_category,
-                secondary_category_any_of,
-                secondary_category_gt,
-                secondary_category_gte,
-                secondary_category_lt,
-                secondary_category_lte,
-                tertiary_category,
-                tertiary_category_any_of,
-                tertiary_category_gt,
-                tertiary_category_gte,
-                tertiary_category_lt,
-                tertiary_category_lte,
-                limit,
-                sort,
-                options,
-            } = params;
-            let primary_category = primary_category.as_deref();
-            let primary_category_any_of = primary_category_any_of.as_deref();
-            let primary_category_gt = primary_category_gt.as_deref();
-            let primary_category_gte = primary_category_gte.as_deref();
-            let primary_category_lt = primary_category_lt.as_deref();
-            let primary_category_lte = primary_category_lte.as_deref();
-            let secondary_category = secondary_category.as_deref();
-            let secondary_category_any_of = secondary_category_any_of.as_deref();
-            let secondary_category_gt = secondary_category_gt.as_deref();
-            let secondary_category_gte = secondary_category_gte.as_deref();
-            let secondary_category_lt = secondary_category_lt.as_deref();
-            let secondary_category_lte = secondary_category_lte.as_deref();
-            let tertiary_category = tertiary_category.as_deref();
-            let tertiary_category_any_of = tertiary_category_any_of.as_deref();
-            let tertiary_category_gt = tertiary_category_gt.as_deref();
-            let tertiary_category_gte = tertiary_category_gte.as_deref();
-            let tertiary_category_lt = tertiary_category_lt.as_deref();
-            let tertiary_category_lte = tertiary_category_lte.as_deref();
-            let sort = sort.as_deref();
-            let options = options.as_ref();
             let path = "/stocks/taxonomies/vX/risk-factors".to_string();
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(v) = taxonomy {
-                query.push(("taxonomy", v.to_string()));
-            }
-            if let Some(v) = taxonomy_gt {
-                query.push(("taxonomy.gt", v.to_string()));
-            }
-            if let Some(v) = taxonomy_gte {
-                query.push(("taxonomy.gte", v.to_string()));
-            }
-            if let Some(v) = taxonomy_lt {
-                query.push(("taxonomy.lt", v.to_string()));
-            }
-            if let Some(v) = taxonomy_lte {
-                query.push(("taxonomy.lte", v.to_string()));
-            }
-            if let Some(v) = primary_category {
-                query.push(("primary_category", v.to_string()));
-            }
-            if let Some(v) = primary_category_any_of {
-                query.push(("primary_category.any_of", v.to_string()));
-            }
-            if let Some(v) = primary_category_gt {
-                query.push(("primary_category.gt", v.to_string()));
-            }
-            if let Some(v) = primary_category_gte {
-                query.push(("primary_category.gte", v.to_string()));
-            }
-            if let Some(v) = primary_category_lt {
-                query.push(("primary_category.lt", v.to_string()));
-            }
-            if let Some(v) = primary_category_lte {
-                query.push(("primary_category.lte", v.to_string()));
-            }
-            if let Some(v) = secondary_category {
-                query.push(("secondary_category", v.to_string()));
-            }
-            if let Some(v) = secondary_category_any_of {
-                query.push(("secondary_category.any_of", v.to_string()));
-            }
-            if let Some(v) = secondary_category_gt {
-                query.push(("secondary_category.gt", v.to_string()));
-            }
-            if let Some(v) = secondary_category_gte {
-                query.push(("secondary_category.gte", v.to_string()));
-            }
-            if let Some(v) = secondary_category_lt {
-                query.push(("secondary_category.lt", v.to_string()));
-            }
-            if let Some(v) = secondary_category_lte {
-                query.push(("secondary_category.lte", v.to_string()));
-            }
-            if let Some(v) = tertiary_category {
-                query.push(("tertiary_category", v.to_string()));
-            }
-            if let Some(v) = tertiary_category_any_of {
-                query.push(("tertiary_category.any_of", v.to_string()));
-            }
-            if let Some(v) = tertiary_category_gt {
-                query.push(("tertiary_category.gt", v.to_string()));
-            }
-            if let Some(v) = tertiary_category_gte {
-                query.push(("tertiary_category.gte", v.to_string()));
-            }
-            if let Some(v) = tertiary_category_lt {
-                query.push(("tertiary_category.lt", v.to_string()));
-            }
-            if let Some(v) = tertiary_category_lte {
-                query.push(("tertiary_category.lte", v.to_string()));
-            }
-            if let Some(v) = limit {
-                query.push(("limit", v.to_string()));
-            }
-            if let Some(v) = sort {
-                query.push(("sort", v.to_string()));
-            }
-            self.list::<RiskFactorTaxonomy>(&path, Some(&query), options)
+            let query = encode_query(&params);
+            self.list::<RiskFactorTaxonomy>(&path, &query, params.options.as_ref())
         })
     }
 
@@ -2917,82 +1739,9 @@ impl ReferenceApi for Client {
         params: ListStocksFilings8kDisclosuresParams,
     ) -> BoxStream<'a, Disclosure> {
         Box::pin({
-            let ListStocksFilings8kDisclosuresParams {
-                cik,
-                cik_any_of,
-                tickers,
-                tickers_all_of,
-                tickers_any_of,
-                filing_date,
-                filing_date_any_of,
-                filing_date_gt,
-                filing_date_gte,
-                filing_date_lt,
-                filing_date_lte,
-                tertiary_category,
-                limit,
-                sort,
-                options,
-            } = params;
-            let cik = cik.as_deref();
-            let cik_any_of = cik_any_of.as_deref();
-            let tickers = tickers.as_deref();
-            let tickers_all_of = tickers_all_of.as_deref();
-            let tickers_any_of = tickers_any_of.as_deref();
-            let filing_date = filing_date.as_deref();
-            let filing_date_any_of = filing_date_any_of.as_deref();
-            let filing_date_gt = filing_date_gt.as_deref();
-            let filing_date_gte = filing_date_gte.as_deref();
-            let filing_date_lt = filing_date_lt.as_deref();
-            let filing_date_lte = filing_date_lte.as_deref();
-            let tertiary_category = tertiary_category.as_deref();
-            let sort = sort.as_deref();
-            let options = options.as_ref();
             let path = "/stocks/filings/8-K/vX/disclosures".to_string();
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(v) = cik {
-                query.push(("cik", v.to_string()));
-            }
-            if let Some(v) = cik_any_of {
-                query.push(("cik.any_of", v.to_string()));
-            }
-            if let Some(v) = tickers {
-                query.push(("tickers", v.to_string()));
-            }
-            if let Some(v) = tickers_all_of {
-                query.push(("tickers.all_of", v.to_string()));
-            }
-            if let Some(v) = tickers_any_of {
-                query.push(("tickers.any_of", v.to_string()));
-            }
-            if let Some(v) = filing_date {
-                query.push(("filing_date", v.to_string()));
-            }
-            if let Some(v) = filing_date_any_of {
-                query.push(("filing_date.any_of", v.to_string()));
-            }
-            if let Some(v) = filing_date_gt {
-                query.push(("filing_date.gt", v.to_string()));
-            }
-            if let Some(v) = filing_date_gte {
-                query.push(("filing_date.gte", v.to_string()));
-            }
-            if let Some(v) = filing_date_lt {
-                query.push(("filing_date.lt", v.to_string()));
-            }
-            if let Some(v) = filing_date_lte {
-                query.push(("filing_date.lte", v.to_string()));
-            }
-            if let Some(v) = tertiary_category {
-                query.push(("tertiary_category", v.to_string()));
-            }
-            if let Some(v) = limit {
-                query.push(("limit", v.to_string()));
-            }
-            if let Some(v) = sort {
-                query.push(("sort", v.to_string()));
-            }
-            self.list::<Disclosure>(&path, Some(&query), options)
+            let query = encode_query(&params);
+            self.list::<Disclosure>(&path, &query, params.options.as_ref())
         })
     }
 
@@ -3062,142 +1811,9 @@ impl ReferenceApi for Client {
         params: ListStocksTaxonomiesDisclosuresParams,
     ) -> BoxStream<'a, DisclosureTaxonomy> {
         Box::pin({
-            let ListStocksTaxonomiesDisclosuresParams {
-                taxonomy,
-                taxonomy_any_of,
-                taxonomy_gt,
-                taxonomy_gte,
-                taxonomy_lt,
-                taxonomy_lte,
-                primary_category,
-                primary_category_any_of,
-                primary_category_gt,
-                primary_category_gte,
-                primary_category_lt,
-                primary_category_lte,
-                secondary_category,
-                secondary_category_any_of,
-                secondary_category_gt,
-                secondary_category_gte,
-                secondary_category_lt,
-                secondary_category_lte,
-                tertiary_category,
-                tertiary_category_any_of,
-                tertiary_category_gt,
-                tertiary_category_gte,
-                tertiary_category_lt,
-                tertiary_category_lte,
-                limit,
-                sort,
-                options,
-            } = params;
-            let taxonomy = taxonomy.as_deref();
-            let taxonomy_any_of = taxonomy_any_of.as_deref();
-            let taxonomy_gt = taxonomy_gt.as_deref();
-            let taxonomy_gte = taxonomy_gte.as_deref();
-            let taxonomy_lt = taxonomy_lt.as_deref();
-            let taxonomy_lte = taxonomy_lte.as_deref();
-            let primary_category = primary_category.as_deref();
-            let primary_category_any_of = primary_category_any_of.as_deref();
-            let primary_category_gt = primary_category_gt.as_deref();
-            let primary_category_gte = primary_category_gte.as_deref();
-            let primary_category_lt = primary_category_lt.as_deref();
-            let primary_category_lte = primary_category_lte.as_deref();
-            let secondary_category = secondary_category.as_deref();
-            let secondary_category_any_of = secondary_category_any_of.as_deref();
-            let secondary_category_gt = secondary_category_gt.as_deref();
-            let secondary_category_gte = secondary_category_gte.as_deref();
-            let secondary_category_lt = secondary_category_lt.as_deref();
-            let secondary_category_lte = secondary_category_lte.as_deref();
-            let tertiary_category = tertiary_category.as_deref();
-            let tertiary_category_any_of = tertiary_category_any_of.as_deref();
-            let tertiary_category_gt = tertiary_category_gt.as_deref();
-            let tertiary_category_gte = tertiary_category_gte.as_deref();
-            let tertiary_category_lt = tertiary_category_lt.as_deref();
-            let tertiary_category_lte = tertiary_category_lte.as_deref();
-            let sort = sort.as_deref();
-            let options = options.as_ref();
             let path = "/stocks/taxonomies/vX/disclosures".to_string();
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(v) = taxonomy {
-                query.push(("taxonomy", v.to_string()));
-            }
-            if let Some(v) = taxonomy_any_of {
-                query.push(("taxonomy.any_of", v.to_string()));
-            }
-            if let Some(v) = taxonomy_gt {
-                query.push(("taxonomy.gt", v.to_string()));
-            }
-            if let Some(v) = taxonomy_gte {
-                query.push(("taxonomy.gte", v.to_string()));
-            }
-            if let Some(v) = taxonomy_lt {
-                query.push(("taxonomy.lt", v.to_string()));
-            }
-            if let Some(v) = taxonomy_lte {
-                query.push(("taxonomy.lte", v.to_string()));
-            }
-            if let Some(v) = primary_category {
-                query.push(("primary_category", v.to_string()));
-            }
-            if let Some(v) = primary_category_any_of {
-                query.push(("primary_category.any_of", v.to_string()));
-            }
-            if let Some(v) = primary_category_gt {
-                query.push(("primary_category.gt", v.to_string()));
-            }
-            if let Some(v) = primary_category_gte {
-                query.push(("primary_category.gte", v.to_string()));
-            }
-            if let Some(v) = primary_category_lt {
-                query.push(("primary_category.lt", v.to_string()));
-            }
-            if let Some(v) = primary_category_lte {
-                query.push(("primary_category.lte", v.to_string()));
-            }
-            if let Some(v) = secondary_category {
-                query.push(("secondary_category", v.to_string()));
-            }
-            if let Some(v) = secondary_category_any_of {
-                query.push(("secondary_category.any_of", v.to_string()));
-            }
-            if let Some(v) = secondary_category_gt {
-                query.push(("secondary_category.gt", v.to_string()));
-            }
-            if let Some(v) = secondary_category_gte {
-                query.push(("secondary_category.gte", v.to_string()));
-            }
-            if let Some(v) = secondary_category_lt {
-                query.push(("secondary_category.lt", v.to_string()));
-            }
-            if let Some(v) = secondary_category_lte {
-                query.push(("secondary_category.lte", v.to_string()));
-            }
-            if let Some(v) = tertiary_category {
-                query.push(("tertiary_category", v.to_string()));
-            }
-            if let Some(v) = tertiary_category_any_of {
-                query.push(("tertiary_category.any_of", v.to_string()));
-            }
-            if let Some(v) = tertiary_category_gt {
-                query.push(("tertiary_category.gt", v.to_string()));
-            }
-            if let Some(v) = tertiary_category_gte {
-                query.push(("tertiary_category.gte", v.to_string()));
-            }
-            if let Some(v) = tertiary_category_lt {
-                query.push(("tertiary_category.lt", v.to_string()));
-            }
-            if let Some(v) = tertiary_category_lte {
-                query.push(("tertiary_category.lte", v.to_string()));
-            }
-            if let Some(v) = limit {
-                query.push(("limit", v.to_string()));
-            }
-            if let Some(v) = sort {
-                query.push(("sort", v.to_string()));
-            }
-            self.list::<DisclosureTaxonomy>(&path, Some(&query), options)
+            let query = encode_query(&params);
+            self.list::<DisclosureTaxonomy>(&path, &query, params.options.as_ref())
         })
     }
 
@@ -3267,142 +1883,9 @@ impl ReferenceApi for Client {
         params: ListStocksFilings10kSectionsParams,
     ) -> BoxStream<'a, FilingSection> {
         Box::pin({
-            let ListStocksFilings10kSectionsParams {
-                cik,
-                cik_any_of,
-                cik_gt,
-                cik_gte,
-                cik_lt,
-                cik_lte,
-                ticker,
-                ticker_any_of,
-                ticker_gt,
-                ticker_gte,
-                ticker_lt,
-                ticker_lte,
-                section,
-                section_any_of,
-                filing_date,
-                filing_date_gt,
-                filing_date_gte,
-                filing_date_lt,
-                filing_date_lte,
-                period_end,
-                period_end_gt,
-                period_end_gte,
-                period_end_lt,
-                period_end_lte,
-                limit,
-                sort,
-                options,
-            } = params;
-            let cik = cik.as_deref();
-            let cik_any_of = cik_any_of.as_deref();
-            let cik_gt = cik_gt.as_deref();
-            let cik_gte = cik_gte.as_deref();
-            let cik_lt = cik_lt.as_deref();
-            let cik_lte = cik_lte.as_deref();
-            let ticker = ticker.as_deref();
-            let ticker_any_of = ticker_any_of.as_deref();
-            let ticker_gt = ticker_gt.as_deref();
-            let ticker_gte = ticker_gte.as_deref();
-            let ticker_lt = ticker_lt.as_deref();
-            let ticker_lte = ticker_lte.as_deref();
-            let section = section.as_deref();
-            let section_any_of = section_any_of.as_deref();
-            let filing_date = filing_date.as_deref();
-            let filing_date_gt = filing_date_gt.as_deref();
-            let filing_date_gte = filing_date_gte.as_deref();
-            let filing_date_lt = filing_date_lt.as_deref();
-            let filing_date_lte = filing_date_lte.as_deref();
-            let period_end = period_end.as_deref();
-            let period_end_gt = period_end_gt.as_deref();
-            let period_end_gte = period_end_gte.as_deref();
-            let period_end_lt = period_end_lt.as_deref();
-            let period_end_lte = period_end_lte.as_deref();
-            let sort = sort.as_deref();
-            let options = options.as_ref();
             let path = "/stocks/filings/10-K/vX/sections".to_string();
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(v) = cik {
-                query.push(("cik", v.to_string()));
-            }
-            if let Some(v) = cik_any_of {
-                query.push(("cik.any_of", v.to_string()));
-            }
-            if let Some(v) = cik_gt {
-                query.push(("cik.gt", v.to_string()));
-            }
-            if let Some(v) = cik_gte {
-                query.push(("cik.gte", v.to_string()));
-            }
-            if let Some(v) = cik_lt {
-                query.push(("cik.lt", v.to_string()));
-            }
-            if let Some(v) = cik_lte {
-                query.push(("cik.lte", v.to_string()));
-            }
-            if let Some(v) = ticker {
-                query.push(("ticker", v.to_string()));
-            }
-            if let Some(v) = ticker_any_of {
-                query.push(("ticker.any_of", v.to_string()));
-            }
-            if let Some(v) = ticker_gt {
-                query.push(("ticker.gt", v.to_string()));
-            }
-            if let Some(v) = ticker_gte {
-                query.push(("ticker.gte", v.to_string()));
-            }
-            if let Some(v) = ticker_lt {
-                query.push(("ticker.lt", v.to_string()));
-            }
-            if let Some(v) = ticker_lte {
-                query.push(("ticker.lte", v.to_string()));
-            }
-            if let Some(v) = section {
-                query.push(("section", v.to_string()));
-            }
-            if let Some(v) = section_any_of {
-                query.push(("section.any_of", v.to_string()));
-            }
-            if let Some(v) = filing_date {
-                query.push(("filing_date", v.to_string()));
-            }
-            if let Some(v) = filing_date_gt {
-                query.push(("filing_date.gt", v.to_string()));
-            }
-            if let Some(v) = filing_date_gte {
-                query.push(("filing_date.gte", v.to_string()));
-            }
-            if let Some(v) = filing_date_lt {
-                query.push(("filing_date.lt", v.to_string()));
-            }
-            if let Some(v) = filing_date_lte {
-                query.push(("filing_date.lte", v.to_string()));
-            }
-            if let Some(v) = period_end {
-                query.push(("period_end", v.to_string()));
-            }
-            if let Some(v) = period_end_gt {
-                query.push(("period_end.gt", v.to_string()));
-            }
-            if let Some(v) = period_end_gte {
-                query.push(("period_end.gte", v.to_string()));
-            }
-            if let Some(v) = period_end_lt {
-                query.push(("period_end.lt", v.to_string()));
-            }
-            if let Some(v) = period_end_lte {
-                query.push(("period_end.lte", v.to_string()));
-            }
-            if let Some(v) = limit {
-                query.push(("limit", v.to_string()));
-            }
-            if let Some(v) = sort {
-                query.push(("sort", v.to_string()));
-            }
-            self.list::<FilingSection>(&path, Some(&query), options)
+            let query = encode_query(&params);
+            self.list::<FilingSection>(&path, &query, params.options.as_ref())
         })
     }
 
@@ -3470,137 +1953,9 @@ impl ReferenceApi for Client {
         params: ListStocksFilings8kTextParams,
     ) -> BoxStream<'a, Filing8K> {
         Box::pin({
-            let ListStocksFilings8kTextParams {
-                cik,
-                cik_any_of,
-                cik_gt,
-                cik_gte,
-                cik_lt,
-                cik_lte,
-                ticker,
-                ticker_any_of,
-                ticker_gt,
-                ticker_gte,
-                ticker_lt,
-                ticker_lte,
-                form_type,
-                form_type_any_of,
-                form_type_gt,
-                form_type_gte,
-                form_type_lt,
-                form_type_lte,
-                filing_date,
-                filing_date_gt,
-                filing_date_gte,
-                filing_date_lt,
-                filing_date_lte,
-                limit,
-                sort,
-                options,
-            } = params;
-            let cik = cik.as_deref();
-            let cik_any_of = cik_any_of.as_deref();
-            let cik_gt = cik_gt.as_deref();
-            let cik_gte = cik_gte.as_deref();
-            let cik_lt = cik_lt.as_deref();
-            let cik_lte = cik_lte.as_deref();
-            let ticker = ticker.as_deref();
-            let ticker_any_of = ticker_any_of.as_deref();
-            let ticker_gt = ticker_gt.as_deref();
-            let ticker_gte = ticker_gte.as_deref();
-            let ticker_lt = ticker_lt.as_deref();
-            let ticker_lte = ticker_lte.as_deref();
-            let form_type = form_type.as_deref();
-            let form_type_any_of = form_type_any_of.as_deref();
-            let form_type_gt = form_type_gt.as_deref();
-            let form_type_gte = form_type_gte.as_deref();
-            let form_type_lt = form_type_lt.as_deref();
-            let form_type_lte = form_type_lte.as_deref();
-            let filing_date = filing_date.as_deref();
-            let filing_date_gt = filing_date_gt.as_deref();
-            let filing_date_gte = filing_date_gte.as_deref();
-            let filing_date_lt = filing_date_lt.as_deref();
-            let filing_date_lte = filing_date_lte.as_deref();
-            let sort = sort.as_deref();
-            let options = options.as_ref();
             let path = "/stocks/filings/8-K/vX/text".to_string();
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(v) = cik {
-                query.push(("cik", v.to_string()));
-            }
-            if let Some(v) = cik_any_of {
-                query.push(("cik.any_of", v.to_string()));
-            }
-            if let Some(v) = cik_gt {
-                query.push(("cik.gt", v.to_string()));
-            }
-            if let Some(v) = cik_gte {
-                query.push(("cik.gte", v.to_string()));
-            }
-            if let Some(v) = cik_lt {
-                query.push(("cik.lt", v.to_string()));
-            }
-            if let Some(v) = cik_lte {
-                query.push(("cik.lte", v.to_string()));
-            }
-            if let Some(v) = ticker {
-                query.push(("ticker", v.to_string()));
-            }
-            if let Some(v) = ticker_any_of {
-                query.push(("ticker.any_of", v.to_string()));
-            }
-            if let Some(v) = ticker_gt {
-                query.push(("ticker.gt", v.to_string()));
-            }
-            if let Some(v) = ticker_gte {
-                query.push(("ticker.gte", v.to_string()));
-            }
-            if let Some(v) = ticker_lt {
-                query.push(("ticker.lt", v.to_string()));
-            }
-            if let Some(v) = ticker_lte {
-                query.push(("ticker.lte", v.to_string()));
-            }
-            if let Some(v) = form_type {
-                query.push(("form_type", v.to_string()));
-            }
-            if let Some(v) = form_type_any_of {
-                query.push(("form_type.any_of", v.to_string()));
-            }
-            if let Some(v) = form_type_gt {
-                query.push(("form_type.gt", v.to_string()));
-            }
-            if let Some(v) = form_type_gte {
-                query.push(("form_type.gte", v.to_string()));
-            }
-            if let Some(v) = form_type_lt {
-                query.push(("form_type.lt", v.to_string()));
-            }
-            if let Some(v) = form_type_lte {
-                query.push(("form_type.lte", v.to_string()));
-            }
-            if let Some(v) = filing_date {
-                query.push(("filing_date", v.to_string()));
-            }
-            if let Some(v) = filing_date_gt {
-                query.push(("filing_date.gt", v.to_string()));
-            }
-            if let Some(v) = filing_date_gte {
-                query.push(("filing_date.gte", v.to_string()));
-            }
-            if let Some(v) = filing_date_lt {
-                query.push(("filing_date.lt", v.to_string()));
-            }
-            if let Some(v) = filing_date_lte {
-                query.push(("filing_date.lte", v.to_string()));
-            }
-            if let Some(v) = limit {
-                query.push(("limit", v.to_string()));
-            }
-            if let Some(v) = sort {
-                query.push(("sort", v.to_string()));
-            }
-            self.list::<Filing8K>(&path, Some(&query), options)
+            let query = encode_query(&params);
+            self.list::<Filing8K>(&path, &query, params.options.as_ref())
         })
     }
 
@@ -3668,137 +2023,9 @@ impl ReferenceApi for Client {
         params: ListStocksFilingsIndexParams,
     ) -> BoxStream<'a, FilingIndex> {
         Box::pin({
-            let ListStocksFilingsIndexParams {
-                cik,
-                cik_any_of,
-                cik_gt,
-                cik_gte,
-                cik_lt,
-                cik_lte,
-                ticker,
-                ticker_any_of,
-                ticker_gt,
-                ticker_gte,
-                ticker_lt,
-                ticker_lte,
-                form_type,
-                form_type_any_of,
-                form_type_gt,
-                form_type_gte,
-                form_type_lt,
-                form_type_lte,
-                filing_date,
-                filing_date_gt,
-                filing_date_gte,
-                filing_date_lt,
-                filing_date_lte,
-                limit,
-                sort,
-                options,
-            } = params;
-            let cik = cik.as_deref();
-            let cik_any_of = cik_any_of.as_deref();
-            let cik_gt = cik_gt.as_deref();
-            let cik_gte = cik_gte.as_deref();
-            let cik_lt = cik_lt.as_deref();
-            let cik_lte = cik_lte.as_deref();
-            let ticker = ticker.as_deref();
-            let ticker_any_of = ticker_any_of.as_deref();
-            let ticker_gt = ticker_gt.as_deref();
-            let ticker_gte = ticker_gte.as_deref();
-            let ticker_lt = ticker_lt.as_deref();
-            let ticker_lte = ticker_lte.as_deref();
-            let form_type = form_type.as_deref();
-            let form_type_any_of = form_type_any_of.as_deref();
-            let form_type_gt = form_type_gt.as_deref();
-            let form_type_gte = form_type_gte.as_deref();
-            let form_type_lt = form_type_lt.as_deref();
-            let form_type_lte = form_type_lte.as_deref();
-            let filing_date = filing_date.as_deref();
-            let filing_date_gt = filing_date_gt.as_deref();
-            let filing_date_gte = filing_date_gte.as_deref();
-            let filing_date_lt = filing_date_lt.as_deref();
-            let filing_date_lte = filing_date_lte.as_deref();
-            let sort = sort.as_deref();
-            let options = options.as_ref();
             let path = "/stocks/filings/vX/index".to_string();
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(v) = cik {
-                query.push(("cik", v.to_string()));
-            }
-            if let Some(v) = cik_any_of {
-                query.push(("cik.any_of", v.to_string()));
-            }
-            if let Some(v) = cik_gt {
-                query.push(("cik.gt", v.to_string()));
-            }
-            if let Some(v) = cik_gte {
-                query.push(("cik.gte", v.to_string()));
-            }
-            if let Some(v) = cik_lt {
-                query.push(("cik.lt", v.to_string()));
-            }
-            if let Some(v) = cik_lte {
-                query.push(("cik.lte", v.to_string()));
-            }
-            if let Some(v) = ticker {
-                query.push(("ticker", v.to_string()));
-            }
-            if let Some(v) = ticker_any_of {
-                query.push(("ticker.any_of", v.to_string()));
-            }
-            if let Some(v) = ticker_gt {
-                query.push(("ticker.gt", v.to_string()));
-            }
-            if let Some(v) = ticker_gte {
-                query.push(("ticker.gte", v.to_string()));
-            }
-            if let Some(v) = ticker_lt {
-                query.push(("ticker.lt", v.to_string()));
-            }
-            if let Some(v) = ticker_lte {
-                query.push(("ticker.lte", v.to_string()));
-            }
-            if let Some(v) = form_type {
-                query.push(("form_type", v.to_string()));
-            }
-            if let Some(v) = form_type_any_of {
-                query.push(("form_type.any_of", v.to_string()));
-            }
-            if let Some(v) = form_type_gt {
-                query.push(("form_type.gt", v.to_string()));
-            }
-            if let Some(v) = form_type_gte {
-                query.push(("form_type.gte", v.to_string()));
-            }
-            if let Some(v) = form_type_lt {
-                query.push(("form_type.lt", v.to_string()));
-            }
-            if let Some(v) = form_type_lte {
-                query.push(("form_type.lte", v.to_string()));
-            }
-            if let Some(v) = filing_date {
-                query.push(("filing_date", v.to_string()));
-            }
-            if let Some(v) = filing_date_gt {
-                query.push(("filing_date.gt", v.to_string()));
-            }
-            if let Some(v) = filing_date_gte {
-                query.push(("filing_date.gte", v.to_string()));
-            }
-            if let Some(v) = filing_date_lt {
-                query.push(("filing_date.lt", v.to_string()));
-            }
-            if let Some(v) = filing_date_lte {
-                query.push(("filing_date.lte", v.to_string()));
-            }
-            if let Some(v) = limit {
-                query.push(("limit", v.to_string()));
-            }
-            if let Some(v) = sort {
-                query.push(("sort", v.to_string()));
-            }
-            self.list::<FilingIndex>(&path, Some(&query), options)
+            let query = encode_query(&params);
+            self.list::<FilingIndex>(&path, &query, params.options.as_ref())
         })
     }
 
@@ -3834,57 +2061,9 @@ impl ReferenceApi for Client {
         params: ListStocksFilings13fParams,
     ) -> BoxStream<'a, Filing13F> {
         Box::pin({
-            let ListStocksFilings13fParams {
-                filer_cik,
-                filer_cik_any_of,
-                filing_date,
-                filing_date_gt,
-                filing_date_gte,
-                filing_date_lt,
-                filing_date_lte,
-                limit,
-                sort,
-                options,
-            } = params;
-            let filer_cik = filer_cik.as_deref();
-            let filer_cik_any_of = filer_cik_any_of.as_deref();
-            let filing_date = filing_date.as_deref();
-            let filing_date_gt = filing_date_gt.as_deref();
-            let filing_date_gte = filing_date_gte.as_deref();
-            let filing_date_lt = filing_date_lt.as_deref();
-            let filing_date_lte = filing_date_lte.as_deref();
-            let sort = sort.as_deref();
-            let options = options.as_ref();
             let path = "/stocks/filings/vX/13-F".to_string();
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(v) = filer_cik {
-                query.push(("filer_cik", v.to_string()));
-            }
-            if let Some(v) = filer_cik_any_of {
-                query.push(("filer_cik.any_of", v.to_string()));
-            }
-            if let Some(v) = filing_date {
-                query.push(("filing_date", v.to_string()));
-            }
-            if let Some(v) = filing_date_gt {
-                query.push(("filing_date.gt", v.to_string()));
-            }
-            if let Some(v) = filing_date_gte {
-                query.push(("filing_date.gte", v.to_string()));
-            }
-            if let Some(v) = filing_date_lt {
-                query.push(("filing_date.lt", v.to_string()));
-            }
-            if let Some(v) = filing_date_lte {
-                query.push(("filing_date.lte", v.to_string()));
-            }
-            if let Some(v) = limit {
-                query.push(("limit", v.to_string()));
-            }
-            if let Some(v) = sort {
-                query.push(("sort", v.to_string()));
-            }
-            self.list::<Filing13F>(&path, Some(&query), options)
+            let query = encode_query(&params);
+            self.list::<Filing13F>(&path, &query, params.options.as_ref())
         })
     }
 
@@ -3956,147 +2135,9 @@ impl ReferenceApi for Client {
         params: ListStocksFilingsForm3Params,
     ) -> BoxStream<'a, FilingForm3> {
         Box::pin({
-            let ListStocksFilingsForm3Params {
-                issuer_cik,
-                issuer_cik_any_of,
-                owner_cik,
-                owner_cik_any_of,
-                tickers,
-                tickers_all_of,
-                tickers_any_of,
-                form_type,
-                filing_date,
-                filing_date_gt,
-                filing_date_gte,
-                filing_date_lt,
-                filing_date_lte,
-                max_ticker,
-                max_ticker_any_of,
-                max_ticker_gt,
-                max_ticker_gte,
-                max_ticker_lt,
-                max_ticker_lte,
-                min_ticker,
-                min_ticker_any_of,
-                min_ticker_gt,
-                min_ticker_gte,
-                min_ticker_lt,
-                min_ticker_lte,
-                limit,
-                sort,
-                options,
-            } = params;
-            let issuer_cik = issuer_cik.as_deref();
-            let issuer_cik_any_of = issuer_cik_any_of.as_deref();
-            let owner_cik = owner_cik.as_deref();
-            let owner_cik_any_of = owner_cik_any_of.as_deref();
-            let tickers = tickers.as_deref();
-            let tickers_all_of = tickers_all_of.as_deref();
-            let tickers_any_of = tickers_any_of.as_deref();
-            let form_type = form_type.as_deref();
-            let filing_date = filing_date.as_deref();
-            let filing_date_gt = filing_date_gt.as_deref();
-            let filing_date_gte = filing_date_gte.as_deref();
-            let filing_date_lt = filing_date_lt.as_deref();
-            let filing_date_lte = filing_date_lte.as_deref();
-            let max_ticker = max_ticker.as_deref();
-            let max_ticker_any_of = max_ticker_any_of.as_deref();
-            let max_ticker_gt = max_ticker_gt.as_deref();
-            let max_ticker_gte = max_ticker_gte.as_deref();
-            let max_ticker_lt = max_ticker_lt.as_deref();
-            let max_ticker_lte = max_ticker_lte.as_deref();
-            let min_ticker = min_ticker.as_deref();
-            let min_ticker_any_of = min_ticker_any_of.as_deref();
-            let min_ticker_gt = min_ticker_gt.as_deref();
-            let min_ticker_gte = min_ticker_gte.as_deref();
-            let min_ticker_lt = min_ticker_lt.as_deref();
-            let min_ticker_lte = min_ticker_lte.as_deref();
-            let sort = sort.as_deref();
-            let options = options.as_ref();
             let path = "/stocks/filings/vX/form-3".to_string();
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(v) = issuer_cik {
-                query.push(("issuer_cik", v.to_string()));
-            }
-            if let Some(v) = issuer_cik_any_of {
-                query.push(("issuer_cik.any_of", v.to_string()));
-            }
-            if let Some(v) = owner_cik {
-                query.push(("owner_cik", v.to_string()));
-            }
-            if let Some(v) = owner_cik_any_of {
-                query.push(("owner_cik.any_of", v.to_string()));
-            }
-            if let Some(v) = tickers {
-                query.push(("tickers", v.to_string()));
-            }
-            if let Some(v) = tickers_all_of {
-                query.push(("tickers.all_of", v.to_string()));
-            }
-            if let Some(v) = tickers_any_of {
-                query.push(("tickers.any_of", v.to_string()));
-            }
-            if let Some(v) = form_type {
-                query.push(("form_type", v.to_string()));
-            }
-            if let Some(v) = filing_date {
-                query.push(("filing_date", v.to_string()));
-            }
-            if let Some(v) = filing_date_gt {
-                query.push(("filing_date.gt", v.to_string()));
-            }
-            if let Some(v) = filing_date_gte {
-                query.push(("filing_date.gte", v.to_string()));
-            }
-            if let Some(v) = filing_date_lt {
-                query.push(("filing_date.lt", v.to_string()));
-            }
-            if let Some(v) = filing_date_lte {
-                query.push(("filing_date.lte", v.to_string()));
-            }
-            if let Some(v) = max_ticker {
-                query.push(("max_ticker", v.to_string()));
-            }
-            if let Some(v) = max_ticker_any_of {
-                query.push(("max_ticker.any_of", v.to_string()));
-            }
-            if let Some(v) = max_ticker_gt {
-                query.push(("max_ticker.gt", v.to_string()));
-            }
-            if let Some(v) = max_ticker_gte {
-                query.push(("max_ticker.gte", v.to_string()));
-            }
-            if let Some(v) = max_ticker_lt {
-                query.push(("max_ticker.lt", v.to_string()));
-            }
-            if let Some(v) = max_ticker_lte {
-                query.push(("max_ticker.lte", v.to_string()));
-            }
-            if let Some(v) = min_ticker {
-                query.push(("min_ticker", v.to_string()));
-            }
-            if let Some(v) = min_ticker_any_of {
-                query.push(("min_ticker.any_of", v.to_string()));
-            }
-            if let Some(v) = min_ticker_gt {
-                query.push(("min_ticker.gt", v.to_string()));
-            }
-            if let Some(v) = min_ticker_gte {
-                query.push(("min_ticker.gte", v.to_string()));
-            }
-            if let Some(v) = min_ticker_lt {
-                query.push(("min_ticker.lt", v.to_string()));
-            }
-            if let Some(v) = min_ticker_lte {
-                query.push(("min_ticker.lte", v.to_string()));
-            }
-            if let Some(v) = limit {
-                query.push(("limit", v.to_string()));
-            }
-            if let Some(v) = sort {
-                query.push(("sort", v.to_string()));
-            }
-            self.list::<FilingForm3>(&path, Some(&query), options)
+            let query = encode_query(&params);
+            self.list::<FilingForm3>(&path, &query, params.options.as_ref())
         })
     }
 
@@ -4170,152 +2211,9 @@ impl ReferenceApi for Client {
         params: ListStocksFilingsForm4Params,
     ) -> BoxStream<'a, FilingForm4> {
         Box::pin({
-            let ListStocksFilingsForm4Params {
-                issuer_cik,
-                issuer_cik_any_of,
-                owner_cik,
-                owner_cik_any_of,
-                tickers,
-                tickers_all_of,
-                tickers_any_of,
-                form_type,
-                transaction_code,
-                filing_date,
-                filing_date_gt,
-                filing_date_gte,
-                filing_date_lt,
-                filing_date_lte,
-                max_ticker,
-                max_ticker_any_of,
-                max_ticker_gt,
-                max_ticker_gte,
-                max_ticker_lt,
-                max_ticker_lte,
-                min_ticker,
-                min_ticker_any_of,
-                min_ticker_gt,
-                min_ticker_gte,
-                min_ticker_lt,
-                min_ticker_lte,
-                limit,
-                sort,
-                options,
-            } = params;
-            let issuer_cik = issuer_cik.as_deref();
-            let issuer_cik_any_of = issuer_cik_any_of.as_deref();
-            let owner_cik = owner_cik.as_deref();
-            let owner_cik_any_of = owner_cik_any_of.as_deref();
-            let tickers = tickers.as_deref();
-            let tickers_all_of = tickers_all_of.as_deref();
-            let tickers_any_of = tickers_any_of.as_deref();
-            let form_type = form_type.as_deref();
-            let transaction_code = transaction_code.as_deref();
-            let filing_date = filing_date.as_deref();
-            let filing_date_gt = filing_date_gt.as_deref();
-            let filing_date_gte = filing_date_gte.as_deref();
-            let filing_date_lt = filing_date_lt.as_deref();
-            let filing_date_lte = filing_date_lte.as_deref();
-            let max_ticker = max_ticker.as_deref();
-            let max_ticker_any_of = max_ticker_any_of.as_deref();
-            let max_ticker_gt = max_ticker_gt.as_deref();
-            let max_ticker_gte = max_ticker_gte.as_deref();
-            let max_ticker_lt = max_ticker_lt.as_deref();
-            let max_ticker_lte = max_ticker_lte.as_deref();
-            let min_ticker = min_ticker.as_deref();
-            let min_ticker_any_of = min_ticker_any_of.as_deref();
-            let min_ticker_gt = min_ticker_gt.as_deref();
-            let min_ticker_gte = min_ticker_gte.as_deref();
-            let min_ticker_lt = min_ticker_lt.as_deref();
-            let min_ticker_lte = min_ticker_lte.as_deref();
-            let sort = sort.as_deref();
-            let options = options.as_ref();
             let path = "/stocks/filings/vX/form-4".to_string();
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(v) = issuer_cik {
-                query.push(("issuer_cik", v.to_string()));
-            }
-            if let Some(v) = issuer_cik_any_of {
-                query.push(("issuer_cik.any_of", v.to_string()));
-            }
-            if let Some(v) = owner_cik {
-                query.push(("owner_cik", v.to_string()));
-            }
-            if let Some(v) = owner_cik_any_of {
-                query.push(("owner_cik.any_of", v.to_string()));
-            }
-            if let Some(v) = tickers {
-                query.push(("tickers", v.to_string()));
-            }
-            if let Some(v) = tickers_all_of {
-                query.push(("tickers.all_of", v.to_string()));
-            }
-            if let Some(v) = tickers_any_of {
-                query.push(("tickers.any_of", v.to_string()));
-            }
-            if let Some(v) = form_type {
-                query.push(("form_type", v.to_string()));
-            }
-            if let Some(v) = transaction_code {
-                query.push(("transaction_code", v.to_string()));
-            }
-            if let Some(v) = filing_date {
-                query.push(("filing_date", v.to_string()));
-            }
-            if let Some(v) = filing_date_gt {
-                query.push(("filing_date.gt", v.to_string()));
-            }
-            if let Some(v) = filing_date_gte {
-                query.push(("filing_date.gte", v.to_string()));
-            }
-            if let Some(v) = filing_date_lt {
-                query.push(("filing_date.lt", v.to_string()));
-            }
-            if let Some(v) = filing_date_lte {
-                query.push(("filing_date.lte", v.to_string()));
-            }
-            if let Some(v) = max_ticker {
-                query.push(("max_ticker", v.to_string()));
-            }
-            if let Some(v) = max_ticker_any_of {
-                query.push(("max_ticker.any_of", v.to_string()));
-            }
-            if let Some(v) = max_ticker_gt {
-                query.push(("max_ticker.gt", v.to_string()));
-            }
-            if let Some(v) = max_ticker_gte {
-                query.push(("max_ticker.gte", v.to_string()));
-            }
-            if let Some(v) = max_ticker_lt {
-                query.push(("max_ticker.lt", v.to_string()));
-            }
-            if let Some(v) = max_ticker_lte {
-                query.push(("max_ticker.lte", v.to_string()));
-            }
-            if let Some(v) = min_ticker {
-                query.push(("min_ticker", v.to_string()));
-            }
-            if let Some(v) = min_ticker_any_of {
-                query.push(("min_ticker.any_of", v.to_string()));
-            }
-            if let Some(v) = min_ticker_gt {
-                query.push(("min_ticker.gt", v.to_string()));
-            }
-            if let Some(v) = min_ticker_gte {
-                query.push(("min_ticker.gte", v.to_string()));
-            }
-            if let Some(v) = min_ticker_lt {
-                query.push(("min_ticker.lt", v.to_string()));
-            }
-            if let Some(v) = min_ticker_lte {
-                query.push(("min_ticker.lte", v.to_string()));
-            }
-            if let Some(v) = limit {
-                query.push(("limit", v.to_string()));
-            }
-            if let Some(v) = sort {
-                query.push(("sort", v.to_string()));
-            }
-            self.list::<FilingForm4>(&path, Some(&query), options)
+            let query = encode_query(&params);
+            self.list::<FilingForm4>(&path, &query, params.options.as_ref())
         })
     }
 }
@@ -4323,9 +2221,10 @@ impl ReferenceApi for Client {
 // --- Params structs (additive builder API) ---
 
 /// Optional arguments for [`ReferenceApi::get_market_holidays`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct GetMarketHolidaysParams {
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -4343,9 +2242,10 @@ impl GetMarketHolidaysParams {
 }
 
 /// Optional arguments for [`ReferenceApi::get_market_status`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct GetMarketStatusParams {
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -4363,41 +2263,58 @@ impl GetMarketStatusParams {
 }
 
 /// Optional arguments for [`ReferenceApi::list_tickers`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct ListTickersParams {
     /// The `ticker` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub ticker: Option<String>,
     /// The `ticker_lt` argument.
+    #[serde(rename = "ticker.lt", skip_serializing_if = "Option::is_none")]
     pub ticker_lt: Option<String>,
     /// The `ticker_lte` argument.
+    #[serde(rename = "ticker.lte", skip_serializing_if = "Option::is_none")]
     pub ticker_lte: Option<String>,
     /// The `ticker_gt` argument.
+    #[serde(rename = "ticker.gt", skip_serializing_if = "Option::is_none")]
     pub ticker_gt: Option<String>,
     /// The `ticker_gte` argument.
+    #[serde(rename = "ticker.gte", skip_serializing_if = "Option::is_none")]
     pub ticker_gte: Option<String>,
     /// The `type` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub r#type: Option<String>,
     /// The `market` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub market: Option<String>,
     /// The `exchange` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub exchange: Option<String>,
     /// The `cusip` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub cusip: Option<i64>,
     /// The `cik` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub cik: Option<i64>,
     /// The `date` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub date: Option<String>,
     /// The `active` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub active: Option<bool>,
     /// The `search` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub search: Option<String>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `sort` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sort: Option<String>,
     /// The `order` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub order: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -4511,11 +2428,13 @@ impl ListTickersParams {
 }
 
 /// Optional arguments for [`ReferenceApi::get_ticker_details`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct GetTickerDetailsParams {
     /// The `date` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub date: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -4539,11 +2458,13 @@ impl GetTickerDetailsParams {
 }
 
 /// Optional arguments for [`ReferenceApi::get_ticker_events`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct GetTickerEventsParams {
     /// The `types` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub types: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -4567,35 +2488,49 @@ impl GetTickerEventsParams {
 }
 
 /// Optional arguments for [`ReferenceApi::list_ticker_news`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct ListTickerNewsParams {
     /// The `ticker` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub ticker: Option<String>,
     /// The `ticker_lt` argument.
+    #[serde(rename = "ticker.lt", skip_serializing_if = "Option::is_none")]
     pub ticker_lt: Option<String>,
     /// The `ticker_lte` argument.
+    #[serde(rename = "ticker.lte", skip_serializing_if = "Option::is_none")]
     pub ticker_lte: Option<String>,
     /// The `ticker_gt` argument.
+    #[serde(rename = "ticker.gt", skip_serializing_if = "Option::is_none")]
     pub ticker_gt: Option<String>,
     /// The `ticker_gte` argument.
+    #[serde(rename = "ticker.gte", skip_serializing_if = "Option::is_none")]
     pub ticker_gte: Option<String>,
     /// The `published_utc` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub published_utc: Option<String>,
     /// The `published_utc_lt` argument.
+    #[serde(rename = "published_utc.lt", skip_serializing_if = "Option::is_none")]
     pub published_utc_lt: Option<String>,
     /// The `published_utc_lte` argument.
+    #[serde(rename = "published_utc.lte", skip_serializing_if = "Option::is_none")]
     pub published_utc_lte: Option<String>,
     /// The `published_utc_gt` argument.
+    #[serde(rename = "published_utc.gt", skip_serializing_if = "Option::is_none")]
     pub published_utc_gt: Option<String>,
     /// The `published_utc_gte` argument.
+    #[serde(rename = "published_utc.gte", skip_serializing_if = "Option::is_none")]
     pub published_utc_gte: Option<String>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `sort` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sort: Option<String>,
     /// The `order` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub order: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -4691,13 +2626,16 @@ impl ListTickerNewsParams {
 }
 
 /// Optional arguments for [`ReferenceApi::get_ticker_types`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct GetTickerTypesParams {
     /// The `asset_class` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub asset_class: Option<String>,
     /// The `locale` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub locale: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -4727,9 +2665,10 @@ impl GetTickerTypesParams {
 }
 
 /// Optional arguments for [`ReferenceApi::get_related_companies`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct GetRelatedCompaniesParams {
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -4747,37 +2686,52 @@ impl GetRelatedCompaniesParams {
 }
 
 /// Optional arguments for [`ReferenceApi::list_splits`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct ListSplitsParams {
     /// The `ticker` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub ticker: Option<String>,
     /// The `ticker_lt` argument.
+    #[serde(rename = "ticker.lt", skip_serializing_if = "Option::is_none")]
     pub ticker_lt: Option<String>,
     /// The `ticker_lte` argument.
+    #[serde(rename = "ticker.lte", skip_serializing_if = "Option::is_none")]
     pub ticker_lte: Option<String>,
     /// The `ticker_gt` argument.
+    #[serde(rename = "ticker.gt", skip_serializing_if = "Option::is_none")]
     pub ticker_gt: Option<String>,
     /// The `ticker_gte` argument.
+    #[serde(rename = "ticker.gte", skip_serializing_if = "Option::is_none")]
     pub ticker_gte: Option<String>,
     /// The `execution_date` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub execution_date: Option<String>,
     /// The `execution_date_lt` argument.
+    #[serde(rename = "execution_date.lt", skip_serializing_if = "Option::is_none")]
     pub execution_date_lt: Option<String>,
     /// The `execution_date_lte` argument.
+    #[serde(rename = "execution_date.lte", skip_serializing_if = "Option::is_none")]
     pub execution_date_lte: Option<String>,
     /// The `execution_date_gt` argument.
+    #[serde(rename = "execution_date.gt", skip_serializing_if = "Option::is_none")]
     pub execution_date_gt: Option<String>,
     /// The `execution_date_gte` argument.
+    #[serde(rename = "execution_date.gte", skip_serializing_if = "Option::is_none")]
     pub execution_date_gte: Option<String>,
     /// The `reverse_split` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub reverse_split: Option<bool>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `sort` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sort: Option<String>,
     /// The `order` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub order: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -4879,79 +2833,158 @@ impl ListSplitsParams {
 }
 
 /// Optional arguments for [`ReferenceApi::list_dividends`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct ListDividendsParams {
     /// The `ticker` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub ticker: Option<String>,
     /// The `ticker_lt` argument.
+    #[serde(rename = "ticker.lt", skip_serializing_if = "Option::is_none")]
     pub ticker_lt: Option<String>,
     /// The `ticker_lte` argument.
+    #[serde(rename = "ticker.lte", skip_serializing_if = "Option::is_none")]
     pub ticker_lte: Option<String>,
     /// The `ticker_gt` argument.
+    #[serde(rename = "ticker.gt", skip_serializing_if = "Option::is_none")]
     pub ticker_gt: Option<String>,
     /// The `ticker_gte` argument.
+    #[serde(rename = "ticker.gte", skip_serializing_if = "Option::is_none")]
     pub ticker_gte: Option<String>,
     /// The `ex_dividend_date` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub ex_dividend_date: Option<String>,
     /// The `ex_dividend_date_lt` argument.
+    #[serde(
+        rename = "ex_dividend_date.lt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub ex_dividend_date_lt: Option<String>,
     /// The `ex_dividend_date_lte` argument.
+    #[serde(
+        rename = "ex_dividend_date.lte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub ex_dividend_date_lte: Option<String>,
     /// The `ex_dividend_date_gt` argument.
+    #[serde(
+        rename = "ex_dividend_date.gt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub ex_dividend_date_gt: Option<String>,
     /// The `ex_dividend_date_gte` argument.
+    #[serde(
+        rename = "ex_dividend_date.gte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub ex_dividend_date_gte: Option<String>,
     /// The `record_date` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub record_date: Option<String>,
     /// The `record_date_lt` argument.
+    #[serde(rename = "record_date.lt", skip_serializing_if = "Option::is_none")]
     pub record_date_lt: Option<String>,
     /// The `record_date_lte` argument.
+    #[serde(rename = "record_date.lte", skip_serializing_if = "Option::is_none")]
     pub record_date_lte: Option<String>,
     /// The `record_date_gt` argument.
+    #[serde(rename = "record_date.gt", skip_serializing_if = "Option::is_none")]
     pub record_date_gt: Option<String>,
     /// The `record_date_gte` argument.
+    #[serde(rename = "record_date.gte", skip_serializing_if = "Option::is_none")]
     pub record_date_gte: Option<String>,
     /// The `declaration_date` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub declaration_date: Option<String>,
     /// The `declaration_date_lt` argument.
+    #[serde(
+        rename = "declaration_date.lt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub declaration_date_lt: Option<String>,
     /// The `declaration_date_lte` argument.
+    #[serde(
+        rename = "declaration_date.lte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub declaration_date_lte: Option<String>,
     /// The `declaration_date_gt` argument.
+    #[serde(
+        rename = "declaration_date.gt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub declaration_date_gt: Option<String>,
     /// The `declaration_date_gte` argument.
+    #[serde(
+        rename = "declaration_date.gte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub declaration_date_gte: Option<String>,
     /// The `pay_date` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub pay_date: Option<String>,
     /// The `pay_date_lt` argument.
+    #[serde(rename = "pay_date.lt", skip_serializing_if = "Option::is_none")]
     pub pay_date_lt: Option<String>,
     /// The `pay_date_lte` argument.
+    #[serde(rename = "pay_date.lte", skip_serializing_if = "Option::is_none")]
     pub pay_date_lte: Option<String>,
     /// The `pay_date_gt` argument.
+    #[serde(rename = "pay_date.gt", skip_serializing_if = "Option::is_none")]
     pub pay_date_gt: Option<String>,
     /// The `pay_date_gte` argument.
+    #[serde(rename = "pay_date.gte", skip_serializing_if = "Option::is_none")]
     pub pay_date_gte: Option<String>,
     /// The `frequency` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub frequency: Option<i64>,
     /// The `cash_amount` argument.
+    #[serde(
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub cash_amount: Option<f64>,
     /// The `cash_amount_lt` argument.
+    #[serde(
+        rename = "cash_amount.lt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub cash_amount_lt: Option<f64>,
     /// The `cash_amount_lte` argument.
+    #[serde(
+        rename = "cash_amount.lte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub cash_amount_lte: Option<f64>,
     /// The `cash_amount_gt` argument.
+    #[serde(
+        rename = "cash_amount.gt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub cash_amount_gt: Option<f64>,
     /// The `cash_amount_gte` argument.
+    #[serde(
+        rename = "cash_amount.gte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub cash_amount_gte: Option<f64>,
     /// The `dividend_type` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub dividend_type: Option<String>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `sort` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sort: Option<String>,
     /// The `order` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub order: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -5179,23 +3212,31 @@ impl ListDividendsParams {
 }
 
 /// Optional arguments for [`ReferenceApi::list_conditions`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct ListConditionsParams {
     /// The `asset_class` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub asset_class: Option<String>,
     /// The `data_type` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub data_type: Option<String>,
     /// The `id` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<i64>,
     /// The `sip` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sip: Option<String>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `sort` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sort: Option<String>,
     /// The `order` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub order: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -5255,13 +3296,16 @@ impl ListConditionsParams {
 }
 
 /// Optional arguments for [`ReferenceApi::get_exchanges`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct GetExchangesParams {
     /// The `asset_class` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub asset_class: Option<String>,
     /// The `locale` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub locale: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -5291,11 +3335,13 @@ impl GetExchangesParams {
 }
 
 /// Optional arguments for [`ReferenceApi::get_options_contract`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct GetOptionsContractParams {
     /// The `as_of` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub as_of: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -5319,51 +3365,110 @@ impl GetOptionsContractParams {
 }
 
 /// Optional arguments for [`ReferenceApi::list_options_contracts`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct ListOptionsContractsParams {
     /// The `underlying_ticker` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub underlying_ticker: Option<String>,
     /// The `underlying_ticker_lt` argument.
+    #[serde(
+        rename = "underlying_ticker.lt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub underlying_ticker_lt: Option<String>,
     /// The `underlying_ticker_lte` argument.
+    #[serde(
+        rename = "underlying_ticker.lte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub underlying_ticker_lte: Option<String>,
     /// The `underlying_ticker_gt` argument.
+    #[serde(
+        rename = "underlying_ticker.gt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub underlying_ticker_gt: Option<String>,
     /// The `underlying_ticker_gte` argument.
+    #[serde(
+        rename = "underlying_ticker.gte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub underlying_ticker_gte: Option<String>,
     /// The `contract_type` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub contract_type: Option<String>,
     /// The `expiration_date` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub expiration_date: Option<String>,
     /// The `expiration_date_lt` argument.
+    #[serde(rename = "expiration_date.lt", skip_serializing_if = "Option::is_none")]
     pub expiration_date_lt: Option<String>,
     /// The `expiration_date_lte` argument.
+    #[serde(
+        rename = "expiration_date.lte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub expiration_date_lte: Option<String>,
     /// The `expiration_date_gt` argument.
+    #[serde(rename = "expiration_date.gt", skip_serializing_if = "Option::is_none")]
     pub expiration_date_gt: Option<String>,
     /// The `expiration_date_gte` argument.
+    #[serde(
+        rename = "expiration_date.gte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub expiration_date_gte: Option<String>,
     /// The `as_of` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub as_of: Option<String>,
     /// The `strike_price` argument.
+    #[serde(
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub strike_price: Option<f64>,
     /// The `strike_price_lt` argument.
+    #[serde(
+        rename = "strike_price.lt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub strike_price_lt: Option<f64>,
     /// The `strike_price_lte` argument.
+    #[serde(
+        rename = "strike_price.lte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub strike_price_lte: Option<f64>,
     /// The `strike_price_gt` argument.
+    #[serde(
+        rename = "strike_price.gt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub strike_price_gt: Option<f64>,
     /// The `strike_price_gte` argument.
+    #[serde(
+        rename = "strike_price.gte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub strike_price_gte: Option<f64>,
     /// The `expired` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub expired: Option<bool>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `sort` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sort: Option<String>,
     /// The `order` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub order: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -5507,47 +3612,85 @@ impl ListOptionsContractsParams {
 }
 
 /// Optional arguments for [`ReferenceApi::list_short_interest`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct ListShortInterestParams {
     /// The `ticker` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub ticker: Option<String>,
     /// The `days_to_cover` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub days_to_cover: Option<String>,
     /// The `days_to_cover_lt` argument.
+    #[serde(rename = "days_to_cover.lt", skip_serializing_if = "Option::is_none")]
     pub days_to_cover_lt: Option<String>,
     /// The `days_to_cover_lte` argument.
+    #[serde(rename = "days_to_cover.lte", skip_serializing_if = "Option::is_none")]
     pub days_to_cover_lte: Option<String>,
     /// The `days_to_cover_gt` argument.
+    #[serde(rename = "days_to_cover.gt", skip_serializing_if = "Option::is_none")]
     pub days_to_cover_gt: Option<String>,
     /// The `days_to_cover_gte` argument.
+    #[serde(rename = "days_to_cover.gte", skip_serializing_if = "Option::is_none")]
     pub days_to_cover_gte: Option<String>,
     /// The `settlement_date` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub settlement_date: Option<String>,
     /// The `settlement_date_lt` argument.
+    #[serde(rename = "settlement_date.lt", skip_serializing_if = "Option::is_none")]
     pub settlement_date_lt: Option<String>,
     /// The `settlement_date_lte` argument.
+    #[serde(
+        rename = "settlement_date.lte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub settlement_date_lte: Option<String>,
     /// The `settlement_date_gt` argument.
+    #[serde(rename = "settlement_date.gt", skip_serializing_if = "Option::is_none")]
     pub settlement_date_gt: Option<String>,
     /// The `settlement_date_gte` argument.
+    #[serde(
+        rename = "settlement_date.gte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub settlement_date_gte: Option<String>,
     /// The `avg_daily_volume` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub avg_daily_volume: Option<String>,
     /// The `avg_daily_volume_lt` argument.
+    #[serde(
+        rename = "avg_daily_volume.lt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub avg_daily_volume_lt: Option<String>,
     /// The `avg_daily_volume_lte` argument.
+    #[serde(
+        rename = "avg_daily_volume.lte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub avg_daily_volume_lte: Option<String>,
     /// The `avg_daily_volume_gt` argument.
+    #[serde(
+        rename = "avg_daily_volume.gt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub avg_daily_volume_gt: Option<String>,
     /// The `avg_daily_volume_gte` argument.
+    #[serde(
+        rename = "avg_daily_volume.gte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub avg_daily_volume_gte: Option<String>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `sort` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sort: Option<String>,
     /// The `order` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub order: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -5679,47 +3822,79 @@ impl ListShortInterestParams {
 }
 
 /// Optional arguments for [`ReferenceApi::list_short_volume`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct ListShortVolumeParams {
     /// The `ticker` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub ticker: Option<String>,
     /// The `date` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub date: Option<String>,
     /// The `date_lt` argument.
+    #[serde(rename = "date.lt", skip_serializing_if = "Option::is_none")]
     pub date_lt: Option<String>,
     /// The `date_lte` argument.
+    #[serde(rename = "date.lte", skip_serializing_if = "Option::is_none")]
     pub date_lte: Option<String>,
     /// The `date_gt` argument.
+    #[serde(rename = "date.gt", skip_serializing_if = "Option::is_none")]
     pub date_gt: Option<String>,
     /// The `date_gte` argument.
+    #[serde(rename = "date.gte", skip_serializing_if = "Option::is_none")]
     pub date_gte: Option<String>,
     /// The `short_volume_ratio` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub short_volume_ratio: Option<String>,
     /// The `short_volume_ratio_lt` argument.
+    #[serde(
+        rename = "short_volume_ratio.lt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub short_volume_ratio_lt: Option<String>,
     /// The `short_volume_ratio_lte` argument.
+    #[serde(
+        rename = "short_volume_ratio.lte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub short_volume_ratio_lte: Option<String>,
     /// The `short_volume_ratio_gt` argument.
+    #[serde(
+        rename = "short_volume_ratio.gt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub short_volume_ratio_gt: Option<String>,
     /// The `short_volume_ratio_gte` argument.
+    #[serde(
+        rename = "short_volume_ratio.gte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub short_volume_ratio_gte: Option<String>,
     /// The `total_volume` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub total_volume: Option<String>,
     /// The `total_volume_lt` argument.
+    #[serde(rename = "total_volume.lt", skip_serializing_if = "Option::is_none")]
     pub total_volume_lt: Option<String>,
     /// The `total_volume_lte` argument.
+    #[serde(rename = "total_volume.lte", skip_serializing_if = "Option::is_none")]
     pub total_volume_lte: Option<String>,
     /// The `total_volume_gt` argument.
+    #[serde(rename = "total_volume.gt", skip_serializing_if = "Option::is_none")]
     pub total_volume_gt: Option<String>,
     /// The `total_volume_gte` argument.
+    #[serde(rename = "total_volume.gte", skip_serializing_if = "Option::is_none")]
     pub total_volume_gte: Option<String>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `sort` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sort: Option<String>,
     /// The `order` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub order: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -5851,39 +4026,58 @@ impl ListShortVolumeParams {
 }
 
 /// Optional arguments for [`ReferenceApi::list_stocks_splits`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct ListStocksSplitsParams {
     /// The `ticker` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub ticker: Option<String>,
     /// The `ticker_any_of` argument.
+    #[serde(rename = "ticker.any_of", skip_serializing_if = "Option::is_none")]
     pub ticker_any_of: Option<String>,
     /// The `ticker_gt` argument.
+    #[serde(rename = "ticker.gt", skip_serializing_if = "Option::is_none")]
     pub ticker_gt: Option<String>,
     /// The `ticker_gte` argument.
+    #[serde(rename = "ticker.gte", skip_serializing_if = "Option::is_none")]
     pub ticker_gte: Option<String>,
     /// The `ticker_lt` argument.
+    #[serde(rename = "ticker.lt", skip_serializing_if = "Option::is_none")]
     pub ticker_lt: Option<String>,
     /// The `ticker_lte` argument.
+    #[serde(rename = "ticker.lte", skip_serializing_if = "Option::is_none")]
     pub ticker_lte: Option<String>,
     /// The `execution_date` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub execution_date: Option<String>,
     /// The `execution_date_gt` argument.
+    #[serde(rename = "execution_date.gt", skip_serializing_if = "Option::is_none")]
     pub execution_date_gt: Option<String>,
     /// The `execution_date_gte` argument.
+    #[serde(rename = "execution_date.gte", skip_serializing_if = "Option::is_none")]
     pub execution_date_gte: Option<String>,
     /// The `execution_date_lt` argument.
+    #[serde(rename = "execution_date.lt", skip_serializing_if = "Option::is_none")]
     pub execution_date_lt: Option<String>,
     /// The `execution_date_lte` argument.
+    #[serde(rename = "execution_date.lte", skip_serializing_if = "Option::is_none")]
     pub execution_date_lte: Option<String>,
     /// The `adjustment_type` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub adjustment_type: Option<String>,
     /// The `adjustment_type_any_of` argument.
+    #[serde(
+        rename = "adjustment_type.any_of",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub adjustment_type_any_of: Option<String>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `sort` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sort: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -5991,49 +4185,85 @@ impl ListStocksSplitsParams {
 }
 
 /// Optional arguments for [`ReferenceApi::list_stocks_dividends`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct ListStocksDividendsParams {
     /// The `ticker` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub ticker: Option<String>,
     /// The `ticker_any_of` argument.
+    #[serde(rename = "ticker.any_of", skip_serializing_if = "Option::is_none")]
     pub ticker_any_of: Option<String>,
     /// The `ticker_gt` argument.
+    #[serde(rename = "ticker.gt", skip_serializing_if = "Option::is_none")]
     pub ticker_gt: Option<String>,
     /// The `ticker_gte` argument.
+    #[serde(rename = "ticker.gte", skip_serializing_if = "Option::is_none")]
     pub ticker_gte: Option<String>,
     /// The `ticker_lt` argument.
+    #[serde(rename = "ticker.lt", skip_serializing_if = "Option::is_none")]
     pub ticker_lt: Option<String>,
     /// The `ticker_lte` argument.
+    #[serde(rename = "ticker.lte", skip_serializing_if = "Option::is_none")]
     pub ticker_lte: Option<String>,
     /// The `ex_dividend_date` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub ex_dividend_date: Option<String>,
     /// The `ex_dividend_date_gt` argument.
+    #[serde(
+        rename = "ex_dividend_date.gt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub ex_dividend_date_gt: Option<String>,
     /// The `ex_dividend_date_gte` argument.
+    #[serde(
+        rename = "ex_dividend_date.gte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub ex_dividend_date_gte: Option<String>,
     /// The `ex_dividend_date_lt` argument.
+    #[serde(
+        rename = "ex_dividend_date.lt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub ex_dividend_date_lt: Option<String>,
     /// The `ex_dividend_date_lte` argument.
+    #[serde(
+        rename = "ex_dividend_date.lte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub ex_dividend_date_lte: Option<String>,
     /// The `frequency` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub frequency: Option<i64>,
     /// The `frequency_gt` argument.
+    #[serde(rename = "frequency.gt", skip_serializing_if = "Option::is_none")]
     pub frequency_gt: Option<i64>,
     /// The `frequency_gte` argument.
+    #[serde(rename = "frequency.gte", skip_serializing_if = "Option::is_none")]
     pub frequency_gte: Option<i64>,
     /// The `frequency_lt` argument.
+    #[serde(rename = "frequency.lt", skip_serializing_if = "Option::is_none")]
     pub frequency_lt: Option<i64>,
     /// The `frequency_lte` argument.
+    #[serde(rename = "frequency.lte", skip_serializing_if = "Option::is_none")]
     pub frequency_lte: Option<i64>,
     /// The `distribution_type` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub distribution_type: Option<String>,
     /// The `distribution_type_any_of` argument.
+    #[serde(
+        rename = "distribution_type.any_of",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub distribution_type_any_of: Option<String>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `sort` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sort: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -6171,49 +4401,70 @@ impl ListStocksDividendsParams {
 }
 
 /// Optional arguments for [`ReferenceApi::list_stocks_filings_risk_factors`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct ListStocksFilingsRiskFactorsParams {
     /// The `filing_date` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub filing_date: Option<String>,
     /// The `filing_date_any_of` argument.
+    #[serde(rename = "filing_date.any_of", skip_serializing_if = "Option::is_none")]
     pub filing_date_any_of: Option<String>,
     /// The `filing_date_gt` argument.
+    #[serde(rename = "filing_date.gt", skip_serializing_if = "Option::is_none")]
     pub filing_date_gt: Option<String>,
     /// The `filing_date_gte` argument.
+    #[serde(rename = "filing_date.gte", skip_serializing_if = "Option::is_none")]
     pub filing_date_gte: Option<String>,
     /// The `filing_date_lt` argument.
+    #[serde(rename = "filing_date.lt", skip_serializing_if = "Option::is_none")]
     pub filing_date_lt: Option<String>,
     /// The `filing_date_lte` argument.
+    #[serde(rename = "filing_date.lte", skip_serializing_if = "Option::is_none")]
     pub filing_date_lte: Option<String>,
     /// The `ticker` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub ticker: Option<String>,
     /// The `ticker_any_of` argument.
+    #[serde(rename = "ticker.any_of", skip_serializing_if = "Option::is_none")]
     pub ticker_any_of: Option<String>,
     /// The `ticker_gt` argument.
+    #[serde(rename = "ticker.gt", skip_serializing_if = "Option::is_none")]
     pub ticker_gt: Option<String>,
     /// The `ticker_gte` argument.
+    #[serde(rename = "ticker.gte", skip_serializing_if = "Option::is_none")]
     pub ticker_gte: Option<String>,
     /// The `ticker_lt` argument.
+    #[serde(rename = "ticker.lt", skip_serializing_if = "Option::is_none")]
     pub ticker_lt: Option<String>,
     /// The `ticker_lte` argument.
+    #[serde(rename = "ticker.lte", skip_serializing_if = "Option::is_none")]
     pub ticker_lte: Option<String>,
     /// The `cik` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub cik: Option<String>,
     /// The `cik_any_of` argument.
+    #[serde(rename = "cik.any_of", skip_serializing_if = "Option::is_none")]
     pub cik_any_of: Option<String>,
     /// The `cik_gt` argument.
+    #[serde(rename = "cik.gt", skip_serializing_if = "Option::is_none")]
     pub cik_gt: Option<String>,
     /// The `cik_gte` argument.
+    #[serde(rename = "cik.gte", skip_serializing_if = "Option::is_none")]
     pub cik_gte: Option<String>,
     /// The `cik_lt` argument.
+    #[serde(rename = "cik.lt", skip_serializing_if = "Option::is_none")]
     pub cik_lt: Option<String>,
     /// The `cik_lte` argument.
+    #[serde(rename = "cik.lte", skip_serializing_if = "Option::is_none")]
     pub cik_lte: Option<String>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `sort` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sort: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -6351,59 +4602,149 @@ impl ListStocksFilingsRiskFactorsParams {
 }
 
 /// Optional arguments for [`ReferenceApi::list_stocks_taxonomies_risk_factors`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct ListStocksTaxonomiesRiskFactorsParams {
     /// The `taxonomy` argument.
+    #[serde(
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub taxonomy: Option<f64>,
     /// The `taxonomy_gt` argument.
+    #[serde(
+        rename = "taxonomy.gt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub taxonomy_gt: Option<f64>,
     /// The `taxonomy_gte` argument.
+    #[serde(
+        rename = "taxonomy.gte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub taxonomy_gte: Option<f64>,
     /// The `taxonomy_lt` argument.
+    #[serde(
+        rename = "taxonomy.lt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub taxonomy_lt: Option<f64>,
     /// The `taxonomy_lte` argument.
+    #[serde(
+        rename = "taxonomy.lte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub taxonomy_lte: Option<f64>,
     /// The `primary_category` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub primary_category: Option<String>,
     /// The `primary_category_any_of` argument.
+    #[serde(
+        rename = "primary_category.any_of",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub primary_category_any_of: Option<String>,
     /// The `primary_category_gt` argument.
+    #[serde(
+        rename = "primary_category.gt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub primary_category_gt: Option<String>,
     /// The `primary_category_gte` argument.
+    #[serde(
+        rename = "primary_category.gte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub primary_category_gte: Option<String>,
     /// The `primary_category_lt` argument.
+    #[serde(
+        rename = "primary_category.lt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub primary_category_lt: Option<String>,
     /// The `primary_category_lte` argument.
+    #[serde(
+        rename = "primary_category.lte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub primary_category_lte: Option<String>,
     /// The `secondary_category` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub secondary_category: Option<String>,
     /// The `secondary_category_any_of` argument.
+    #[serde(
+        rename = "secondary_category.any_of",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub secondary_category_any_of: Option<String>,
     /// The `secondary_category_gt` argument.
+    #[serde(
+        rename = "secondary_category.gt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub secondary_category_gt: Option<String>,
     /// The `secondary_category_gte` argument.
+    #[serde(
+        rename = "secondary_category.gte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub secondary_category_gte: Option<String>,
     /// The `secondary_category_lt` argument.
+    #[serde(
+        rename = "secondary_category.lt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub secondary_category_lt: Option<String>,
     /// The `secondary_category_lte` argument.
+    #[serde(
+        rename = "secondary_category.lte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub secondary_category_lte: Option<String>,
     /// The `tertiary_category` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub tertiary_category: Option<String>,
     /// The `tertiary_category_any_of` argument.
+    #[serde(
+        rename = "tertiary_category.any_of",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub tertiary_category_any_of: Option<String>,
     /// The `tertiary_category_gt` argument.
+    #[serde(
+        rename = "tertiary_category.gt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub tertiary_category_gt: Option<String>,
     /// The `tertiary_category_gte` argument.
+    #[serde(
+        rename = "tertiary_category.gte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub tertiary_category_gte: Option<String>,
     /// The `tertiary_category_lt` argument.
+    #[serde(
+        rename = "tertiary_category.lt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub tertiary_category_lt: Option<String>,
     /// The `tertiary_category_lte` argument.
+    #[serde(
+        rename = "tertiary_category.lte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub tertiary_category_lte: Option<String>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `sort` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sort: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -6574,37 +4915,52 @@ impl ListStocksTaxonomiesRiskFactorsParams {
 }
 
 /// Optional arguments for [`ReferenceApi::list_stocks_filings_8k_disclosures`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct ListStocksFilings8kDisclosuresParams {
     /// The `cik` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub cik: Option<String>,
     /// The `cik_any_of` argument.
+    #[serde(rename = "cik.any_of", skip_serializing_if = "Option::is_none")]
     pub cik_any_of: Option<String>,
     /// The `tickers` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub tickers: Option<String>,
     /// The `tickers_all_of` argument.
+    #[serde(rename = "tickers.all_of", skip_serializing_if = "Option::is_none")]
     pub tickers_all_of: Option<String>,
     /// The `tickers_any_of` argument.
+    #[serde(rename = "tickers.any_of", skip_serializing_if = "Option::is_none")]
     pub tickers_any_of: Option<String>,
     /// The `filing_date` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub filing_date: Option<String>,
     /// The `filing_date_any_of` argument.
+    #[serde(rename = "filing_date.any_of", skip_serializing_if = "Option::is_none")]
     pub filing_date_any_of: Option<String>,
     /// The `filing_date_gt` argument.
+    #[serde(rename = "filing_date.gt", skip_serializing_if = "Option::is_none")]
     pub filing_date_gt: Option<String>,
     /// The `filing_date_gte` argument.
+    #[serde(rename = "filing_date.gte", skip_serializing_if = "Option::is_none")]
     pub filing_date_gte: Option<String>,
     /// The `filing_date_lt` argument.
+    #[serde(rename = "filing_date.lt", skip_serializing_if = "Option::is_none")]
     pub filing_date_lt: Option<String>,
     /// The `filing_date_lte` argument.
+    #[serde(rename = "filing_date.lte", skip_serializing_if = "Option::is_none")]
     pub filing_date_lte: Option<String>,
     /// The `tertiary_category` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub tertiary_category: Option<String>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `sort` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sort: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -6706,61 +5062,133 @@ impl ListStocksFilings8kDisclosuresParams {
 }
 
 /// Optional arguments for [`ReferenceApi::list_stocks_taxonomies_disclosures`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct ListStocksTaxonomiesDisclosuresParams {
     /// The `taxonomy` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub taxonomy: Option<String>,
     /// The `taxonomy_any_of` argument.
+    #[serde(rename = "taxonomy.any_of", skip_serializing_if = "Option::is_none")]
     pub taxonomy_any_of: Option<String>,
     /// The `taxonomy_gt` argument.
+    #[serde(rename = "taxonomy.gt", skip_serializing_if = "Option::is_none")]
     pub taxonomy_gt: Option<String>,
     /// The `taxonomy_gte` argument.
+    #[serde(rename = "taxonomy.gte", skip_serializing_if = "Option::is_none")]
     pub taxonomy_gte: Option<String>,
     /// The `taxonomy_lt` argument.
+    #[serde(rename = "taxonomy.lt", skip_serializing_if = "Option::is_none")]
     pub taxonomy_lt: Option<String>,
     /// The `taxonomy_lte` argument.
+    #[serde(rename = "taxonomy.lte", skip_serializing_if = "Option::is_none")]
     pub taxonomy_lte: Option<String>,
     /// The `primary_category` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub primary_category: Option<String>,
     /// The `primary_category_any_of` argument.
+    #[serde(
+        rename = "primary_category.any_of",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub primary_category_any_of: Option<String>,
     /// The `primary_category_gt` argument.
+    #[serde(
+        rename = "primary_category.gt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub primary_category_gt: Option<String>,
     /// The `primary_category_gte` argument.
+    #[serde(
+        rename = "primary_category.gte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub primary_category_gte: Option<String>,
     /// The `primary_category_lt` argument.
+    #[serde(
+        rename = "primary_category.lt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub primary_category_lt: Option<String>,
     /// The `primary_category_lte` argument.
+    #[serde(
+        rename = "primary_category.lte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub primary_category_lte: Option<String>,
     /// The `secondary_category` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub secondary_category: Option<String>,
     /// The `secondary_category_any_of` argument.
+    #[serde(
+        rename = "secondary_category.any_of",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub secondary_category_any_of: Option<String>,
     /// The `secondary_category_gt` argument.
+    #[serde(
+        rename = "secondary_category.gt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub secondary_category_gt: Option<String>,
     /// The `secondary_category_gte` argument.
+    #[serde(
+        rename = "secondary_category.gte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub secondary_category_gte: Option<String>,
     /// The `secondary_category_lt` argument.
+    #[serde(
+        rename = "secondary_category.lt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub secondary_category_lt: Option<String>,
     /// The `secondary_category_lte` argument.
+    #[serde(
+        rename = "secondary_category.lte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub secondary_category_lte: Option<String>,
     /// The `tertiary_category` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub tertiary_category: Option<String>,
     /// The `tertiary_category_any_of` argument.
+    #[serde(
+        rename = "tertiary_category.any_of",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub tertiary_category_any_of: Option<String>,
     /// The `tertiary_category_gt` argument.
+    #[serde(
+        rename = "tertiary_category.gt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub tertiary_category_gt: Option<String>,
     /// The `tertiary_category_gte` argument.
+    #[serde(
+        rename = "tertiary_category.gte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub tertiary_category_gte: Option<String>,
     /// The `tertiary_category_lt` argument.
+    #[serde(
+        rename = "tertiary_category.lt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub tertiary_category_lt: Option<String>,
     /// The `tertiary_category_lte` argument.
+    #[serde(
+        rename = "tertiary_category.lte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub tertiary_category_lte: Option<String>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `sort` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sort: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -6937,61 +5365,88 @@ impl ListStocksTaxonomiesDisclosuresParams {
 }
 
 /// Optional arguments for [`ReferenceApi::list_stocks_filings_10k_sections`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct ListStocksFilings10kSectionsParams {
     /// The `cik` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub cik: Option<String>,
     /// The `cik_any_of` argument.
+    #[serde(rename = "cik.any_of", skip_serializing_if = "Option::is_none")]
     pub cik_any_of: Option<String>,
     /// The `cik_gt` argument.
+    #[serde(rename = "cik.gt", skip_serializing_if = "Option::is_none")]
     pub cik_gt: Option<String>,
     /// The `cik_gte` argument.
+    #[serde(rename = "cik.gte", skip_serializing_if = "Option::is_none")]
     pub cik_gte: Option<String>,
     /// The `cik_lt` argument.
+    #[serde(rename = "cik.lt", skip_serializing_if = "Option::is_none")]
     pub cik_lt: Option<String>,
     /// The `cik_lte` argument.
+    #[serde(rename = "cik.lte", skip_serializing_if = "Option::is_none")]
     pub cik_lte: Option<String>,
     /// The `ticker` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub ticker: Option<String>,
     /// The `ticker_any_of` argument.
+    #[serde(rename = "ticker.any_of", skip_serializing_if = "Option::is_none")]
     pub ticker_any_of: Option<String>,
     /// The `ticker_gt` argument.
+    #[serde(rename = "ticker.gt", skip_serializing_if = "Option::is_none")]
     pub ticker_gt: Option<String>,
     /// The `ticker_gte` argument.
+    #[serde(rename = "ticker.gte", skip_serializing_if = "Option::is_none")]
     pub ticker_gte: Option<String>,
     /// The `ticker_lt` argument.
+    #[serde(rename = "ticker.lt", skip_serializing_if = "Option::is_none")]
     pub ticker_lt: Option<String>,
     /// The `ticker_lte` argument.
+    #[serde(rename = "ticker.lte", skip_serializing_if = "Option::is_none")]
     pub ticker_lte: Option<String>,
     /// The `section` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub section: Option<String>,
     /// The `section_any_of` argument.
+    #[serde(rename = "section.any_of", skip_serializing_if = "Option::is_none")]
     pub section_any_of: Option<String>,
     /// The `filing_date` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub filing_date: Option<String>,
     /// The `filing_date_gt` argument.
+    #[serde(rename = "filing_date.gt", skip_serializing_if = "Option::is_none")]
     pub filing_date_gt: Option<String>,
     /// The `filing_date_gte` argument.
+    #[serde(rename = "filing_date.gte", skip_serializing_if = "Option::is_none")]
     pub filing_date_gte: Option<String>,
     /// The `filing_date_lt` argument.
+    #[serde(rename = "filing_date.lt", skip_serializing_if = "Option::is_none")]
     pub filing_date_lt: Option<String>,
     /// The `filing_date_lte` argument.
+    #[serde(rename = "filing_date.lte", skip_serializing_if = "Option::is_none")]
     pub filing_date_lte: Option<String>,
     /// The `period_end` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub period_end: Option<String>,
     /// The `period_end_gt` argument.
+    #[serde(rename = "period_end.gt", skip_serializing_if = "Option::is_none")]
     pub period_end_gt: Option<String>,
     /// The `period_end_gte` argument.
+    #[serde(rename = "period_end.gte", skip_serializing_if = "Option::is_none")]
     pub period_end_gte: Option<String>,
     /// The `period_end_lt` argument.
+    #[serde(rename = "period_end.lt", skip_serializing_if = "Option::is_none")]
     pub period_end_lt: Option<String>,
     /// The `period_end_lte` argument.
+    #[serde(rename = "period_end.lte", skip_serializing_if = "Option::is_none")]
     pub period_end_lte: Option<String>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `sort` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sort: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -7165,59 +5620,85 @@ impl ListStocksFilings10kSectionsParams {
 }
 
 /// Optional arguments for [`ReferenceApi::list_stocks_filings_8k_text`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct ListStocksFilings8kTextParams {
     /// The `cik` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub cik: Option<String>,
     /// The `cik_any_of` argument.
+    #[serde(rename = "cik.any_of", skip_serializing_if = "Option::is_none")]
     pub cik_any_of: Option<String>,
     /// The `cik_gt` argument.
+    #[serde(rename = "cik.gt", skip_serializing_if = "Option::is_none")]
     pub cik_gt: Option<String>,
     /// The `cik_gte` argument.
+    #[serde(rename = "cik.gte", skip_serializing_if = "Option::is_none")]
     pub cik_gte: Option<String>,
     /// The `cik_lt` argument.
+    #[serde(rename = "cik.lt", skip_serializing_if = "Option::is_none")]
     pub cik_lt: Option<String>,
     /// The `cik_lte` argument.
+    #[serde(rename = "cik.lte", skip_serializing_if = "Option::is_none")]
     pub cik_lte: Option<String>,
     /// The `ticker` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub ticker: Option<String>,
     /// The `ticker_any_of` argument.
+    #[serde(rename = "ticker.any_of", skip_serializing_if = "Option::is_none")]
     pub ticker_any_of: Option<String>,
     /// The `ticker_gt` argument.
+    #[serde(rename = "ticker.gt", skip_serializing_if = "Option::is_none")]
     pub ticker_gt: Option<String>,
     /// The `ticker_gte` argument.
+    #[serde(rename = "ticker.gte", skip_serializing_if = "Option::is_none")]
     pub ticker_gte: Option<String>,
     /// The `ticker_lt` argument.
+    #[serde(rename = "ticker.lt", skip_serializing_if = "Option::is_none")]
     pub ticker_lt: Option<String>,
     /// The `ticker_lte` argument.
+    #[serde(rename = "ticker.lte", skip_serializing_if = "Option::is_none")]
     pub ticker_lte: Option<String>,
     /// The `form_type` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub form_type: Option<String>,
     /// The `form_type_any_of` argument.
+    #[serde(rename = "form_type.any_of", skip_serializing_if = "Option::is_none")]
     pub form_type_any_of: Option<String>,
     /// The `form_type_gt` argument.
+    #[serde(rename = "form_type.gt", skip_serializing_if = "Option::is_none")]
     pub form_type_gt: Option<String>,
     /// The `form_type_gte` argument.
+    #[serde(rename = "form_type.gte", skip_serializing_if = "Option::is_none")]
     pub form_type_gte: Option<String>,
     /// The `form_type_lt` argument.
+    #[serde(rename = "form_type.lt", skip_serializing_if = "Option::is_none")]
     pub form_type_lt: Option<String>,
     /// The `form_type_lte` argument.
+    #[serde(rename = "form_type.lte", skip_serializing_if = "Option::is_none")]
     pub form_type_lte: Option<String>,
     /// The `filing_date` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub filing_date: Option<String>,
     /// The `filing_date_gt` argument.
+    #[serde(rename = "filing_date.gt", skip_serializing_if = "Option::is_none")]
     pub filing_date_gt: Option<String>,
     /// The `filing_date_gte` argument.
+    #[serde(rename = "filing_date.gte", skip_serializing_if = "Option::is_none")]
     pub filing_date_gte: Option<String>,
     /// The `filing_date_lt` argument.
+    #[serde(rename = "filing_date.lt", skip_serializing_if = "Option::is_none")]
     pub filing_date_lt: Option<String>,
     /// The `filing_date_lte` argument.
+    #[serde(rename = "filing_date.lte", skip_serializing_if = "Option::is_none")]
     pub filing_date_lte: Option<String>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `sort` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sort: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -7385,59 +5866,85 @@ impl ListStocksFilings8kTextParams {
 }
 
 /// Optional arguments for [`ReferenceApi::list_stocks_filings_index`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct ListStocksFilingsIndexParams {
     /// The `cik` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub cik: Option<String>,
     /// The `cik_any_of` argument.
+    #[serde(rename = "cik.any_of", skip_serializing_if = "Option::is_none")]
     pub cik_any_of: Option<String>,
     /// The `cik_gt` argument.
+    #[serde(rename = "cik.gt", skip_serializing_if = "Option::is_none")]
     pub cik_gt: Option<String>,
     /// The `cik_gte` argument.
+    #[serde(rename = "cik.gte", skip_serializing_if = "Option::is_none")]
     pub cik_gte: Option<String>,
     /// The `cik_lt` argument.
+    #[serde(rename = "cik.lt", skip_serializing_if = "Option::is_none")]
     pub cik_lt: Option<String>,
     /// The `cik_lte` argument.
+    #[serde(rename = "cik.lte", skip_serializing_if = "Option::is_none")]
     pub cik_lte: Option<String>,
     /// The `ticker` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub ticker: Option<String>,
     /// The `ticker_any_of` argument.
+    #[serde(rename = "ticker.any_of", skip_serializing_if = "Option::is_none")]
     pub ticker_any_of: Option<String>,
     /// The `ticker_gt` argument.
+    #[serde(rename = "ticker.gt", skip_serializing_if = "Option::is_none")]
     pub ticker_gt: Option<String>,
     /// The `ticker_gte` argument.
+    #[serde(rename = "ticker.gte", skip_serializing_if = "Option::is_none")]
     pub ticker_gte: Option<String>,
     /// The `ticker_lt` argument.
+    #[serde(rename = "ticker.lt", skip_serializing_if = "Option::is_none")]
     pub ticker_lt: Option<String>,
     /// The `ticker_lte` argument.
+    #[serde(rename = "ticker.lte", skip_serializing_if = "Option::is_none")]
     pub ticker_lte: Option<String>,
     /// The `form_type` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub form_type: Option<String>,
     /// The `form_type_any_of` argument.
+    #[serde(rename = "form_type.any_of", skip_serializing_if = "Option::is_none")]
     pub form_type_any_of: Option<String>,
     /// The `form_type_gt` argument.
+    #[serde(rename = "form_type.gt", skip_serializing_if = "Option::is_none")]
     pub form_type_gt: Option<String>,
     /// The `form_type_gte` argument.
+    #[serde(rename = "form_type.gte", skip_serializing_if = "Option::is_none")]
     pub form_type_gte: Option<String>,
     /// The `form_type_lt` argument.
+    #[serde(rename = "form_type.lt", skip_serializing_if = "Option::is_none")]
     pub form_type_lt: Option<String>,
     /// The `form_type_lte` argument.
+    #[serde(rename = "form_type.lte", skip_serializing_if = "Option::is_none")]
     pub form_type_lte: Option<String>,
     /// The `filing_date` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub filing_date: Option<String>,
     /// The `filing_date_gt` argument.
+    #[serde(rename = "filing_date.gt", skip_serializing_if = "Option::is_none")]
     pub filing_date_gt: Option<String>,
     /// The `filing_date_gte` argument.
+    #[serde(rename = "filing_date.gte", skip_serializing_if = "Option::is_none")]
     pub filing_date_gte: Option<String>,
     /// The `filing_date_lt` argument.
+    #[serde(rename = "filing_date.lt", skip_serializing_if = "Option::is_none")]
     pub filing_date_lt: Option<String>,
     /// The `filing_date_lte` argument.
+    #[serde(rename = "filing_date.lte", skip_serializing_if = "Option::is_none")]
     pub filing_date_lte: Option<String>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `sort` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sort: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -7605,27 +6112,37 @@ impl ListStocksFilingsIndexParams {
 }
 
 /// Optional arguments for [`ReferenceApi::list_stocks_filings_13f`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct ListStocksFilings13fParams {
     /// The `filer_cik` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub filer_cik: Option<String>,
     /// The `filer_cik_any_of` argument.
+    #[serde(rename = "filer_cik.any_of", skip_serializing_if = "Option::is_none")]
     pub filer_cik_any_of: Option<String>,
     /// The `filing_date` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub filing_date: Option<String>,
     /// The `filing_date_gt` argument.
+    #[serde(rename = "filing_date.gt", skip_serializing_if = "Option::is_none")]
     pub filing_date_gt: Option<String>,
     /// The `filing_date_gte` argument.
+    #[serde(rename = "filing_date.gte", skip_serializing_if = "Option::is_none")]
     pub filing_date_gte: Option<String>,
     /// The `filing_date_lt` argument.
+    #[serde(rename = "filing_date.lt", skip_serializing_if = "Option::is_none")]
     pub filing_date_lt: Option<String>,
     /// The `filing_date_lte` argument.
+    #[serde(rename = "filing_date.lte", skip_serializing_if = "Option::is_none")]
     pub filing_date_lte: Option<String>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `sort` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sort: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -7697,63 +6214,91 @@ impl ListStocksFilings13fParams {
 }
 
 /// Optional arguments for [`ReferenceApi::list_stocks_filings_form_3`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct ListStocksFilingsForm3Params {
     /// The `issuer_cik` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub issuer_cik: Option<String>,
     /// The `issuer_cik_any_of` argument.
+    #[serde(rename = "issuer_cik.any_of", skip_serializing_if = "Option::is_none")]
     pub issuer_cik_any_of: Option<String>,
     /// The `owner_cik` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub owner_cik: Option<String>,
     /// The `owner_cik_any_of` argument.
+    #[serde(rename = "owner_cik.any_of", skip_serializing_if = "Option::is_none")]
     pub owner_cik_any_of: Option<String>,
     /// The `tickers` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub tickers: Option<String>,
     /// The `tickers_all_of` argument.
+    #[serde(rename = "tickers.all_of", skip_serializing_if = "Option::is_none")]
     pub tickers_all_of: Option<String>,
     /// The `tickers_any_of` argument.
+    #[serde(rename = "tickers.any_of", skip_serializing_if = "Option::is_none")]
     pub tickers_any_of: Option<String>,
     /// The `form_type` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub form_type: Option<String>,
     /// The `filing_date` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub filing_date: Option<String>,
     /// The `filing_date_gt` argument.
+    #[serde(rename = "filing_date.gt", skip_serializing_if = "Option::is_none")]
     pub filing_date_gt: Option<String>,
     /// The `filing_date_gte` argument.
+    #[serde(rename = "filing_date.gte", skip_serializing_if = "Option::is_none")]
     pub filing_date_gte: Option<String>,
     /// The `filing_date_lt` argument.
+    #[serde(rename = "filing_date.lt", skip_serializing_if = "Option::is_none")]
     pub filing_date_lt: Option<String>,
     /// The `filing_date_lte` argument.
+    #[serde(rename = "filing_date.lte", skip_serializing_if = "Option::is_none")]
     pub filing_date_lte: Option<String>,
     /// The `max_ticker` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub max_ticker: Option<String>,
     /// The `max_ticker_any_of` argument.
+    #[serde(rename = "max_ticker.any_of", skip_serializing_if = "Option::is_none")]
     pub max_ticker_any_of: Option<String>,
     /// The `max_ticker_gt` argument.
+    #[serde(rename = "max_ticker.gt", skip_serializing_if = "Option::is_none")]
     pub max_ticker_gt: Option<String>,
     /// The `max_ticker_gte` argument.
+    #[serde(rename = "max_ticker.gte", skip_serializing_if = "Option::is_none")]
     pub max_ticker_gte: Option<String>,
     /// The `max_ticker_lt` argument.
+    #[serde(rename = "max_ticker.lt", skip_serializing_if = "Option::is_none")]
     pub max_ticker_lt: Option<String>,
     /// The `max_ticker_lte` argument.
+    #[serde(rename = "max_ticker.lte", skip_serializing_if = "Option::is_none")]
     pub max_ticker_lte: Option<String>,
     /// The `min_ticker` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub min_ticker: Option<String>,
     /// The `min_ticker_any_of` argument.
+    #[serde(rename = "min_ticker.any_of", skip_serializing_if = "Option::is_none")]
     pub min_ticker_any_of: Option<String>,
     /// The `min_ticker_gt` argument.
+    #[serde(rename = "min_ticker.gt", skip_serializing_if = "Option::is_none")]
     pub min_ticker_gt: Option<String>,
     /// The `min_ticker_gte` argument.
+    #[serde(rename = "min_ticker.gte", skip_serializing_if = "Option::is_none")]
     pub min_ticker_gte: Option<String>,
     /// The `min_ticker_lt` argument.
+    #[serde(rename = "min_ticker.lt", skip_serializing_if = "Option::is_none")]
     pub min_ticker_lt: Option<String>,
     /// The `min_ticker_lte` argument.
+    #[serde(rename = "min_ticker.lte", skip_serializing_if = "Option::is_none")]
     pub min_ticker_lte: Option<String>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `sort` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sort: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -7933,65 +6478,94 @@ impl ListStocksFilingsForm3Params {
 }
 
 /// Optional arguments for [`ReferenceApi::list_stocks_filings_form_4`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct ListStocksFilingsForm4Params {
     /// The `issuer_cik` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub issuer_cik: Option<String>,
     /// The `issuer_cik_any_of` argument.
+    #[serde(rename = "issuer_cik.any_of", skip_serializing_if = "Option::is_none")]
     pub issuer_cik_any_of: Option<String>,
     /// The `owner_cik` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub owner_cik: Option<String>,
     /// The `owner_cik_any_of` argument.
+    #[serde(rename = "owner_cik.any_of", skip_serializing_if = "Option::is_none")]
     pub owner_cik_any_of: Option<String>,
     /// The `tickers` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub tickers: Option<String>,
     /// The `tickers_all_of` argument.
+    #[serde(rename = "tickers.all_of", skip_serializing_if = "Option::is_none")]
     pub tickers_all_of: Option<String>,
     /// The `tickers_any_of` argument.
+    #[serde(rename = "tickers.any_of", skip_serializing_if = "Option::is_none")]
     pub tickers_any_of: Option<String>,
     /// The `form_type` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub form_type: Option<String>,
     /// The `transaction_code` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub transaction_code: Option<String>,
     /// The `filing_date` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub filing_date: Option<String>,
     /// The `filing_date_gt` argument.
+    #[serde(rename = "filing_date.gt", skip_serializing_if = "Option::is_none")]
     pub filing_date_gt: Option<String>,
     /// The `filing_date_gte` argument.
+    #[serde(rename = "filing_date.gte", skip_serializing_if = "Option::is_none")]
     pub filing_date_gte: Option<String>,
     /// The `filing_date_lt` argument.
+    #[serde(rename = "filing_date.lt", skip_serializing_if = "Option::is_none")]
     pub filing_date_lt: Option<String>,
     /// The `filing_date_lte` argument.
+    #[serde(rename = "filing_date.lte", skip_serializing_if = "Option::is_none")]
     pub filing_date_lte: Option<String>,
     /// The `max_ticker` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub max_ticker: Option<String>,
     /// The `max_ticker_any_of` argument.
+    #[serde(rename = "max_ticker.any_of", skip_serializing_if = "Option::is_none")]
     pub max_ticker_any_of: Option<String>,
     /// The `max_ticker_gt` argument.
+    #[serde(rename = "max_ticker.gt", skip_serializing_if = "Option::is_none")]
     pub max_ticker_gt: Option<String>,
     /// The `max_ticker_gte` argument.
+    #[serde(rename = "max_ticker.gte", skip_serializing_if = "Option::is_none")]
     pub max_ticker_gte: Option<String>,
     /// The `max_ticker_lt` argument.
+    #[serde(rename = "max_ticker.lt", skip_serializing_if = "Option::is_none")]
     pub max_ticker_lt: Option<String>,
     /// The `max_ticker_lte` argument.
+    #[serde(rename = "max_ticker.lte", skip_serializing_if = "Option::is_none")]
     pub max_ticker_lte: Option<String>,
     /// The `min_ticker` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub min_ticker: Option<String>,
     /// The `min_ticker_any_of` argument.
+    #[serde(rename = "min_ticker.any_of", skip_serializing_if = "Option::is_none")]
     pub min_ticker_any_of: Option<String>,
     /// The `min_ticker_gt` argument.
+    #[serde(rename = "min_ticker.gt", skip_serializing_if = "Option::is_none")]
     pub min_ticker_gt: Option<String>,
     /// The `min_ticker_gte` argument.
+    #[serde(rename = "min_ticker.gte", skip_serializing_if = "Option::is_none")]
     pub min_ticker_gte: Option<String>,
     /// The `min_ticker_lt` argument.
+    #[serde(rename = "min_ticker.lt", skip_serializing_if = "Option::is_none")]
     pub min_ticker_lt: Option<String>,
     /// The `min_ticker_lte` argument.
+    #[serde(rename = "min_ticker.lte", skip_serializing_if = "Option::is_none")]
     pub min_ticker_lte: Option<String>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `sort` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sort: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 

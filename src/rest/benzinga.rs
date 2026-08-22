@@ -1,4 +1,4 @@
-use super::BoxStream;
+use super::{encode_query, BoxStream};
 use crate::client::{Client, RequestOptions};
 use crate::models::{
     BenzingaAnalyst, BenzingaAnalystInsight, BenzingaBullsBearsSay, BenzingaConsensusRating,
@@ -564,232 +564,9 @@ impl BenzingaApi for Client {
         params: ListBenzingaAnalystInsightsParams,
     ) -> BoxStream<'a, BenzingaAnalystInsight> {
         Box::pin({
-            let ListBenzingaAnalystInsightsParams {
-                date,
-                date_any_of,
-                date_gt,
-                date_gte,
-                date_lt,
-                date_lte,
-                ticker,
-                ticker_any_of,
-                ticker_gt,
-                ticker_gte,
-                ticker_lt,
-                ticker_lte,
-                last_updated,
-                last_updated_any_of,
-                last_updated_gt,
-                last_updated_gte,
-                last_updated_lt,
-                last_updated_lte,
-                firm,
-                firm_any_of,
-                firm_gt,
-                firm_gte,
-                firm_lt,
-                firm_lte,
-                rating_action,
-                rating_action_any_of,
-                rating_action_gt,
-                rating_action_gte,
-                rating_action_lt,
-                rating_action_lte,
-                benzinga_firm_id,
-                benzinga_firm_id_any_of,
-                benzinga_firm_id_gt,
-                benzinga_firm_id_gte,
-                benzinga_firm_id_lt,
-                benzinga_firm_id_lte,
-                benzinga_rating_id,
-                benzinga_rating_id_any_of,
-                benzinga_rating_id_gt,
-                benzinga_rating_id_gte,
-                benzinga_rating_id_lt,
-                benzinga_rating_id_lte,
-                limit,
-                sort,
-                options,
-            } = params;
-            let date = date.as_deref();
-            let date_any_of = date_any_of.as_deref();
-            let date_gt = date_gt.as_deref();
-            let date_gte = date_gte.as_deref();
-            let date_lt = date_lt.as_deref();
-            let date_lte = date_lte.as_deref();
-            let ticker = ticker.as_deref();
-            let ticker_any_of = ticker_any_of.as_deref();
-            let ticker_gt = ticker_gt.as_deref();
-            let ticker_gte = ticker_gte.as_deref();
-            let ticker_lt = ticker_lt.as_deref();
-            let ticker_lte = ticker_lte.as_deref();
-            let last_updated = last_updated.as_deref();
-            let last_updated_any_of = last_updated_any_of.as_deref();
-            let last_updated_gt = last_updated_gt.as_deref();
-            let last_updated_gte = last_updated_gte.as_deref();
-            let last_updated_lt = last_updated_lt.as_deref();
-            let last_updated_lte = last_updated_lte.as_deref();
-            let firm = firm.as_deref();
-            let firm_any_of = firm_any_of.as_deref();
-            let firm_gt = firm_gt.as_deref();
-            let firm_gte = firm_gte.as_deref();
-            let firm_lt = firm_lt.as_deref();
-            let firm_lte = firm_lte.as_deref();
-            let rating_action = rating_action.as_deref();
-            let rating_action_any_of = rating_action_any_of.as_deref();
-            let rating_action_gt = rating_action_gt.as_deref();
-            let rating_action_gte = rating_action_gte.as_deref();
-            let rating_action_lt = rating_action_lt.as_deref();
-            let rating_action_lte = rating_action_lte.as_deref();
-            let benzinga_firm_id = benzinga_firm_id.as_deref();
-            let benzinga_firm_id_any_of = benzinga_firm_id_any_of.as_deref();
-            let benzinga_firm_id_gt = benzinga_firm_id_gt.as_deref();
-            let benzinga_firm_id_gte = benzinga_firm_id_gte.as_deref();
-            let benzinga_firm_id_lt = benzinga_firm_id_lt.as_deref();
-            let benzinga_firm_id_lte = benzinga_firm_id_lte.as_deref();
-            let benzinga_rating_id = benzinga_rating_id.as_deref();
-            let benzinga_rating_id_any_of = benzinga_rating_id_any_of.as_deref();
-            let benzinga_rating_id_gt = benzinga_rating_id_gt.as_deref();
-            let benzinga_rating_id_gte = benzinga_rating_id_gte.as_deref();
-            let benzinga_rating_id_lt = benzinga_rating_id_lt.as_deref();
-            let benzinga_rating_id_lte = benzinga_rating_id_lte.as_deref();
-            let sort = sort.as_deref();
-            let options = options.as_ref();
             let path = "/benzinga/v1/analyst-insights";
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(v) = date {
-                query.push(("date", v.to_string()));
-            }
-            if let Some(v) = date_any_of {
-                query.push(("date.any_of", v.to_string()));
-            }
-            if let Some(v) = date_gt {
-                query.push(("date.gt", v.to_string()));
-            }
-            if let Some(v) = date_gte {
-                query.push(("date.gte", v.to_string()));
-            }
-            if let Some(v) = date_lt {
-                query.push(("date.lt", v.to_string()));
-            }
-            if let Some(v) = date_lte {
-                query.push(("date.lte", v.to_string()));
-            }
-            if let Some(v) = ticker {
-                query.push(("ticker", v.to_string()));
-            }
-            if let Some(v) = ticker_any_of {
-                query.push(("ticker.any_of", v.to_string()));
-            }
-            if let Some(v) = ticker_gt {
-                query.push(("ticker.gt", v.to_string()));
-            }
-            if let Some(v) = ticker_gte {
-                query.push(("ticker.gte", v.to_string()));
-            }
-            if let Some(v) = ticker_lt {
-                query.push(("ticker.lt", v.to_string()));
-            }
-            if let Some(v) = ticker_lte {
-                query.push(("ticker.lte", v.to_string()));
-            }
-            if let Some(v) = last_updated {
-                query.push(("last_updated", v.to_string()));
-            }
-            if let Some(v) = last_updated_any_of {
-                query.push(("last_updated.any_of", v.to_string()));
-            }
-            if let Some(v) = last_updated_gt {
-                query.push(("last_updated.gt", v.to_string()));
-            }
-            if let Some(v) = last_updated_gte {
-                query.push(("last_updated.gte", v.to_string()));
-            }
-            if let Some(v) = last_updated_lt {
-                query.push(("last_updated.lt", v.to_string()));
-            }
-            if let Some(v) = last_updated_lte {
-                query.push(("last_updated.lte", v.to_string()));
-            }
-            if let Some(v) = firm {
-                query.push(("firm", v.to_string()));
-            }
-            if let Some(v) = firm_any_of {
-                query.push(("firm.any_of", v.to_string()));
-            }
-            if let Some(v) = firm_gt {
-                query.push(("firm.gt", v.to_string()));
-            }
-            if let Some(v) = firm_gte {
-                query.push(("firm.gte", v.to_string()));
-            }
-            if let Some(v) = firm_lt {
-                query.push(("firm.lt", v.to_string()));
-            }
-            if let Some(v) = firm_lte {
-                query.push(("firm.lte", v.to_string()));
-            }
-            if let Some(v) = rating_action {
-                query.push(("rating_action", v.to_string()));
-            }
-            if let Some(v) = rating_action_any_of {
-                query.push(("rating_action.any_of", v.to_string()));
-            }
-            if let Some(v) = rating_action_gt {
-                query.push(("rating_action.gt", v.to_string()));
-            }
-            if let Some(v) = rating_action_gte {
-                query.push(("rating_action.gte", v.to_string()));
-            }
-            if let Some(v) = rating_action_lt {
-                query.push(("rating_action.lt", v.to_string()));
-            }
-            if let Some(v) = rating_action_lte {
-                query.push(("rating_action.lte", v.to_string()));
-            }
-            if let Some(v) = benzinga_firm_id {
-                query.push(("benzinga_firm_id", v.to_string()));
-            }
-            if let Some(v) = benzinga_firm_id_any_of {
-                query.push(("benzinga_firm_id.any_of", v.to_string()));
-            }
-            if let Some(v) = benzinga_firm_id_gt {
-                query.push(("benzinga_firm_id.gt", v.to_string()));
-            }
-            if let Some(v) = benzinga_firm_id_gte {
-                query.push(("benzinga_firm_id.gte", v.to_string()));
-            }
-            if let Some(v) = benzinga_firm_id_lt {
-                query.push(("benzinga_firm_id.lt", v.to_string()));
-            }
-            if let Some(v) = benzinga_firm_id_lte {
-                query.push(("benzinga_firm_id.lte", v.to_string()));
-            }
-            if let Some(v) = benzinga_rating_id {
-                query.push(("benzinga_rating_id", v.to_string()));
-            }
-            if let Some(v) = benzinga_rating_id_any_of {
-                query.push(("benzinga_rating_id.any_of", v.to_string()));
-            }
-            if let Some(v) = benzinga_rating_id_gt {
-                query.push(("benzinga_rating_id.gt", v.to_string()));
-            }
-            if let Some(v) = benzinga_rating_id_gte {
-                query.push(("benzinga_rating_id.gte", v.to_string()));
-            }
-            if let Some(v) = benzinga_rating_id_lt {
-                query.push(("benzinga_rating_id.lt", v.to_string()));
-            }
-            if let Some(v) = benzinga_rating_id_lte {
-                query.push(("benzinga_rating_id.lte", v.to_string()));
-            }
-            if let Some(v) = limit {
-                query.push(("limit", v.to_string()));
-            }
-            if let Some(v) = sort {
-                query.push(("sort", v.to_string()));
-            }
-            self.list::<BenzingaAnalystInsight>(path, Some(&query), options)
+            let query = encode_query(&params);
+            self.list::<BenzingaAnalystInsight>(path, &query, params.options.as_ref())
         })
     }
 
@@ -859,142 +636,9 @@ impl BenzingaApi for Client {
         params: ListBenzingaAnalystsParams,
     ) -> BoxStream<'a, BenzingaAnalyst> {
         Box::pin({
-            let ListBenzingaAnalystsParams {
-                benzinga_id,
-                benzinga_id_any_of,
-                benzinga_id_gt,
-                benzinga_id_gte,
-                benzinga_id_lt,
-                benzinga_id_lte,
-                benzinga_firm_id,
-                benzinga_firm_id_any_of,
-                benzinga_firm_id_gt,
-                benzinga_firm_id_gte,
-                benzinga_firm_id_lt,
-                benzinga_firm_id_lte,
-                firm_name,
-                firm_name_any_of,
-                firm_name_gt,
-                firm_name_gte,
-                firm_name_lt,
-                firm_name_lte,
-                full_name,
-                full_name_any_of,
-                full_name_gt,
-                full_name_gte,
-                full_name_lt,
-                full_name_lte,
-                limit,
-                sort,
-                options,
-            } = params;
-            let benzinga_id = benzinga_id.as_deref();
-            let benzinga_id_any_of = benzinga_id_any_of.as_deref();
-            let benzinga_id_gt = benzinga_id_gt.as_deref();
-            let benzinga_id_gte = benzinga_id_gte.as_deref();
-            let benzinga_id_lt = benzinga_id_lt.as_deref();
-            let benzinga_id_lte = benzinga_id_lte.as_deref();
-            let benzinga_firm_id = benzinga_firm_id.as_deref();
-            let benzinga_firm_id_any_of = benzinga_firm_id_any_of.as_deref();
-            let benzinga_firm_id_gt = benzinga_firm_id_gt.as_deref();
-            let benzinga_firm_id_gte = benzinga_firm_id_gte.as_deref();
-            let benzinga_firm_id_lt = benzinga_firm_id_lt.as_deref();
-            let benzinga_firm_id_lte = benzinga_firm_id_lte.as_deref();
-            let firm_name = firm_name.as_deref();
-            let firm_name_any_of = firm_name_any_of.as_deref();
-            let firm_name_gt = firm_name_gt.as_deref();
-            let firm_name_gte = firm_name_gte.as_deref();
-            let firm_name_lt = firm_name_lt.as_deref();
-            let firm_name_lte = firm_name_lte.as_deref();
-            let full_name = full_name.as_deref();
-            let full_name_any_of = full_name_any_of.as_deref();
-            let full_name_gt = full_name_gt.as_deref();
-            let full_name_gte = full_name_gte.as_deref();
-            let full_name_lt = full_name_lt.as_deref();
-            let full_name_lte = full_name_lte.as_deref();
-            let sort = sort.as_deref();
-            let options = options.as_ref();
             let path = "/benzinga/v1/analysts";
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(v) = benzinga_id {
-                query.push(("benzinga_id", v.to_string()));
-            }
-            if let Some(v) = benzinga_id_any_of {
-                query.push(("benzinga_id.any_of", v.to_string()));
-            }
-            if let Some(v) = benzinga_id_gt {
-                query.push(("benzinga_id.gt", v.to_string()));
-            }
-            if let Some(v) = benzinga_id_gte {
-                query.push(("benzinga_id.gte", v.to_string()));
-            }
-            if let Some(v) = benzinga_id_lt {
-                query.push(("benzinga_id.lt", v.to_string()));
-            }
-            if let Some(v) = benzinga_id_lte {
-                query.push(("benzinga_id.lte", v.to_string()));
-            }
-            if let Some(v) = benzinga_firm_id {
-                query.push(("benzinga_firm_id", v.to_string()));
-            }
-            if let Some(v) = benzinga_firm_id_any_of {
-                query.push(("benzinga_firm_id.any_of", v.to_string()));
-            }
-            if let Some(v) = benzinga_firm_id_gt {
-                query.push(("benzinga_firm_id.gt", v.to_string()));
-            }
-            if let Some(v) = benzinga_firm_id_gte {
-                query.push(("benzinga_firm_id.gte", v.to_string()));
-            }
-            if let Some(v) = benzinga_firm_id_lt {
-                query.push(("benzinga_firm_id.lt", v.to_string()));
-            }
-            if let Some(v) = benzinga_firm_id_lte {
-                query.push(("benzinga_firm_id.lte", v.to_string()));
-            }
-            if let Some(v) = firm_name {
-                query.push(("firm_name", v.to_string()));
-            }
-            if let Some(v) = firm_name_any_of {
-                query.push(("firm_name.any_of", v.to_string()));
-            }
-            if let Some(v) = firm_name_gt {
-                query.push(("firm_name.gt", v.to_string()));
-            }
-            if let Some(v) = firm_name_gte {
-                query.push(("firm_name.gte", v.to_string()));
-            }
-            if let Some(v) = firm_name_lt {
-                query.push(("firm_name.lt", v.to_string()));
-            }
-            if let Some(v) = firm_name_lte {
-                query.push(("firm_name.lte", v.to_string()));
-            }
-            if let Some(v) = full_name {
-                query.push(("full_name", v.to_string()));
-            }
-            if let Some(v) = full_name_any_of {
-                query.push(("full_name.any_of", v.to_string()));
-            }
-            if let Some(v) = full_name_gt {
-                query.push(("full_name.gt", v.to_string()));
-            }
-            if let Some(v) = full_name_gte {
-                query.push(("full_name.gte", v.to_string()));
-            }
-            if let Some(v) = full_name_lt {
-                query.push(("full_name.lt", v.to_string()));
-            }
-            if let Some(v) = full_name_lte {
-                query.push(("full_name.lte", v.to_string()));
-            }
-            if let Some(v) = limit {
-                query.push(("limit", v.to_string()));
-            }
-            if let Some(v) = sort {
-                query.push(("sort", v.to_string()));
-            }
-            self.list::<BenzingaAnalyst>(path, Some(&query), options)
+            let query = encode_query(&params);
+            self.list::<BenzingaAnalyst>(path, &query, params.options.as_ref())
         })
     }
 
@@ -1029,42 +673,9 @@ impl BenzingaApi for Client {
         params: ListBenzingaConsensusRatingsParams,
     ) -> BoxStream<'a, BenzingaConsensusRating> {
         Box::pin({
-            let ListBenzingaConsensusRatingsParams {
-                date,
-                date_gt,
-                date_gte,
-                date_lt,
-                date_lte,
-                limit,
-                options,
-            } = params;
-            let date = date.as_deref();
-            let date_gt = date_gt.as_deref();
-            let date_gte = date_gte.as_deref();
-            let date_lt = date_lt.as_deref();
-            let date_lte = date_lte.as_deref();
-            let options = options.as_ref();
             let path = format!("/benzinga/v1/consensus-ratings/{}", ticker);
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(v) = date {
-                query.push(("date", v.to_string()));
-            }
-            if let Some(v) = date_gt {
-                query.push(("date.gt", v.to_string()));
-            }
-            if let Some(v) = date_gte {
-                query.push(("date.gte", v.to_string()));
-            }
-            if let Some(v) = date_lt {
-                query.push(("date.lt", v.to_string()));
-            }
-            if let Some(v) = date_lte {
-                query.push(("date.lte", v.to_string()));
-            }
-            if let Some(v) = limit {
-                query.push(("limit", v.to_string()));
-            }
-            self.list::<BenzingaConsensusRating>(&path, Some(&query), options)
+            let query = encode_query(&params);
+            self.list::<BenzingaConsensusRating>(&path, &query, params.options.as_ref())
         })
     }
 
@@ -1194,272 +805,9 @@ impl BenzingaApi for Client {
         params: ListBenzingaEarningsParams,
     ) -> BoxStream<'a, BenzingaEarning> {
         Box::pin({
-            let ListBenzingaEarningsParams {
-                date,
-                date_any_of,
-                date_gt,
-                date_gte,
-                date_lt,
-                date_lte,
-                ticker,
-                ticker_any_of,
-                ticker_gt,
-                ticker_gte,
-                ticker_lt,
-                ticker_lte,
-                importance,
-                importance_any_of,
-                importance_gt,
-                importance_gte,
-                importance_lt,
-                importance_lte,
-                last_updated,
-                last_updated_any_of,
-                last_updated_gt,
-                last_updated_gte,
-                last_updated_lt,
-                last_updated_lte,
-                date_status,
-                date_status_any_of,
-                date_status_gt,
-                date_status_gte,
-                date_status_lt,
-                date_status_lte,
-                eps_surprise_percent,
-                eps_surprise_percent_any_of,
-                eps_surprise_percent_gt,
-                eps_surprise_percent_gte,
-                eps_surprise_percent_lt,
-                eps_surprise_percent_lte,
-                revenue_surprise_percent,
-                revenue_surprise_percent_any_of,
-                revenue_surprise_percent_gt,
-                revenue_surprise_percent_gte,
-                revenue_surprise_percent_lt,
-                revenue_surprise_percent_lte,
-                fiscal_year,
-                fiscal_year_any_of,
-                fiscal_year_gt,
-                fiscal_year_gte,
-                fiscal_year_lt,
-                fiscal_year_lte,
-                fiscal_period,
-                fiscal_period_any_of,
-                fiscal_period_gt,
-                fiscal_period_gte,
-                fiscal_period_lt,
-                fiscal_period_lte,
-                limit,
-                sort,
-                options,
-            } = params;
-            let date = date.as_deref();
-            let date_any_of = date_any_of.as_deref();
-            let date_gt = date_gt.as_deref();
-            let date_gte = date_gte.as_deref();
-            let date_lt = date_lt.as_deref();
-            let date_lte = date_lte.as_deref();
-            let ticker = ticker.as_deref();
-            let ticker_any_of = ticker_any_of.as_deref();
-            let ticker_gt = ticker_gt.as_deref();
-            let ticker_gte = ticker_gte.as_deref();
-            let ticker_lt = ticker_lt.as_deref();
-            let ticker_lte = ticker_lte.as_deref();
-            let importance_any_of = importance_any_of.as_deref();
-            let last_updated = last_updated.as_deref();
-            let last_updated_any_of = last_updated_any_of.as_deref();
-            let last_updated_gt = last_updated_gt.as_deref();
-            let last_updated_gte = last_updated_gte.as_deref();
-            let last_updated_lt = last_updated_lt.as_deref();
-            let last_updated_lte = last_updated_lte.as_deref();
-            let date_status = date_status.as_deref();
-            let date_status_any_of = date_status_any_of.as_deref();
-            let date_status_gt = date_status_gt.as_deref();
-            let date_status_gte = date_status_gte.as_deref();
-            let date_status_lt = date_status_lt.as_deref();
-            let date_status_lte = date_status_lte.as_deref();
-            let eps_surprise_percent_any_of = eps_surprise_percent_any_of.as_deref();
-            let revenue_surprise_percent_any_of = revenue_surprise_percent_any_of.as_deref();
-            let fiscal_year_any_of = fiscal_year_any_of.as_deref();
-            let fiscal_period = fiscal_period.as_deref();
-            let fiscal_period_any_of = fiscal_period_any_of.as_deref();
-            let fiscal_period_gt = fiscal_period_gt.as_deref();
-            let fiscal_period_gte = fiscal_period_gte.as_deref();
-            let fiscal_period_lt = fiscal_period_lt.as_deref();
-            let fiscal_period_lte = fiscal_period_lte.as_deref();
-            let sort = sort.as_deref();
-            let options = options.as_ref();
             let path = "/benzinga/v1/earnings";
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(v) = date {
-                query.push(("date", v.to_string()));
-            }
-            if let Some(v) = date_any_of {
-                query.push(("date.any_of", v.to_string()));
-            }
-            if let Some(v) = date_gt {
-                query.push(("date.gt", v.to_string()));
-            }
-            if let Some(v) = date_gte {
-                query.push(("date.gte", v.to_string()));
-            }
-            if let Some(v) = date_lt {
-                query.push(("date.lt", v.to_string()));
-            }
-            if let Some(v) = date_lte {
-                query.push(("date.lte", v.to_string()));
-            }
-            if let Some(v) = ticker {
-                query.push(("ticker", v.to_string()));
-            }
-            if let Some(v) = ticker_any_of {
-                query.push(("ticker.any_of", v.to_string()));
-            }
-            if let Some(v) = ticker_gt {
-                query.push(("ticker.gt", v.to_string()));
-            }
-            if let Some(v) = ticker_gte {
-                query.push(("ticker.gte", v.to_string()));
-            }
-            if let Some(v) = ticker_lt {
-                query.push(("ticker.lt", v.to_string()));
-            }
-            if let Some(v) = ticker_lte {
-                query.push(("ticker.lte", v.to_string()));
-            }
-            if let Some(v) = importance {
-                query.push(("importance", v.to_string()));
-            }
-            if let Some(v) = importance_any_of {
-                query.push(("importance.any_of", v.to_string()));
-            }
-            if let Some(v) = importance_gt {
-                query.push(("importance.gt", v.to_string()));
-            }
-            if let Some(v) = importance_gte {
-                query.push(("importance.gte", v.to_string()));
-            }
-            if let Some(v) = importance_lt {
-                query.push(("importance.lt", v.to_string()));
-            }
-            if let Some(v) = importance_lte {
-                query.push(("importance.lte", v.to_string()));
-            }
-            if let Some(v) = last_updated {
-                query.push(("last_updated", v.to_string()));
-            }
-            if let Some(v) = last_updated_any_of {
-                query.push(("last_updated.any_of", v.to_string()));
-            }
-            if let Some(v) = last_updated_gt {
-                query.push(("last_updated.gt", v.to_string()));
-            }
-            if let Some(v) = last_updated_gte {
-                query.push(("last_updated.gte", v.to_string()));
-            }
-            if let Some(v) = last_updated_lt {
-                query.push(("last_updated.lt", v.to_string()));
-            }
-            if let Some(v) = last_updated_lte {
-                query.push(("last_updated.lte", v.to_string()));
-            }
-            if let Some(v) = date_status {
-                query.push(("date_status", v.to_string()));
-            }
-            if let Some(v) = date_status_any_of {
-                query.push(("date_status.any_of", v.to_string()));
-            }
-            if let Some(v) = date_status_gt {
-                query.push(("date_status.gt", v.to_string()));
-            }
-            if let Some(v) = date_status_gte {
-                query.push(("date_status.gte", v.to_string()));
-            }
-            if let Some(v) = date_status_lt {
-                query.push(("date_status.lt", v.to_string()));
-            }
-            if let Some(v) = date_status_lte {
-                query.push(("date_status.lte", v.to_string()));
-            }
-            if let Some(v) = eps_surprise_percent {
-                query.push(("eps_surprise_percent", v.to_string()));
-            }
-            if let Some(v) = eps_surprise_percent_any_of {
-                query.push(("eps_surprise_percent.any_of", v.to_string()));
-            }
-            if let Some(v) = eps_surprise_percent_gt {
-                query.push(("eps_surprise_percent.gt", v.to_string()));
-            }
-            if let Some(v) = eps_surprise_percent_gte {
-                query.push(("eps_surprise_percent.gte", v.to_string()));
-            }
-            if let Some(v) = eps_surprise_percent_lt {
-                query.push(("eps_surprise_percent.lt", v.to_string()));
-            }
-            if let Some(v) = eps_surprise_percent_lte {
-                query.push(("eps_surprise_percent.lte", v.to_string()));
-            }
-            if let Some(v) = revenue_surprise_percent {
-                query.push(("revenue_surprise_percent", v.to_string()));
-            }
-            if let Some(v) = revenue_surprise_percent_any_of {
-                query.push(("revenue_surprise_percent.any_of", v.to_string()));
-            }
-            if let Some(v) = revenue_surprise_percent_gt {
-                query.push(("revenue_surprise_percent.gt", v.to_string()));
-            }
-            if let Some(v) = revenue_surprise_percent_gte {
-                query.push(("revenue_surprise_percent.gte", v.to_string()));
-            }
-            if let Some(v) = revenue_surprise_percent_lt {
-                query.push(("revenue_surprise_percent.lt", v.to_string()));
-            }
-            if let Some(v) = revenue_surprise_percent_lte {
-                query.push(("revenue_surprise_percent.lte", v.to_string()));
-            }
-            if let Some(v) = fiscal_year {
-                query.push(("fiscal_year", v.to_string()));
-            }
-            if let Some(v) = fiscal_year_any_of {
-                query.push(("fiscal_year.any_of", v.to_string()));
-            }
-            if let Some(v) = fiscal_year_gt {
-                query.push(("fiscal_year.gt", v.to_string()));
-            }
-            if let Some(v) = fiscal_year_gte {
-                query.push(("fiscal_year.gte", v.to_string()));
-            }
-            if let Some(v) = fiscal_year_lt {
-                query.push(("fiscal_year.lt", v.to_string()));
-            }
-            if let Some(v) = fiscal_year_lte {
-                query.push(("fiscal_year.lte", v.to_string()));
-            }
-            if let Some(v) = fiscal_period {
-                query.push(("fiscal_period", v.to_string()));
-            }
-            if let Some(v) = fiscal_period_any_of {
-                query.push(("fiscal_period.any_of", v.to_string()));
-            }
-            if let Some(v) = fiscal_period_gt {
-                query.push(("fiscal_period.gt", v.to_string()));
-            }
-            if let Some(v) = fiscal_period_gte {
-                query.push(("fiscal_period.gte", v.to_string()));
-            }
-            if let Some(v) = fiscal_period_lt {
-                query.push(("fiscal_period.lt", v.to_string()));
-            }
-            if let Some(v) = fiscal_period_lte {
-                query.push(("fiscal_period.lte", v.to_string()));
-            }
-            if let Some(v) = limit {
-                query.push(("limit", v.to_string()));
-            }
-            if let Some(v) = sort {
-                query.push(("sort", v.to_string()));
-            }
-            self.list::<BenzingaEarning>(path, Some(&query), options)
+            let query = encode_query(&params);
+            self.list::<BenzingaEarning>(path, &query, params.options.as_ref())
         })
     }
 
@@ -1493,52 +841,9 @@ impl BenzingaApi for Client {
         params: ListBenzingaFirmsParams,
     ) -> BoxStream<'a, BenzingaFirm> {
         Box::pin({
-            let ListBenzingaFirmsParams {
-                benzinga_id,
-                benzinga_id_any_of,
-                benzinga_id_gt,
-                benzinga_id_gte,
-                benzinga_id_lt,
-                benzinga_id_lte,
-                limit,
-                sort,
-                options,
-            } = params;
-            let benzinga_id = benzinga_id.as_deref();
-            let benzinga_id_any_of = benzinga_id_any_of.as_deref();
-            let benzinga_id_gt = benzinga_id_gt.as_deref();
-            let benzinga_id_gte = benzinga_id_gte.as_deref();
-            let benzinga_id_lt = benzinga_id_lt.as_deref();
-            let benzinga_id_lte = benzinga_id_lte.as_deref();
-            let sort = sort.as_deref();
-            let options = options.as_ref();
             let path = "/benzinga/v1/firms";
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(v) = benzinga_id {
-                query.push(("benzinga_id", v.to_string()));
-            }
-            if let Some(v) = benzinga_id_any_of {
-                query.push(("benzinga_id.any_of", v.to_string()));
-            }
-            if let Some(v) = benzinga_id_gt {
-                query.push(("benzinga_id.gt", v.to_string()));
-            }
-            if let Some(v) = benzinga_id_gte {
-                query.push(("benzinga_id.gte", v.to_string()));
-            }
-            if let Some(v) = benzinga_id_lt {
-                query.push(("benzinga_id.lt", v.to_string()));
-            }
-            if let Some(v) = benzinga_id_lte {
-                query.push(("benzinga_id.lte", v.to_string()));
-            }
-            if let Some(v) = limit {
-                query.push(("limit", v.to_string()));
-            }
-            if let Some(v) = sort {
-                query.push(("sort", v.to_string()));
-            }
-            self.list::<BenzingaFirm>(path, Some(&query), options)
+            let query = encode_query(&params);
+            self.list::<BenzingaFirm>(path, &query, params.options.as_ref())
         })
     }
 
@@ -1644,222 +949,9 @@ impl BenzingaApi for Client {
         params: ListBenzingaGuidanceParams,
     ) -> BoxStream<'a, BenzingaGuidance> {
         Box::pin({
-            let ListBenzingaGuidanceParams {
-                date,
-                date_any_of,
-                date_gt,
-                date_gte,
-                date_lt,
-                date_lte,
-                ticker,
-                ticker_any_of,
-                ticker_gt,
-                ticker_gte,
-                ticker_lt,
-                ticker_lte,
-                positioning,
-                positioning_any_of,
-                positioning_gt,
-                positioning_gte,
-                positioning_lt,
-                positioning_lte,
-                importance,
-                importance_any_of,
-                importance_gt,
-                importance_gte,
-                importance_lt,
-                importance_lte,
-                last_updated,
-                last_updated_any_of,
-                last_updated_gt,
-                last_updated_gte,
-                last_updated_lt,
-                last_updated_lte,
-                fiscal_year,
-                fiscal_year_any_of,
-                fiscal_year_gt,
-                fiscal_year_gte,
-                fiscal_year_lt,
-                fiscal_year_lte,
-                fiscal_period,
-                fiscal_period_any_of,
-                fiscal_period_gt,
-                fiscal_period_gte,
-                fiscal_period_lt,
-                fiscal_period_lte,
-                limit,
-                sort,
-                options,
-            } = params;
-            let date = date.as_deref();
-            let date_any_of = date_any_of.as_deref();
-            let date_gt = date_gt.as_deref();
-            let date_gte = date_gte.as_deref();
-            let date_lt = date_lt.as_deref();
-            let date_lte = date_lte.as_deref();
-            let ticker = ticker.as_deref();
-            let ticker_any_of = ticker_any_of.as_deref();
-            let ticker_gt = ticker_gt.as_deref();
-            let ticker_gte = ticker_gte.as_deref();
-            let ticker_lt = ticker_lt.as_deref();
-            let ticker_lte = ticker_lte.as_deref();
-            let positioning = positioning.as_deref();
-            let positioning_any_of = positioning_any_of.as_deref();
-            let positioning_gt = positioning_gt.as_deref();
-            let positioning_gte = positioning_gte.as_deref();
-            let positioning_lt = positioning_lt.as_deref();
-            let positioning_lte = positioning_lte.as_deref();
-            let importance_any_of = importance_any_of.as_deref();
-            let last_updated = last_updated.as_deref();
-            let last_updated_any_of = last_updated_any_of.as_deref();
-            let last_updated_gt = last_updated_gt.as_deref();
-            let last_updated_gte = last_updated_gte.as_deref();
-            let last_updated_lt = last_updated_lt.as_deref();
-            let last_updated_lte = last_updated_lte.as_deref();
-            let fiscal_year_any_of = fiscal_year_any_of.as_deref();
-            let fiscal_period = fiscal_period.as_deref();
-            let fiscal_period_any_of = fiscal_period_any_of.as_deref();
-            let fiscal_period_gt = fiscal_period_gt.as_deref();
-            let fiscal_period_gte = fiscal_period_gte.as_deref();
-            let fiscal_period_lt = fiscal_period_lt.as_deref();
-            let fiscal_period_lte = fiscal_period_lte.as_deref();
-            let sort = sort.as_deref();
-            let options = options.as_ref();
             let path = "/benzinga/v1/guidance";
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(v) = date {
-                query.push(("date", v.to_string()));
-            }
-            if let Some(v) = date_any_of {
-                query.push(("date.any_of", v.to_string()));
-            }
-            if let Some(v) = date_gt {
-                query.push(("date.gt", v.to_string()));
-            }
-            if let Some(v) = date_gte {
-                query.push(("date.gte", v.to_string()));
-            }
-            if let Some(v) = date_lt {
-                query.push(("date.lt", v.to_string()));
-            }
-            if let Some(v) = date_lte {
-                query.push(("date.lte", v.to_string()));
-            }
-            if let Some(v) = ticker {
-                query.push(("ticker", v.to_string()));
-            }
-            if let Some(v) = ticker_any_of {
-                query.push(("ticker.any_of", v.to_string()));
-            }
-            if let Some(v) = ticker_gt {
-                query.push(("ticker.gt", v.to_string()));
-            }
-            if let Some(v) = ticker_gte {
-                query.push(("ticker.gte", v.to_string()));
-            }
-            if let Some(v) = ticker_lt {
-                query.push(("ticker.lt", v.to_string()));
-            }
-            if let Some(v) = ticker_lte {
-                query.push(("ticker.lte", v.to_string()));
-            }
-            if let Some(v) = positioning {
-                query.push(("positioning", v.to_string()));
-            }
-            if let Some(v) = positioning_any_of {
-                query.push(("positioning.any_of", v.to_string()));
-            }
-            if let Some(v) = positioning_gt {
-                query.push(("positioning.gt", v.to_string()));
-            }
-            if let Some(v) = positioning_gte {
-                query.push(("positioning.gte", v.to_string()));
-            }
-            if let Some(v) = positioning_lt {
-                query.push(("positioning.lt", v.to_string()));
-            }
-            if let Some(v) = positioning_lte {
-                query.push(("positioning.lte", v.to_string()));
-            }
-            if let Some(v) = importance {
-                query.push(("importance", v.to_string()));
-            }
-            if let Some(v) = importance_any_of {
-                query.push(("importance.any_of", v.to_string()));
-            }
-            if let Some(v) = importance_gt {
-                query.push(("importance.gt", v.to_string()));
-            }
-            if let Some(v) = importance_gte {
-                query.push(("importance.gte", v.to_string()));
-            }
-            if let Some(v) = importance_lt {
-                query.push(("importance.lt", v.to_string()));
-            }
-            if let Some(v) = importance_lte {
-                query.push(("importance.lte", v.to_string()));
-            }
-            if let Some(v) = last_updated {
-                query.push(("last_updated", v.to_string()));
-            }
-            if let Some(v) = last_updated_any_of {
-                query.push(("last_updated.any_of", v.to_string()));
-            }
-            if let Some(v) = last_updated_gt {
-                query.push(("last_updated.gt", v.to_string()));
-            }
-            if let Some(v) = last_updated_gte {
-                query.push(("last_updated.gte", v.to_string()));
-            }
-            if let Some(v) = last_updated_lt {
-                query.push(("last_updated.lt", v.to_string()));
-            }
-            if let Some(v) = last_updated_lte {
-                query.push(("last_updated.lte", v.to_string()));
-            }
-            if let Some(v) = fiscal_year {
-                query.push(("fiscal_year", v.to_string()));
-            }
-            if let Some(v) = fiscal_year_any_of {
-                query.push(("fiscal_year.any_of", v.to_string()));
-            }
-            if let Some(v) = fiscal_year_gt {
-                query.push(("fiscal_year.gt", v.to_string()));
-            }
-            if let Some(v) = fiscal_year_gte {
-                query.push(("fiscal_year.gte", v.to_string()));
-            }
-            if let Some(v) = fiscal_year_lt {
-                query.push(("fiscal_year.lt", v.to_string()));
-            }
-            if let Some(v) = fiscal_year_lte {
-                query.push(("fiscal_year.lte", v.to_string()));
-            }
-            if let Some(v) = fiscal_period {
-                query.push(("fiscal_period", v.to_string()));
-            }
-            if let Some(v) = fiscal_period_any_of {
-                query.push(("fiscal_period.any_of", v.to_string()));
-            }
-            if let Some(v) = fiscal_period_gt {
-                query.push(("fiscal_period.gt", v.to_string()));
-            }
-            if let Some(v) = fiscal_period_gte {
-                query.push(("fiscal_period.gte", v.to_string()));
-            }
-            if let Some(v) = fiscal_period_lt {
-                query.push(("fiscal_period.lt", v.to_string()));
-            }
-            if let Some(v) = fiscal_period_lte {
-                query.push(("fiscal_period.lte", v.to_string()));
-            }
-            if let Some(v) = limit {
-                query.push(("limit", v.to_string()));
-            }
-            if let Some(v) = sort {
-                query.push(("sort", v.to_string()));
-            }
-            self.list::<BenzingaGuidance>(path, Some(&query), options)
+            let query = encode_query(&params);
+            self.list::<BenzingaGuidance>(path, &query, params.options.as_ref())
         })
     }
 
@@ -1935,157 +1027,9 @@ impl BenzingaApi for Client {
         params: ListBenzingaNewsParams,
     ) -> BoxStream<'a, BenzingaNews> {
         Box::pin({
-            let ListBenzingaNewsParams {
-                published,
-                published_any_of,
-                published_gt,
-                published_gte,
-                published_lt,
-                published_lte,
-                last_updated,
-                last_updated_any_of,
-                last_updated_gt,
-                last_updated_gte,
-                last_updated_lt,
-                last_updated_lte,
-                tickers,
-                tickers_all_of,
-                tickers_any_of,
-                channels,
-                channels_all_of,
-                channels_any_of,
-                tags,
-                tags_all_of,
-                tags_any_of,
-                author,
-                author_any_of,
-                author_gt,
-                author_gte,
-                author_lt,
-                author_lte,
-                limit,
-                sort,
-                options,
-            } = params;
-            let published = published.as_deref();
-            let published_any_of = published_any_of.as_deref();
-            let published_gt = published_gt.as_deref();
-            let published_gte = published_gte.as_deref();
-            let published_lt = published_lt.as_deref();
-            let published_lte = published_lte.as_deref();
-            let last_updated = last_updated.as_deref();
-            let last_updated_any_of = last_updated_any_of.as_deref();
-            let last_updated_gt = last_updated_gt.as_deref();
-            let last_updated_gte = last_updated_gte.as_deref();
-            let last_updated_lt = last_updated_lt.as_deref();
-            let last_updated_lte = last_updated_lte.as_deref();
-            let tickers = tickers.as_deref();
-            let tickers_all_of = tickers_all_of.as_deref();
-            let tickers_any_of = tickers_any_of.as_deref();
-            let channels = channels.as_deref();
-            let channels_all_of = channels_all_of.as_deref();
-            let channels_any_of = channels_any_of.as_deref();
-            let tags = tags.as_deref();
-            let tags_all_of = tags_all_of.as_deref();
-            let tags_any_of = tags_any_of.as_deref();
-            let author = author.as_deref();
-            let author_any_of = author_any_of.as_deref();
-            let author_gt = author_gt.as_deref();
-            let author_gte = author_gte.as_deref();
-            let author_lt = author_lt.as_deref();
-            let author_lte = author_lte.as_deref();
-            let sort = sort.as_deref();
-            let options = options.as_ref();
             let path = "/benzinga/v1/news";
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(v) = published {
-                query.push(("published", v.to_string()));
-            }
-            if let Some(v) = published_any_of {
-                query.push(("published.any_of", v.to_string()));
-            }
-            if let Some(v) = published_gt {
-                query.push(("published.gt", v.to_string()));
-            }
-            if let Some(v) = published_gte {
-                query.push(("published.gte", v.to_string()));
-            }
-            if let Some(v) = published_lt {
-                query.push(("published.lt", v.to_string()));
-            }
-            if let Some(v) = published_lte {
-                query.push(("published.lte", v.to_string()));
-            }
-            if let Some(v) = last_updated {
-                query.push(("last_updated", v.to_string()));
-            }
-            if let Some(v) = last_updated_any_of {
-                query.push(("last_updated.any_of", v.to_string()));
-            }
-            if let Some(v) = last_updated_gt {
-                query.push(("last_updated.gt", v.to_string()));
-            }
-            if let Some(v) = last_updated_gte {
-                query.push(("last_updated.gte", v.to_string()));
-            }
-            if let Some(v) = last_updated_lt {
-                query.push(("last_updated.lt", v.to_string()));
-            }
-            if let Some(v) = last_updated_lte {
-                query.push(("last_updated.lte", v.to_string()));
-            }
-            if let Some(v) = tickers {
-                query.push(("tickers", v.to_string()));
-            }
-            if let Some(v) = tickers_all_of {
-                query.push(("tickers.all_of", v.to_string()));
-            }
-            if let Some(v) = tickers_any_of {
-                query.push(("tickers.any_of", v.to_string()));
-            }
-            if let Some(v) = channels {
-                query.push(("channels", v.to_string()));
-            }
-            if let Some(v) = channels_all_of {
-                query.push(("channels.all_of", v.to_string()));
-            }
-            if let Some(v) = channels_any_of {
-                query.push(("channels.any_of", v.to_string()));
-            }
-            if let Some(v) = tags {
-                query.push(("tags", v.to_string()));
-            }
-            if let Some(v) = tags_all_of {
-                query.push(("tags.all_of", v.to_string()));
-            }
-            if let Some(v) = tags_any_of {
-                query.push(("tags.any_of", v.to_string()));
-            }
-            if let Some(v) = author {
-                query.push(("author", v.to_string()));
-            }
-            if let Some(v) = author_any_of {
-                query.push(("author.any_of", v.to_string()));
-            }
-            if let Some(v) = author_gt {
-                query.push(("author.gt", v.to_string()));
-            }
-            if let Some(v) = author_gte {
-                query.push(("author.gte", v.to_string()));
-            }
-            if let Some(v) = author_lt {
-                query.push(("author.lt", v.to_string()));
-            }
-            if let Some(v) = author_lte {
-                query.push(("author.lte", v.to_string()));
-            }
-            if let Some(v) = limit {
-                query.push(("limit", v.to_string()));
-            }
-            if let Some(v) = sort {
-                query.push(("sort", v.to_string()));
-            }
-            self.list::<BenzingaNews>(path, Some(&query), options)
+            let query = encode_query(&params);
+            self.list::<BenzingaNews>(path, &query, params.options.as_ref())
         })
     }
 
@@ -2153,137 +1097,9 @@ impl BenzingaApi for Client {
         params: ListBenzingaNewsV2Params,
     ) -> BoxStream<'a, BenzingaNews> {
         Box::pin({
-            let ListBenzingaNewsV2Params {
-                published,
-                published_gt,
-                published_gte,
-                published_lt,
-                published_lte,
-                channels,
-                channels_all_of,
-                channels_any_of,
-                tags,
-                tags_all_of,
-                tags_any_of,
-                author,
-                author_any_of,
-                author_gt,
-                author_gte,
-                author_lt,
-                author_lte,
-                stocks,
-                stocks_all_of,
-                stocks_any_of,
-                tickers,
-                tickers_all_of,
-                tickers_any_of,
-                limit,
-                sort,
-                options,
-            } = params;
-            let published = published.as_deref();
-            let published_gt = published_gt.as_deref();
-            let published_gte = published_gte.as_deref();
-            let published_lt = published_lt.as_deref();
-            let published_lte = published_lte.as_deref();
-            let channels = channels.as_deref();
-            let channels_all_of = channels_all_of.as_deref();
-            let channels_any_of = channels_any_of.as_deref();
-            let tags = tags.as_deref();
-            let tags_all_of = tags_all_of.as_deref();
-            let tags_any_of = tags_any_of.as_deref();
-            let author = author.as_deref();
-            let author_any_of = author_any_of.as_deref();
-            let author_gt = author_gt.as_deref();
-            let author_gte = author_gte.as_deref();
-            let author_lt = author_lt.as_deref();
-            let author_lte = author_lte.as_deref();
-            let stocks = stocks.as_deref();
-            let stocks_all_of = stocks_all_of.as_deref();
-            let stocks_any_of = stocks_any_of.as_deref();
-            let tickers = tickers.as_deref();
-            let tickers_all_of = tickers_all_of.as_deref();
-            let tickers_any_of = tickers_any_of.as_deref();
-            let sort = sort.as_deref();
-            let options = options.as_ref();
             let path = "/benzinga/v2/news";
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(v) = published {
-                query.push(("published", v.to_string()));
-            }
-            if let Some(v) = published_gt {
-                query.push(("published.gt", v.to_string()));
-            }
-            if let Some(v) = published_gte {
-                query.push(("published.gte", v.to_string()));
-            }
-            if let Some(v) = published_lt {
-                query.push(("published.lt", v.to_string()));
-            }
-            if let Some(v) = published_lte {
-                query.push(("published.lte", v.to_string()));
-            }
-            if let Some(v) = channels {
-                query.push(("channels", v.to_string()));
-            }
-            if let Some(v) = channels_all_of {
-                query.push(("channels.all_of", v.to_string()));
-            }
-            if let Some(v) = channels_any_of {
-                query.push(("channels.any_of", v.to_string()));
-            }
-            if let Some(v) = tags {
-                query.push(("tags", v.to_string()));
-            }
-            if let Some(v) = tags_all_of {
-                query.push(("tags.all_of", v.to_string()));
-            }
-            if let Some(v) = tags_any_of {
-                query.push(("tags.any_of", v.to_string()));
-            }
-            if let Some(v) = author {
-                query.push(("author", v.to_string()));
-            }
-            if let Some(v) = author_any_of {
-                query.push(("author.any_of", v.to_string()));
-            }
-            if let Some(v) = author_gt {
-                query.push(("author.gt", v.to_string()));
-            }
-            if let Some(v) = author_gte {
-                query.push(("author.gte", v.to_string()));
-            }
-            if let Some(v) = author_lt {
-                query.push(("author.lt", v.to_string()));
-            }
-            if let Some(v) = author_lte {
-                query.push(("author.lte", v.to_string()));
-            }
-            if let Some(v) = stocks {
-                query.push(("stocks", v.to_string()));
-            }
-            if let Some(v) = stocks_all_of {
-                query.push(("stocks.all_of", v.to_string()));
-            }
-            if let Some(v) = stocks_any_of {
-                query.push(("stocks.any_of", v.to_string()));
-            }
-            if let Some(v) = tickers {
-                query.push(("tickers", v.to_string()));
-            }
-            if let Some(v) = tickers_all_of {
-                query.push(("tickers.all_of", v.to_string()));
-            }
-            if let Some(v) = tickers_any_of {
-                query.push(("tickers.any_of", v.to_string()));
-            }
-            if let Some(v) = limit {
-                query.push(("limit", v.to_string()));
-            }
-            if let Some(v) = sort {
-                query.push(("sort", v.to_string()));
-            }
-            self.list::<BenzingaNews>(path, Some(&query), options)
+            let query = encode_query(&params);
+            self.list::<BenzingaNews>(path, &query, params.options.as_ref())
         })
     }
 
@@ -2413,287 +1229,9 @@ impl BenzingaApi for Client {
         params: ListBenzingaRatingsParams,
     ) -> BoxStream<'a, BenzingaRating> {
         Box::pin({
-            let ListBenzingaRatingsParams {
-                date,
-                date_any_of,
-                date_gt,
-                date_gte,
-                date_lt,
-                date_lte,
-                ticker,
-                ticker_any_of,
-                ticker_gt,
-                ticker_gte,
-                ticker_lt,
-                ticker_lte,
-                importance,
-                importance_any_of,
-                importance_gt,
-                importance_gte,
-                importance_lt,
-                importance_lte,
-                last_updated,
-                last_updated_any_of,
-                last_updated_gt,
-                last_updated_gte,
-                last_updated_lt,
-                last_updated_lte,
-                rating_action,
-                rating_action_any_of,
-                rating_action_gt,
-                rating_action_gte,
-                rating_action_lt,
-                rating_action_lte,
-                price_target_action,
-                price_target_action_any_of,
-                price_target_action_gt,
-                price_target_action_gte,
-                price_target_action_lt,
-                price_target_action_lte,
-                benzinga_id,
-                benzinga_id_any_of,
-                benzinga_id_gt,
-                benzinga_id_gte,
-                benzinga_id_lt,
-                benzinga_id_lte,
-                benzinga_analyst_id,
-                benzinga_analyst_id_any_of,
-                benzinga_analyst_id_gt,
-                benzinga_analyst_id_gte,
-                benzinga_analyst_id_lt,
-                benzinga_analyst_id_lte,
-                benzinga_firm_id,
-                benzinga_firm_id_any_of,
-                benzinga_firm_id_gt,
-                benzinga_firm_id_gte,
-                benzinga_firm_id_lt,
-                benzinga_firm_id_lte,
-                limit,
-                sort,
-                options,
-            } = params;
-            let date = date.as_deref();
-            let date_any_of = date_any_of.as_deref();
-            let date_gt = date_gt.as_deref();
-            let date_gte = date_gte.as_deref();
-            let date_lt = date_lt.as_deref();
-            let date_lte = date_lte.as_deref();
-            let ticker = ticker.as_deref();
-            let ticker_any_of = ticker_any_of.as_deref();
-            let ticker_gt = ticker_gt.as_deref();
-            let ticker_gte = ticker_gte.as_deref();
-            let ticker_lt = ticker_lt.as_deref();
-            let ticker_lte = ticker_lte.as_deref();
-            let importance_any_of = importance_any_of.as_deref();
-            let last_updated = last_updated.as_deref();
-            let last_updated_any_of = last_updated_any_of.as_deref();
-            let last_updated_gt = last_updated_gt.as_deref();
-            let last_updated_gte = last_updated_gte.as_deref();
-            let last_updated_lt = last_updated_lt.as_deref();
-            let last_updated_lte = last_updated_lte.as_deref();
-            let rating_action = rating_action.as_deref();
-            let rating_action_any_of = rating_action_any_of.as_deref();
-            let rating_action_gt = rating_action_gt.as_deref();
-            let rating_action_gte = rating_action_gte.as_deref();
-            let rating_action_lt = rating_action_lt.as_deref();
-            let rating_action_lte = rating_action_lte.as_deref();
-            let price_target_action = price_target_action.as_deref();
-            let price_target_action_any_of = price_target_action_any_of.as_deref();
-            let price_target_action_gt = price_target_action_gt.as_deref();
-            let price_target_action_gte = price_target_action_gte.as_deref();
-            let price_target_action_lt = price_target_action_lt.as_deref();
-            let price_target_action_lte = price_target_action_lte.as_deref();
-            let benzinga_id = benzinga_id.as_deref();
-            let benzinga_id_any_of = benzinga_id_any_of.as_deref();
-            let benzinga_id_gt = benzinga_id_gt.as_deref();
-            let benzinga_id_gte = benzinga_id_gte.as_deref();
-            let benzinga_id_lt = benzinga_id_lt.as_deref();
-            let benzinga_id_lte = benzinga_id_lte.as_deref();
-            let benzinga_analyst_id = benzinga_analyst_id.as_deref();
-            let benzinga_analyst_id_any_of = benzinga_analyst_id_any_of.as_deref();
-            let benzinga_analyst_id_gt = benzinga_analyst_id_gt.as_deref();
-            let benzinga_analyst_id_gte = benzinga_analyst_id_gte.as_deref();
-            let benzinga_analyst_id_lt = benzinga_analyst_id_lt.as_deref();
-            let benzinga_analyst_id_lte = benzinga_analyst_id_lte.as_deref();
-            let benzinga_firm_id = benzinga_firm_id.as_deref();
-            let benzinga_firm_id_any_of = benzinga_firm_id_any_of.as_deref();
-            let benzinga_firm_id_gt = benzinga_firm_id_gt.as_deref();
-            let benzinga_firm_id_gte = benzinga_firm_id_gte.as_deref();
-            let benzinga_firm_id_lt = benzinga_firm_id_lt.as_deref();
-            let benzinga_firm_id_lte = benzinga_firm_id_lte.as_deref();
-            let sort = sort.as_deref();
-            let options = options.as_ref();
             let path = "/benzinga/v1/ratings";
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(v) = date {
-                query.push(("date", v.to_string()));
-            }
-            if let Some(v) = date_any_of {
-                query.push(("date.any_of", v.to_string()));
-            }
-            if let Some(v) = date_gt {
-                query.push(("date.gt", v.to_string()));
-            }
-            if let Some(v) = date_gte {
-                query.push(("date.gte", v.to_string()));
-            }
-            if let Some(v) = date_lt {
-                query.push(("date.lt", v.to_string()));
-            }
-            if let Some(v) = date_lte {
-                query.push(("date.lte", v.to_string()));
-            }
-            if let Some(v) = ticker {
-                query.push(("ticker", v.to_string()));
-            }
-            if let Some(v) = ticker_any_of {
-                query.push(("ticker.any_of", v.to_string()));
-            }
-            if let Some(v) = ticker_gt {
-                query.push(("ticker.gt", v.to_string()));
-            }
-            if let Some(v) = ticker_gte {
-                query.push(("ticker.gte", v.to_string()));
-            }
-            if let Some(v) = ticker_lt {
-                query.push(("ticker.lt", v.to_string()));
-            }
-            if let Some(v) = ticker_lte {
-                query.push(("ticker.lte", v.to_string()));
-            }
-            if let Some(v) = importance {
-                query.push(("importance", v.to_string()));
-            }
-            if let Some(v) = importance_any_of {
-                query.push(("importance.any_of", v.to_string()));
-            }
-            if let Some(v) = importance_gt {
-                query.push(("importance.gt", v.to_string()));
-            }
-            if let Some(v) = importance_gte {
-                query.push(("importance.gte", v.to_string()));
-            }
-            if let Some(v) = importance_lt {
-                query.push(("importance.lt", v.to_string()));
-            }
-            if let Some(v) = importance_lte {
-                query.push(("importance.lte", v.to_string()));
-            }
-            if let Some(v) = last_updated {
-                query.push(("last_updated", v.to_string()));
-            }
-            if let Some(v) = last_updated_any_of {
-                query.push(("last_updated.any_of", v.to_string()));
-            }
-            if let Some(v) = last_updated_gt {
-                query.push(("last_updated.gt", v.to_string()));
-            }
-            if let Some(v) = last_updated_gte {
-                query.push(("last_updated.gte", v.to_string()));
-            }
-            if let Some(v) = last_updated_lt {
-                query.push(("last_updated.lt", v.to_string()));
-            }
-            if let Some(v) = last_updated_lte {
-                query.push(("last_updated.lte", v.to_string()));
-            }
-            if let Some(v) = rating_action {
-                query.push(("rating_action", v.to_string()));
-            }
-            if let Some(v) = rating_action_any_of {
-                query.push(("rating_action.any_of", v.to_string()));
-            }
-            if let Some(v) = rating_action_gt {
-                query.push(("rating_action.gt", v.to_string()));
-            }
-            if let Some(v) = rating_action_gte {
-                query.push(("rating_action.gte", v.to_string()));
-            }
-            if let Some(v) = rating_action_lt {
-                query.push(("rating_action.lt", v.to_string()));
-            }
-            if let Some(v) = rating_action_lte {
-                query.push(("rating_action.lte", v.to_string()));
-            }
-            if let Some(v) = price_target_action {
-                query.push(("price_target_action", v.to_string()));
-            }
-            if let Some(v) = price_target_action_any_of {
-                query.push(("price_target_action.any_of", v.to_string()));
-            }
-            if let Some(v) = price_target_action_gt {
-                query.push(("price_target_action.gt", v.to_string()));
-            }
-            if let Some(v) = price_target_action_gte {
-                query.push(("price_target_action.gte", v.to_string()));
-            }
-            if let Some(v) = price_target_action_lt {
-                query.push(("price_target_action.lt", v.to_string()));
-            }
-            if let Some(v) = price_target_action_lte {
-                query.push(("price_target_action.lte", v.to_string()));
-            }
-            if let Some(v) = benzinga_id {
-                query.push(("benzinga_id", v.to_string()));
-            }
-            if let Some(v) = benzinga_id_any_of {
-                query.push(("benzinga_id.any_of", v.to_string()));
-            }
-            if let Some(v) = benzinga_id_gt {
-                query.push(("benzinga_id.gt", v.to_string()));
-            }
-            if let Some(v) = benzinga_id_gte {
-                query.push(("benzinga_id.gte", v.to_string()));
-            }
-            if let Some(v) = benzinga_id_lt {
-                query.push(("benzinga_id.lt", v.to_string()));
-            }
-            if let Some(v) = benzinga_id_lte {
-                query.push(("benzinga_id.lte", v.to_string()));
-            }
-            if let Some(v) = benzinga_analyst_id {
-                query.push(("benzinga_analyst_id", v.to_string()));
-            }
-            if let Some(v) = benzinga_analyst_id_any_of {
-                query.push(("benzinga_analyst_id.any_of", v.to_string()));
-            }
-            if let Some(v) = benzinga_analyst_id_gt {
-                query.push(("benzinga_analyst_id.gt", v.to_string()));
-            }
-            if let Some(v) = benzinga_analyst_id_gte {
-                query.push(("benzinga_analyst_id.gte", v.to_string()));
-            }
-            if let Some(v) = benzinga_analyst_id_lt {
-                query.push(("benzinga_analyst_id.lt", v.to_string()));
-            }
-            if let Some(v) = benzinga_analyst_id_lte {
-                query.push(("benzinga_analyst_id.lte", v.to_string()));
-            }
-            if let Some(v) = benzinga_firm_id {
-                query.push(("benzinga_firm_id", v.to_string()));
-            }
-            if let Some(v) = benzinga_firm_id_any_of {
-                query.push(("benzinga_firm_id.any_of", v.to_string()));
-            }
-            if let Some(v) = benzinga_firm_id_gt {
-                query.push(("benzinga_firm_id.gt", v.to_string()));
-            }
-            if let Some(v) = benzinga_firm_id_gte {
-                query.push(("benzinga_firm_id.gte", v.to_string()));
-            }
-            if let Some(v) = benzinga_firm_id_lt {
-                query.push(("benzinga_firm_id.lt", v.to_string()));
-            }
-            if let Some(v) = benzinga_firm_id_lte {
-                query.push(("benzinga_firm_id.lte", v.to_string()));
-            }
-            if let Some(v) = limit {
-                query.push(("limit", v.to_string()));
-            }
-            if let Some(v) = sort {
-                query.push(("sort", v.to_string()));
-            }
-            self.list::<BenzingaRating>(path, Some(&query), options)
+            let query = encode_query(&params);
+            self.list::<BenzingaRating>(path, &query, params.options.as_ref())
         })
     }
 
@@ -2749,107 +1287,9 @@ impl BenzingaApi for Client {
         params: ListBenzingaBullsBearsSayParams,
     ) -> BoxStream<'a, BenzingaBullsBearsSay> {
         Box::pin({
-            let ListBenzingaBullsBearsSayParams {
-                ticker,
-                ticker_any_of,
-                ticker_gt,
-                ticker_gte,
-                ticker_lt,
-                ticker_lte,
-                benzinga_id,
-                benzinga_id_any_of,
-                benzinga_id_gt,
-                benzinga_id_gte,
-                benzinga_id_lt,
-                benzinga_id_lte,
-                last_updated,
-                last_updated_gt,
-                last_updated_gte,
-                last_updated_lt,
-                last_updated_lte,
-                limit,
-                sort,
-                options,
-            } = params;
-            let ticker = ticker.as_deref();
-            let ticker_any_of = ticker_any_of.as_deref();
-            let ticker_gt = ticker_gt.as_deref();
-            let ticker_gte = ticker_gte.as_deref();
-            let ticker_lt = ticker_lt.as_deref();
-            let ticker_lte = ticker_lte.as_deref();
-            let benzinga_id = benzinga_id.as_deref();
-            let benzinga_id_any_of = benzinga_id_any_of.as_deref();
-            let benzinga_id_gt = benzinga_id_gt.as_deref();
-            let benzinga_id_gte = benzinga_id_gte.as_deref();
-            let benzinga_id_lt = benzinga_id_lt.as_deref();
-            let benzinga_id_lte = benzinga_id_lte.as_deref();
-            let last_updated = last_updated.as_deref();
-            let last_updated_gt = last_updated_gt.as_deref();
-            let last_updated_gte = last_updated_gte.as_deref();
-            let last_updated_lt = last_updated_lt.as_deref();
-            let last_updated_lte = last_updated_lte.as_deref();
-            let sort = sort.as_deref();
-            let options = options.as_ref();
             let path = "/benzinga/v1/bulls-bears-say";
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(v) = ticker {
-                query.push(("ticker", v.to_string()));
-            }
-            if let Some(v) = ticker_any_of {
-                query.push(("ticker.any_of", v.to_string()));
-            }
-            if let Some(v) = ticker_gt {
-                query.push(("ticker.gt", v.to_string()));
-            }
-            if let Some(v) = ticker_gte {
-                query.push(("ticker.gte", v.to_string()));
-            }
-            if let Some(v) = ticker_lt {
-                query.push(("ticker.lt", v.to_string()));
-            }
-            if let Some(v) = ticker_lte {
-                query.push(("ticker.lte", v.to_string()));
-            }
-            if let Some(v) = benzinga_id {
-                query.push(("benzinga_id", v.to_string()));
-            }
-            if let Some(v) = benzinga_id_any_of {
-                query.push(("benzinga_id.any_of", v.to_string()));
-            }
-            if let Some(v) = benzinga_id_gt {
-                query.push(("benzinga_id.gt", v.to_string()));
-            }
-            if let Some(v) = benzinga_id_gte {
-                query.push(("benzinga_id.gte", v.to_string()));
-            }
-            if let Some(v) = benzinga_id_lt {
-                query.push(("benzinga_id.lt", v.to_string()));
-            }
-            if let Some(v) = benzinga_id_lte {
-                query.push(("benzinga_id.lte", v.to_string()));
-            }
-            if let Some(v) = last_updated {
-                query.push(("last_updated", v.to_string()));
-            }
-            if let Some(v) = last_updated_gt {
-                query.push(("last_updated.gt", v.to_string()));
-            }
-            if let Some(v) = last_updated_gte {
-                query.push(("last_updated.gte", v.to_string()));
-            }
-            if let Some(v) = last_updated_lt {
-                query.push(("last_updated.lt", v.to_string()));
-            }
-            if let Some(v) = last_updated_lte {
-                query.push(("last_updated.lte", v.to_string()));
-            }
-            if let Some(v) = limit {
-                query.push(("limit", v.to_string()));
-            }
-            if let Some(v) = sort {
-                query.push(("sort", v.to_string()));
-            }
-            self.list::<BenzingaBullsBearsSay>(path, Some(&query), options)
+            let query = encode_query(&params);
+            self.list::<BenzingaBullsBearsSay>(path, &query, params.options.as_ref())
         })
     }
 }
@@ -2857,97 +1297,178 @@ impl BenzingaApi for Client {
 // --- Params structs (additive builder API) ---
 
 /// Optional arguments for [`BenzingaApi::list_benzinga_analyst_insights`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct ListBenzingaAnalystInsightsParams {
     /// The `date` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub date: Option<String>,
     /// The `date_any_of` argument.
+    #[serde(rename = "date.any_of", skip_serializing_if = "Option::is_none")]
     pub date_any_of: Option<String>,
     /// The `date_gt` argument.
+    #[serde(rename = "date.gt", skip_serializing_if = "Option::is_none")]
     pub date_gt: Option<String>,
     /// The `date_gte` argument.
+    #[serde(rename = "date.gte", skip_serializing_if = "Option::is_none")]
     pub date_gte: Option<String>,
     /// The `date_lt` argument.
+    #[serde(rename = "date.lt", skip_serializing_if = "Option::is_none")]
     pub date_lt: Option<String>,
     /// The `date_lte` argument.
+    #[serde(rename = "date.lte", skip_serializing_if = "Option::is_none")]
     pub date_lte: Option<String>,
     /// The `ticker` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub ticker: Option<String>,
     /// The `ticker_any_of` argument.
+    #[serde(rename = "ticker.any_of", skip_serializing_if = "Option::is_none")]
     pub ticker_any_of: Option<String>,
     /// The `ticker_gt` argument.
+    #[serde(rename = "ticker.gt", skip_serializing_if = "Option::is_none")]
     pub ticker_gt: Option<String>,
     /// The `ticker_gte` argument.
+    #[serde(rename = "ticker.gte", skip_serializing_if = "Option::is_none")]
     pub ticker_gte: Option<String>,
     /// The `ticker_lt` argument.
+    #[serde(rename = "ticker.lt", skip_serializing_if = "Option::is_none")]
     pub ticker_lt: Option<String>,
     /// The `ticker_lte` argument.
+    #[serde(rename = "ticker.lte", skip_serializing_if = "Option::is_none")]
     pub ticker_lte: Option<String>,
     /// The `last_updated` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub last_updated: Option<String>,
     /// The `last_updated_any_of` argument.
+    #[serde(
+        rename = "last_updated.any_of",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub last_updated_any_of: Option<String>,
     /// The `last_updated_gt` argument.
+    #[serde(rename = "last_updated.gt", skip_serializing_if = "Option::is_none")]
     pub last_updated_gt: Option<String>,
     /// The `last_updated_gte` argument.
+    #[serde(rename = "last_updated.gte", skip_serializing_if = "Option::is_none")]
     pub last_updated_gte: Option<String>,
     /// The `last_updated_lt` argument.
+    #[serde(rename = "last_updated.lt", skip_serializing_if = "Option::is_none")]
     pub last_updated_lt: Option<String>,
     /// The `last_updated_lte` argument.
+    #[serde(rename = "last_updated.lte", skip_serializing_if = "Option::is_none")]
     pub last_updated_lte: Option<String>,
     /// The `firm` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub firm: Option<String>,
     /// The `firm_any_of` argument.
+    #[serde(rename = "firm.any_of", skip_serializing_if = "Option::is_none")]
     pub firm_any_of: Option<String>,
     /// The `firm_gt` argument.
+    #[serde(rename = "firm.gt", skip_serializing_if = "Option::is_none")]
     pub firm_gt: Option<String>,
     /// The `firm_gte` argument.
+    #[serde(rename = "firm.gte", skip_serializing_if = "Option::is_none")]
     pub firm_gte: Option<String>,
     /// The `firm_lt` argument.
+    #[serde(rename = "firm.lt", skip_serializing_if = "Option::is_none")]
     pub firm_lt: Option<String>,
     /// The `firm_lte` argument.
+    #[serde(rename = "firm.lte", skip_serializing_if = "Option::is_none")]
     pub firm_lte: Option<String>,
     /// The `rating_action` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub rating_action: Option<String>,
     /// The `rating_action_any_of` argument.
+    #[serde(
+        rename = "rating_action.any_of",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub rating_action_any_of: Option<String>,
     /// The `rating_action_gt` argument.
+    #[serde(rename = "rating_action.gt", skip_serializing_if = "Option::is_none")]
     pub rating_action_gt: Option<String>,
     /// The `rating_action_gte` argument.
+    #[serde(rename = "rating_action.gte", skip_serializing_if = "Option::is_none")]
     pub rating_action_gte: Option<String>,
     /// The `rating_action_lt` argument.
+    #[serde(rename = "rating_action.lt", skip_serializing_if = "Option::is_none")]
     pub rating_action_lt: Option<String>,
     /// The `rating_action_lte` argument.
+    #[serde(rename = "rating_action.lte", skip_serializing_if = "Option::is_none")]
     pub rating_action_lte: Option<String>,
     /// The `benzinga_firm_id` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub benzinga_firm_id: Option<String>,
     /// The `benzinga_firm_id_any_of` argument.
+    #[serde(
+        rename = "benzinga_firm_id.any_of",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub benzinga_firm_id_any_of: Option<String>,
     /// The `benzinga_firm_id_gt` argument.
+    #[serde(
+        rename = "benzinga_firm_id.gt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub benzinga_firm_id_gt: Option<String>,
     /// The `benzinga_firm_id_gte` argument.
+    #[serde(
+        rename = "benzinga_firm_id.gte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub benzinga_firm_id_gte: Option<String>,
     /// The `benzinga_firm_id_lt` argument.
+    #[serde(
+        rename = "benzinga_firm_id.lt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub benzinga_firm_id_lt: Option<String>,
     /// The `benzinga_firm_id_lte` argument.
+    #[serde(
+        rename = "benzinga_firm_id.lte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub benzinga_firm_id_lte: Option<String>,
     /// The `benzinga_rating_id` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub benzinga_rating_id: Option<String>,
     /// The `benzinga_rating_id_any_of` argument.
+    #[serde(
+        rename = "benzinga_rating_id.any_of",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub benzinga_rating_id_any_of: Option<String>,
     /// The `benzinga_rating_id_gt` argument.
+    #[serde(
+        rename = "benzinga_rating_id.gt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub benzinga_rating_id_gt: Option<String>,
     /// The `benzinga_rating_id_gte` argument.
+    #[serde(
+        rename = "benzinga_rating_id.gte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub benzinga_rating_id_gte: Option<String>,
     /// The `benzinga_rating_id_lt` argument.
+    #[serde(
+        rename = "benzinga_rating_id.lt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub benzinga_rating_id_lt: Option<String>,
     /// The `benzinga_rating_id_lte` argument.
+    #[serde(
+        rename = "benzinga_rating_id.lte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub benzinga_rating_id_lte: Option<String>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `sort` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sort: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -3232,61 +1753,103 @@ impl ListBenzingaAnalystInsightsParams {
 }
 
 /// Optional arguments for [`BenzingaApi::list_benzinga_analysts`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct ListBenzingaAnalystsParams {
     /// The `benzinga_id` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub benzinga_id: Option<String>,
     /// The `benzinga_id_any_of` argument.
+    #[serde(rename = "benzinga_id.any_of", skip_serializing_if = "Option::is_none")]
     pub benzinga_id_any_of: Option<String>,
     /// The `benzinga_id_gt` argument.
+    #[serde(rename = "benzinga_id.gt", skip_serializing_if = "Option::is_none")]
     pub benzinga_id_gt: Option<String>,
     /// The `benzinga_id_gte` argument.
+    #[serde(rename = "benzinga_id.gte", skip_serializing_if = "Option::is_none")]
     pub benzinga_id_gte: Option<String>,
     /// The `benzinga_id_lt` argument.
+    #[serde(rename = "benzinga_id.lt", skip_serializing_if = "Option::is_none")]
     pub benzinga_id_lt: Option<String>,
     /// The `benzinga_id_lte` argument.
+    #[serde(rename = "benzinga_id.lte", skip_serializing_if = "Option::is_none")]
     pub benzinga_id_lte: Option<String>,
     /// The `benzinga_firm_id` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub benzinga_firm_id: Option<String>,
     /// The `benzinga_firm_id_any_of` argument.
+    #[serde(
+        rename = "benzinga_firm_id.any_of",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub benzinga_firm_id_any_of: Option<String>,
     /// The `benzinga_firm_id_gt` argument.
+    #[serde(
+        rename = "benzinga_firm_id.gt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub benzinga_firm_id_gt: Option<String>,
     /// The `benzinga_firm_id_gte` argument.
+    #[serde(
+        rename = "benzinga_firm_id.gte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub benzinga_firm_id_gte: Option<String>,
     /// The `benzinga_firm_id_lt` argument.
+    #[serde(
+        rename = "benzinga_firm_id.lt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub benzinga_firm_id_lt: Option<String>,
     /// The `benzinga_firm_id_lte` argument.
+    #[serde(
+        rename = "benzinga_firm_id.lte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub benzinga_firm_id_lte: Option<String>,
     /// The `firm_name` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub firm_name: Option<String>,
     /// The `firm_name_any_of` argument.
+    #[serde(rename = "firm_name.any_of", skip_serializing_if = "Option::is_none")]
     pub firm_name_any_of: Option<String>,
     /// The `firm_name_gt` argument.
+    #[serde(rename = "firm_name.gt", skip_serializing_if = "Option::is_none")]
     pub firm_name_gt: Option<String>,
     /// The `firm_name_gte` argument.
+    #[serde(rename = "firm_name.gte", skip_serializing_if = "Option::is_none")]
     pub firm_name_gte: Option<String>,
     /// The `firm_name_lt` argument.
+    #[serde(rename = "firm_name.lt", skip_serializing_if = "Option::is_none")]
     pub firm_name_lt: Option<String>,
     /// The `firm_name_lte` argument.
+    #[serde(rename = "firm_name.lte", skip_serializing_if = "Option::is_none")]
     pub firm_name_lte: Option<String>,
     /// The `full_name` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub full_name: Option<String>,
     /// The `full_name_any_of` argument.
+    #[serde(rename = "full_name.any_of", skip_serializing_if = "Option::is_none")]
     pub full_name_any_of: Option<String>,
     /// The `full_name_gt` argument.
+    #[serde(rename = "full_name.gt", skip_serializing_if = "Option::is_none")]
     pub full_name_gt: Option<String>,
     /// The `full_name_gte` argument.
+    #[serde(rename = "full_name.gte", skip_serializing_if = "Option::is_none")]
     pub full_name_gte: Option<String>,
     /// The `full_name_lt` argument.
+    #[serde(rename = "full_name.lt", skip_serializing_if = "Option::is_none")]
     pub full_name_lt: Option<String>,
     /// The `full_name_lte` argument.
+    #[serde(rename = "full_name.lte", skip_serializing_if = "Option::is_none")]
     pub full_name_lte: Option<String>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `sort` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sort: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -3460,21 +2023,28 @@ impl ListBenzingaAnalystsParams {
 }
 
 /// Optional arguments for [`BenzingaApi::list_benzinga_consensus_ratings`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct ListBenzingaConsensusRatingsParams {
     /// The `date` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub date: Option<String>,
     /// The `date_gt` argument.
+    #[serde(rename = "date.gt", skip_serializing_if = "Option::is_none")]
     pub date_gt: Option<String>,
     /// The `date_gte` argument.
+    #[serde(rename = "date.gte", skip_serializing_if = "Option::is_none")]
     pub date_gte: Option<String>,
     /// The `date_lt` argument.
+    #[serde(rename = "date.lt", skip_serializing_if = "Option::is_none")]
     pub date_lt: Option<String>,
     /// The `date_lte` argument.
+    #[serde(rename = "date.lte", skip_serializing_if = "Option::is_none")]
     pub date_lte: Option<String>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -3528,121 +2098,228 @@ impl ListBenzingaConsensusRatingsParams {
 }
 
 /// Optional arguments for [`BenzingaApi::list_benzinga_earnings`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct ListBenzingaEarningsParams {
     /// The `date` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub date: Option<String>,
     /// The `date_any_of` argument.
+    #[serde(rename = "date.any_of", skip_serializing_if = "Option::is_none")]
     pub date_any_of: Option<String>,
     /// The `date_gt` argument.
+    #[serde(rename = "date.gt", skip_serializing_if = "Option::is_none")]
     pub date_gt: Option<String>,
     /// The `date_gte` argument.
+    #[serde(rename = "date.gte", skip_serializing_if = "Option::is_none")]
     pub date_gte: Option<String>,
     /// The `date_lt` argument.
+    #[serde(rename = "date.lt", skip_serializing_if = "Option::is_none")]
     pub date_lt: Option<String>,
     /// The `date_lte` argument.
+    #[serde(rename = "date.lte", skip_serializing_if = "Option::is_none")]
     pub date_lte: Option<String>,
     /// The `ticker` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub ticker: Option<String>,
     /// The `ticker_any_of` argument.
+    #[serde(rename = "ticker.any_of", skip_serializing_if = "Option::is_none")]
     pub ticker_any_of: Option<String>,
     /// The `ticker_gt` argument.
+    #[serde(rename = "ticker.gt", skip_serializing_if = "Option::is_none")]
     pub ticker_gt: Option<String>,
     /// The `ticker_gte` argument.
+    #[serde(rename = "ticker.gte", skip_serializing_if = "Option::is_none")]
     pub ticker_gte: Option<String>,
     /// The `ticker_lt` argument.
+    #[serde(rename = "ticker.lt", skip_serializing_if = "Option::is_none")]
     pub ticker_lt: Option<String>,
     /// The `ticker_lte` argument.
+    #[serde(rename = "ticker.lte", skip_serializing_if = "Option::is_none")]
     pub ticker_lte: Option<String>,
     /// The `importance` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub importance: Option<i64>,
     /// The `importance_any_of` argument.
+    #[serde(rename = "importance.any_of", skip_serializing_if = "Option::is_none")]
     pub importance_any_of: Option<String>,
     /// The `importance_gt` argument.
+    #[serde(rename = "importance.gt", skip_serializing_if = "Option::is_none")]
     pub importance_gt: Option<i64>,
     /// The `importance_gte` argument.
+    #[serde(rename = "importance.gte", skip_serializing_if = "Option::is_none")]
     pub importance_gte: Option<i64>,
     /// The `importance_lt` argument.
+    #[serde(rename = "importance.lt", skip_serializing_if = "Option::is_none")]
     pub importance_lt: Option<i64>,
     /// The `importance_lte` argument.
+    #[serde(rename = "importance.lte", skip_serializing_if = "Option::is_none")]
     pub importance_lte: Option<i64>,
     /// The `last_updated` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub last_updated: Option<String>,
     /// The `last_updated_any_of` argument.
+    #[serde(
+        rename = "last_updated.any_of",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub last_updated_any_of: Option<String>,
     /// The `last_updated_gt` argument.
+    #[serde(rename = "last_updated.gt", skip_serializing_if = "Option::is_none")]
     pub last_updated_gt: Option<String>,
     /// The `last_updated_gte` argument.
+    #[serde(rename = "last_updated.gte", skip_serializing_if = "Option::is_none")]
     pub last_updated_gte: Option<String>,
     /// The `last_updated_lt` argument.
+    #[serde(rename = "last_updated.lt", skip_serializing_if = "Option::is_none")]
     pub last_updated_lt: Option<String>,
     /// The `last_updated_lte` argument.
+    #[serde(rename = "last_updated.lte", skip_serializing_if = "Option::is_none")]
     pub last_updated_lte: Option<String>,
     /// The `date_status` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub date_status: Option<String>,
     /// The `date_status_any_of` argument.
+    #[serde(rename = "date_status.any_of", skip_serializing_if = "Option::is_none")]
     pub date_status_any_of: Option<String>,
     /// The `date_status_gt` argument.
+    #[serde(rename = "date_status.gt", skip_serializing_if = "Option::is_none")]
     pub date_status_gt: Option<String>,
     /// The `date_status_gte` argument.
+    #[serde(rename = "date_status.gte", skip_serializing_if = "Option::is_none")]
     pub date_status_gte: Option<String>,
     /// The `date_status_lt` argument.
+    #[serde(rename = "date_status.lt", skip_serializing_if = "Option::is_none")]
     pub date_status_lt: Option<String>,
     /// The `date_status_lte` argument.
+    #[serde(rename = "date_status.lte", skip_serializing_if = "Option::is_none")]
     pub date_status_lte: Option<String>,
     /// The `eps_surprise_percent` argument.
+    #[serde(
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub eps_surprise_percent: Option<f64>,
     /// The `eps_surprise_percent_any_of` argument.
+    #[serde(
+        rename = "eps_surprise_percent.any_of",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub eps_surprise_percent_any_of: Option<String>,
     /// The `eps_surprise_percent_gt` argument.
+    #[serde(
+        rename = "eps_surprise_percent.gt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub eps_surprise_percent_gt: Option<f64>,
     /// The `eps_surprise_percent_gte` argument.
+    #[serde(
+        rename = "eps_surprise_percent.gte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub eps_surprise_percent_gte: Option<f64>,
     /// The `eps_surprise_percent_lt` argument.
+    #[serde(
+        rename = "eps_surprise_percent.lt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub eps_surprise_percent_lt: Option<f64>,
     /// The `eps_surprise_percent_lte` argument.
+    #[serde(
+        rename = "eps_surprise_percent.lte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub eps_surprise_percent_lte: Option<f64>,
     /// The `revenue_surprise_percent` argument.
+    #[serde(
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub revenue_surprise_percent: Option<f64>,
     /// The `revenue_surprise_percent_any_of` argument.
+    #[serde(
+        rename = "revenue_surprise_percent.any_of",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub revenue_surprise_percent_any_of: Option<String>,
     /// The `revenue_surprise_percent_gt` argument.
+    #[serde(
+        rename = "revenue_surprise_percent.gt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub revenue_surprise_percent_gt: Option<f64>,
     /// The `revenue_surprise_percent_gte` argument.
+    #[serde(
+        rename = "revenue_surprise_percent.gte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub revenue_surprise_percent_gte: Option<f64>,
     /// The `revenue_surprise_percent_lt` argument.
+    #[serde(
+        rename = "revenue_surprise_percent.lt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub revenue_surprise_percent_lt: Option<f64>,
     /// The `revenue_surprise_percent_lte` argument.
+    #[serde(
+        rename = "revenue_surprise_percent.lte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub revenue_surprise_percent_lte: Option<f64>,
     /// The `fiscal_year` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub fiscal_year: Option<i64>,
     /// The `fiscal_year_any_of` argument.
+    #[serde(rename = "fiscal_year.any_of", skip_serializing_if = "Option::is_none")]
     pub fiscal_year_any_of: Option<String>,
     /// The `fiscal_year_gt` argument.
+    #[serde(rename = "fiscal_year.gt", skip_serializing_if = "Option::is_none")]
     pub fiscal_year_gt: Option<i64>,
     /// The `fiscal_year_gte` argument.
+    #[serde(rename = "fiscal_year.gte", skip_serializing_if = "Option::is_none")]
     pub fiscal_year_gte: Option<i64>,
     /// The `fiscal_year_lt` argument.
+    #[serde(rename = "fiscal_year.lt", skip_serializing_if = "Option::is_none")]
     pub fiscal_year_lt: Option<i64>,
     /// The `fiscal_year_lte` argument.
+    #[serde(rename = "fiscal_year.lte", skip_serializing_if = "Option::is_none")]
     pub fiscal_year_lte: Option<i64>,
     /// The `fiscal_period` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub fiscal_period: Option<String>,
     /// The `fiscal_period_any_of` argument.
+    #[serde(
+        rename = "fiscal_period.any_of",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub fiscal_period_any_of: Option<String>,
     /// The `fiscal_period_gt` argument.
+    #[serde(rename = "fiscal_period.gt", skip_serializing_if = "Option::is_none")]
     pub fiscal_period_gt: Option<String>,
     /// The `fiscal_period_gte` argument.
+    #[serde(rename = "fiscal_period.gte", skip_serializing_if = "Option::is_none")]
     pub fiscal_period_gte: Option<String>,
     /// The `fiscal_period_lt` argument.
+    #[serde(rename = "fiscal_period.lt", skip_serializing_if = "Option::is_none")]
     pub fiscal_period_lt: Option<String>,
     /// The `fiscal_period_lte` argument.
+    #[serde(rename = "fiscal_period.lte", skip_serializing_if = "Option::is_none")]
     pub fiscal_period_lte: Option<String>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `sort` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sort: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -4002,25 +2679,34 @@ impl ListBenzingaEarningsParams {
 }
 
 /// Optional arguments for [`BenzingaApi::list_benzinga_firms`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct ListBenzingaFirmsParams {
     /// The `benzinga_id` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub benzinga_id: Option<String>,
     /// The `benzinga_id_any_of` argument.
+    #[serde(rename = "benzinga_id.any_of", skip_serializing_if = "Option::is_none")]
     pub benzinga_id_any_of: Option<String>,
     /// The `benzinga_id_gt` argument.
+    #[serde(rename = "benzinga_id.gt", skip_serializing_if = "Option::is_none")]
     pub benzinga_id_gt: Option<String>,
     /// The `benzinga_id_gte` argument.
+    #[serde(rename = "benzinga_id.gte", skip_serializing_if = "Option::is_none")]
     pub benzinga_id_gte: Option<String>,
     /// The `benzinga_id_lt` argument.
+    #[serde(rename = "benzinga_id.lt", skip_serializing_if = "Option::is_none")]
     pub benzinga_id_lt: Option<String>,
     /// The `benzinga_id_lte` argument.
+    #[serde(rename = "benzinga_id.lte", skip_serializing_if = "Option::is_none")]
     pub benzinga_id_lte: Option<String>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `sort` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sort: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -4086,97 +2772,148 @@ impl ListBenzingaFirmsParams {
 }
 
 /// Optional arguments for [`BenzingaApi::list_benzinga_guidance`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct ListBenzingaGuidanceParams {
     /// The `date` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub date: Option<String>,
     /// The `date_any_of` argument.
+    #[serde(rename = "date.any_of", skip_serializing_if = "Option::is_none")]
     pub date_any_of: Option<String>,
     /// The `date_gt` argument.
+    #[serde(rename = "date.gt", skip_serializing_if = "Option::is_none")]
     pub date_gt: Option<String>,
     /// The `date_gte` argument.
+    #[serde(rename = "date.gte", skip_serializing_if = "Option::is_none")]
     pub date_gte: Option<String>,
     /// The `date_lt` argument.
+    #[serde(rename = "date.lt", skip_serializing_if = "Option::is_none")]
     pub date_lt: Option<String>,
     /// The `date_lte` argument.
+    #[serde(rename = "date.lte", skip_serializing_if = "Option::is_none")]
     pub date_lte: Option<String>,
     /// The `ticker` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub ticker: Option<String>,
     /// The `ticker_any_of` argument.
+    #[serde(rename = "ticker.any_of", skip_serializing_if = "Option::is_none")]
     pub ticker_any_of: Option<String>,
     /// The `ticker_gt` argument.
+    #[serde(rename = "ticker.gt", skip_serializing_if = "Option::is_none")]
     pub ticker_gt: Option<String>,
     /// The `ticker_gte` argument.
+    #[serde(rename = "ticker.gte", skip_serializing_if = "Option::is_none")]
     pub ticker_gte: Option<String>,
     /// The `ticker_lt` argument.
+    #[serde(rename = "ticker.lt", skip_serializing_if = "Option::is_none")]
     pub ticker_lt: Option<String>,
     /// The `ticker_lte` argument.
+    #[serde(rename = "ticker.lte", skip_serializing_if = "Option::is_none")]
     pub ticker_lte: Option<String>,
     /// The `positioning` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub positioning: Option<String>,
     /// The `positioning_any_of` argument.
+    #[serde(rename = "positioning.any_of", skip_serializing_if = "Option::is_none")]
     pub positioning_any_of: Option<String>,
     /// The `positioning_gt` argument.
+    #[serde(rename = "positioning.gt", skip_serializing_if = "Option::is_none")]
     pub positioning_gt: Option<String>,
     /// The `positioning_gte` argument.
+    #[serde(rename = "positioning.gte", skip_serializing_if = "Option::is_none")]
     pub positioning_gte: Option<String>,
     /// The `positioning_lt` argument.
+    #[serde(rename = "positioning.lt", skip_serializing_if = "Option::is_none")]
     pub positioning_lt: Option<String>,
     /// The `positioning_lte` argument.
+    #[serde(rename = "positioning.lte", skip_serializing_if = "Option::is_none")]
     pub positioning_lte: Option<String>,
     /// The `importance` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub importance: Option<i64>,
     /// The `importance_any_of` argument.
+    #[serde(rename = "importance.any_of", skip_serializing_if = "Option::is_none")]
     pub importance_any_of: Option<String>,
     /// The `importance_gt` argument.
+    #[serde(rename = "importance.gt", skip_serializing_if = "Option::is_none")]
     pub importance_gt: Option<i64>,
     /// The `importance_gte` argument.
+    #[serde(rename = "importance.gte", skip_serializing_if = "Option::is_none")]
     pub importance_gte: Option<i64>,
     /// The `importance_lt` argument.
+    #[serde(rename = "importance.lt", skip_serializing_if = "Option::is_none")]
     pub importance_lt: Option<i64>,
     /// The `importance_lte` argument.
+    #[serde(rename = "importance.lte", skip_serializing_if = "Option::is_none")]
     pub importance_lte: Option<i64>,
     /// The `last_updated` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub last_updated: Option<String>,
     /// The `last_updated_any_of` argument.
+    #[serde(
+        rename = "last_updated.any_of",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub last_updated_any_of: Option<String>,
     /// The `last_updated_gt` argument.
+    #[serde(rename = "last_updated.gt", skip_serializing_if = "Option::is_none")]
     pub last_updated_gt: Option<String>,
     /// The `last_updated_gte` argument.
+    #[serde(rename = "last_updated.gte", skip_serializing_if = "Option::is_none")]
     pub last_updated_gte: Option<String>,
     /// The `last_updated_lt` argument.
+    #[serde(rename = "last_updated.lt", skip_serializing_if = "Option::is_none")]
     pub last_updated_lt: Option<String>,
     /// The `last_updated_lte` argument.
+    #[serde(rename = "last_updated.lte", skip_serializing_if = "Option::is_none")]
     pub last_updated_lte: Option<String>,
     /// The `fiscal_year` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub fiscal_year: Option<i64>,
     /// The `fiscal_year_any_of` argument.
+    #[serde(rename = "fiscal_year.any_of", skip_serializing_if = "Option::is_none")]
     pub fiscal_year_any_of: Option<String>,
     /// The `fiscal_year_gt` argument.
+    #[serde(rename = "fiscal_year.gt", skip_serializing_if = "Option::is_none")]
     pub fiscal_year_gt: Option<i64>,
     /// The `fiscal_year_gte` argument.
+    #[serde(rename = "fiscal_year.gte", skip_serializing_if = "Option::is_none")]
     pub fiscal_year_gte: Option<i64>,
     /// The `fiscal_year_lt` argument.
+    #[serde(rename = "fiscal_year.lt", skip_serializing_if = "Option::is_none")]
     pub fiscal_year_lt: Option<i64>,
     /// The `fiscal_year_lte` argument.
+    #[serde(rename = "fiscal_year.lte", skip_serializing_if = "Option::is_none")]
     pub fiscal_year_lte: Option<i64>,
     /// The `fiscal_period` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub fiscal_period: Option<String>,
     /// The `fiscal_period_any_of` argument.
+    #[serde(
+        rename = "fiscal_period.any_of",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub fiscal_period_any_of: Option<String>,
     /// The `fiscal_period_gt` argument.
+    #[serde(rename = "fiscal_period.gt", skip_serializing_if = "Option::is_none")]
     pub fiscal_period_gt: Option<String>,
     /// The `fiscal_period_gte` argument.
+    #[serde(rename = "fiscal_period.gte", skip_serializing_if = "Option::is_none")]
     pub fiscal_period_gte: Option<String>,
     /// The `fiscal_period_lt` argument.
+    #[serde(rename = "fiscal_period.lt", skip_serializing_if = "Option::is_none")]
     pub fiscal_period_lt: Option<String>,
     /// The `fiscal_period_lte` argument.
+    #[serde(rename = "fiscal_period.lte", skip_serializing_if = "Option::is_none")]
     pub fiscal_period_lte: Option<String>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `sort` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sort: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -4458,67 +3195,100 @@ impl ListBenzingaGuidanceParams {
 }
 
 /// Optional arguments for [`BenzingaApi::list_benzinga_news`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct ListBenzingaNewsParams {
     /// The `published` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub published: Option<String>,
     /// The `published_any_of` argument.
+    #[serde(rename = "published.any_of", skip_serializing_if = "Option::is_none")]
     pub published_any_of: Option<String>,
     /// The `published_gt` argument.
+    #[serde(rename = "published.gt", skip_serializing_if = "Option::is_none")]
     pub published_gt: Option<String>,
     /// The `published_gte` argument.
+    #[serde(rename = "published.gte", skip_serializing_if = "Option::is_none")]
     pub published_gte: Option<String>,
     /// The `published_lt` argument.
+    #[serde(rename = "published.lt", skip_serializing_if = "Option::is_none")]
     pub published_lt: Option<String>,
     /// The `published_lte` argument.
+    #[serde(rename = "published.lte", skip_serializing_if = "Option::is_none")]
     pub published_lte: Option<String>,
     /// The `last_updated` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub last_updated: Option<String>,
     /// The `last_updated_any_of` argument.
+    #[serde(
+        rename = "last_updated.any_of",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub last_updated_any_of: Option<String>,
     /// The `last_updated_gt` argument.
+    #[serde(rename = "last_updated.gt", skip_serializing_if = "Option::is_none")]
     pub last_updated_gt: Option<String>,
     /// The `last_updated_gte` argument.
+    #[serde(rename = "last_updated.gte", skip_serializing_if = "Option::is_none")]
     pub last_updated_gte: Option<String>,
     /// The `last_updated_lt` argument.
+    #[serde(rename = "last_updated.lt", skip_serializing_if = "Option::is_none")]
     pub last_updated_lt: Option<String>,
     /// The `last_updated_lte` argument.
+    #[serde(rename = "last_updated.lte", skip_serializing_if = "Option::is_none")]
     pub last_updated_lte: Option<String>,
     /// The `tickers` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub tickers: Option<String>,
     /// The `tickers_all_of` argument.
+    #[serde(rename = "tickers.all_of", skip_serializing_if = "Option::is_none")]
     pub tickers_all_of: Option<String>,
     /// The `tickers_any_of` argument.
+    #[serde(rename = "tickers.any_of", skip_serializing_if = "Option::is_none")]
     pub tickers_any_of: Option<String>,
     /// The `channels` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub channels: Option<String>,
     /// The `channels_all_of` argument.
+    #[serde(rename = "channels.all_of", skip_serializing_if = "Option::is_none")]
     pub channels_all_of: Option<String>,
     /// The `channels_any_of` argument.
+    #[serde(rename = "channels.any_of", skip_serializing_if = "Option::is_none")]
     pub channels_any_of: Option<String>,
     /// The `tags` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub tags: Option<String>,
     /// The `tags_all_of` argument.
+    #[serde(rename = "tags.all_of", skip_serializing_if = "Option::is_none")]
     pub tags_all_of: Option<String>,
     /// The `tags_any_of` argument.
+    #[serde(rename = "tags.any_of", skip_serializing_if = "Option::is_none")]
     pub tags_any_of: Option<String>,
     /// The `author` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub author: Option<String>,
     /// The `author_any_of` argument.
+    #[serde(rename = "author.any_of", skip_serializing_if = "Option::is_none")]
     pub author_any_of: Option<String>,
     /// The `author_gt` argument.
+    #[serde(rename = "author.gt", skip_serializing_if = "Option::is_none")]
     pub author_gt: Option<String>,
     /// The `author_gte` argument.
+    #[serde(rename = "author.gte", skip_serializing_if = "Option::is_none")]
     pub author_gte: Option<String>,
     /// The `author_lt` argument.
+    #[serde(rename = "author.lt", skip_serializing_if = "Option::is_none")]
     pub author_lt: Option<String>,
     /// The `author_lte` argument.
+    #[serde(rename = "author.lte", skip_serializing_if = "Option::is_none")]
     pub author_lte: Option<String>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `sort` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sort: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -4710,59 +3480,85 @@ impl ListBenzingaNewsParams {
 }
 
 /// Optional arguments for [`BenzingaApi::list_benzinga_news_v2`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct ListBenzingaNewsV2Params {
     /// The `published` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub published: Option<String>,
     /// The `published_gt` argument.
+    #[serde(rename = "published.gt", skip_serializing_if = "Option::is_none")]
     pub published_gt: Option<String>,
     /// The `published_gte` argument.
+    #[serde(rename = "published.gte", skip_serializing_if = "Option::is_none")]
     pub published_gte: Option<String>,
     /// The `published_lt` argument.
+    #[serde(rename = "published.lt", skip_serializing_if = "Option::is_none")]
     pub published_lt: Option<String>,
     /// The `published_lte` argument.
+    #[serde(rename = "published.lte", skip_serializing_if = "Option::is_none")]
     pub published_lte: Option<String>,
     /// The `channels` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub channels: Option<String>,
     /// The `channels_all_of` argument.
+    #[serde(rename = "channels.all_of", skip_serializing_if = "Option::is_none")]
     pub channels_all_of: Option<String>,
     /// The `channels_any_of` argument.
+    #[serde(rename = "channels.any_of", skip_serializing_if = "Option::is_none")]
     pub channels_any_of: Option<String>,
     /// The `tags` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub tags: Option<String>,
     /// The `tags_all_of` argument.
+    #[serde(rename = "tags.all_of", skip_serializing_if = "Option::is_none")]
     pub tags_all_of: Option<String>,
     /// The `tags_any_of` argument.
+    #[serde(rename = "tags.any_of", skip_serializing_if = "Option::is_none")]
     pub tags_any_of: Option<String>,
     /// The `author` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub author: Option<String>,
     /// The `author_any_of` argument.
+    #[serde(rename = "author.any_of", skip_serializing_if = "Option::is_none")]
     pub author_any_of: Option<String>,
     /// The `author_gt` argument.
+    #[serde(rename = "author.gt", skip_serializing_if = "Option::is_none")]
     pub author_gt: Option<String>,
     /// The `author_gte` argument.
+    #[serde(rename = "author.gte", skip_serializing_if = "Option::is_none")]
     pub author_gte: Option<String>,
     /// The `author_lt` argument.
+    #[serde(rename = "author.lt", skip_serializing_if = "Option::is_none")]
     pub author_lt: Option<String>,
     /// The `author_lte` argument.
+    #[serde(rename = "author.lte", skip_serializing_if = "Option::is_none")]
     pub author_lte: Option<String>,
     /// The `stocks` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub stocks: Option<String>,
     /// The `stocks_all_of` argument.
+    #[serde(rename = "stocks.all_of", skip_serializing_if = "Option::is_none")]
     pub stocks_all_of: Option<String>,
     /// The `stocks_any_of` argument.
+    #[serde(rename = "stocks.any_of", skip_serializing_if = "Option::is_none")]
     pub stocks_any_of: Option<String>,
     /// The `tickers` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub tickers: Option<String>,
     /// The `tickers_all_of` argument.
+    #[serde(rename = "tickers.all_of", skip_serializing_if = "Option::is_none")]
     pub tickers_all_of: Option<String>,
     /// The `tickers_any_of` argument.
+    #[serde(rename = "tickers.any_of", skip_serializing_if = "Option::is_none")]
     pub tickers_any_of: Option<String>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `sort` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sort: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -4930,121 +3726,229 @@ impl ListBenzingaNewsV2Params {
 }
 
 /// Optional arguments for [`BenzingaApi::list_benzinga_ratings`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct ListBenzingaRatingsParams {
     /// The `date` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub date: Option<String>,
     /// The `date_any_of` argument.
+    #[serde(rename = "date.any_of", skip_serializing_if = "Option::is_none")]
     pub date_any_of: Option<String>,
     /// The `date_gt` argument.
+    #[serde(rename = "date.gt", skip_serializing_if = "Option::is_none")]
     pub date_gt: Option<String>,
     /// The `date_gte` argument.
+    #[serde(rename = "date.gte", skip_serializing_if = "Option::is_none")]
     pub date_gte: Option<String>,
     /// The `date_lt` argument.
+    #[serde(rename = "date.lt", skip_serializing_if = "Option::is_none")]
     pub date_lt: Option<String>,
     /// The `date_lte` argument.
+    #[serde(rename = "date.lte", skip_serializing_if = "Option::is_none")]
     pub date_lte: Option<String>,
     /// The `ticker` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub ticker: Option<String>,
     /// The `ticker_any_of` argument.
+    #[serde(rename = "ticker.any_of", skip_serializing_if = "Option::is_none")]
     pub ticker_any_of: Option<String>,
     /// The `ticker_gt` argument.
+    #[serde(rename = "ticker.gt", skip_serializing_if = "Option::is_none")]
     pub ticker_gt: Option<String>,
     /// The `ticker_gte` argument.
+    #[serde(rename = "ticker.gte", skip_serializing_if = "Option::is_none")]
     pub ticker_gte: Option<String>,
     /// The `ticker_lt` argument.
+    #[serde(rename = "ticker.lt", skip_serializing_if = "Option::is_none")]
     pub ticker_lt: Option<String>,
     /// The `ticker_lte` argument.
+    #[serde(rename = "ticker.lte", skip_serializing_if = "Option::is_none")]
     pub ticker_lte: Option<String>,
     /// The `importance` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub importance: Option<i64>,
     /// The `importance_any_of` argument.
+    #[serde(rename = "importance.any_of", skip_serializing_if = "Option::is_none")]
     pub importance_any_of: Option<String>,
     /// The `importance_gt` argument.
+    #[serde(rename = "importance.gt", skip_serializing_if = "Option::is_none")]
     pub importance_gt: Option<i64>,
     /// The `importance_gte` argument.
+    #[serde(rename = "importance.gte", skip_serializing_if = "Option::is_none")]
     pub importance_gte: Option<i64>,
     /// The `importance_lt` argument.
+    #[serde(rename = "importance.lt", skip_serializing_if = "Option::is_none")]
     pub importance_lt: Option<i64>,
     /// The `importance_lte` argument.
+    #[serde(rename = "importance.lte", skip_serializing_if = "Option::is_none")]
     pub importance_lte: Option<i64>,
     /// The `last_updated` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub last_updated: Option<String>,
     /// The `last_updated_any_of` argument.
+    #[serde(
+        rename = "last_updated.any_of",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub last_updated_any_of: Option<String>,
     /// The `last_updated_gt` argument.
+    #[serde(rename = "last_updated.gt", skip_serializing_if = "Option::is_none")]
     pub last_updated_gt: Option<String>,
     /// The `last_updated_gte` argument.
+    #[serde(rename = "last_updated.gte", skip_serializing_if = "Option::is_none")]
     pub last_updated_gte: Option<String>,
     /// The `last_updated_lt` argument.
+    #[serde(rename = "last_updated.lt", skip_serializing_if = "Option::is_none")]
     pub last_updated_lt: Option<String>,
     /// The `last_updated_lte` argument.
+    #[serde(rename = "last_updated.lte", skip_serializing_if = "Option::is_none")]
     pub last_updated_lte: Option<String>,
     /// The `rating_action` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub rating_action: Option<String>,
     /// The `rating_action_any_of` argument.
+    #[serde(
+        rename = "rating_action.any_of",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub rating_action_any_of: Option<String>,
     /// The `rating_action_gt` argument.
+    #[serde(rename = "rating_action.gt", skip_serializing_if = "Option::is_none")]
     pub rating_action_gt: Option<String>,
     /// The `rating_action_gte` argument.
+    #[serde(rename = "rating_action.gte", skip_serializing_if = "Option::is_none")]
     pub rating_action_gte: Option<String>,
     /// The `rating_action_lt` argument.
+    #[serde(rename = "rating_action.lt", skip_serializing_if = "Option::is_none")]
     pub rating_action_lt: Option<String>,
     /// The `rating_action_lte` argument.
+    #[serde(rename = "rating_action.lte", skip_serializing_if = "Option::is_none")]
     pub rating_action_lte: Option<String>,
     /// The `price_target_action` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub price_target_action: Option<String>,
     /// The `price_target_action_any_of` argument.
+    #[serde(
+        rename = "price_target_action.any_of",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub price_target_action_any_of: Option<String>,
     /// The `price_target_action_gt` argument.
+    #[serde(
+        rename = "price_target_action.gt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub price_target_action_gt: Option<String>,
     /// The `price_target_action_gte` argument.
+    #[serde(
+        rename = "price_target_action.gte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub price_target_action_gte: Option<String>,
     /// The `price_target_action_lt` argument.
+    #[serde(
+        rename = "price_target_action.lt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub price_target_action_lt: Option<String>,
     /// The `price_target_action_lte` argument.
+    #[serde(
+        rename = "price_target_action.lte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub price_target_action_lte: Option<String>,
     /// The `benzinga_id` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub benzinga_id: Option<String>,
     /// The `benzinga_id_any_of` argument.
+    #[serde(rename = "benzinga_id.any_of", skip_serializing_if = "Option::is_none")]
     pub benzinga_id_any_of: Option<String>,
     /// The `benzinga_id_gt` argument.
+    #[serde(rename = "benzinga_id.gt", skip_serializing_if = "Option::is_none")]
     pub benzinga_id_gt: Option<String>,
     /// The `benzinga_id_gte` argument.
+    #[serde(rename = "benzinga_id.gte", skip_serializing_if = "Option::is_none")]
     pub benzinga_id_gte: Option<String>,
     /// The `benzinga_id_lt` argument.
+    #[serde(rename = "benzinga_id.lt", skip_serializing_if = "Option::is_none")]
     pub benzinga_id_lt: Option<String>,
     /// The `benzinga_id_lte` argument.
+    #[serde(rename = "benzinga_id.lte", skip_serializing_if = "Option::is_none")]
     pub benzinga_id_lte: Option<String>,
     /// The `benzinga_analyst_id` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub benzinga_analyst_id: Option<String>,
     /// The `benzinga_analyst_id_any_of` argument.
+    #[serde(
+        rename = "benzinga_analyst_id.any_of",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub benzinga_analyst_id_any_of: Option<String>,
     /// The `benzinga_analyst_id_gt` argument.
+    #[serde(
+        rename = "benzinga_analyst_id.gt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub benzinga_analyst_id_gt: Option<String>,
     /// The `benzinga_analyst_id_gte` argument.
+    #[serde(
+        rename = "benzinga_analyst_id.gte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub benzinga_analyst_id_gte: Option<String>,
     /// The `benzinga_analyst_id_lt` argument.
+    #[serde(
+        rename = "benzinga_analyst_id.lt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub benzinga_analyst_id_lt: Option<String>,
     /// The `benzinga_analyst_id_lte` argument.
+    #[serde(
+        rename = "benzinga_analyst_id.lte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub benzinga_analyst_id_lte: Option<String>,
     /// The `benzinga_firm_id` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub benzinga_firm_id: Option<String>,
     /// The `benzinga_firm_id_any_of` argument.
+    #[serde(
+        rename = "benzinga_firm_id.any_of",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub benzinga_firm_id_any_of: Option<String>,
     /// The `benzinga_firm_id_gt` argument.
+    #[serde(
+        rename = "benzinga_firm_id.gt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub benzinga_firm_id_gt: Option<String>,
     /// The `benzinga_firm_id_gte` argument.
+    #[serde(
+        rename = "benzinga_firm_id.gte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub benzinga_firm_id_gte: Option<String>,
     /// The `benzinga_firm_id_lt` argument.
+    #[serde(
+        rename = "benzinga_firm_id.lt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub benzinga_firm_id_lt: Option<String>,
     /// The `benzinga_firm_id_lte` argument.
+    #[serde(
+        rename = "benzinga_firm_id.lte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub benzinga_firm_id_lte: Option<String>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `sort` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sort: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -5404,47 +4308,67 @@ impl ListBenzingaRatingsParams {
 }
 
 /// Optional arguments for [`BenzingaApi::list_benzinga_bulls_bears_say`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct ListBenzingaBullsBearsSayParams {
     /// The `ticker` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub ticker: Option<String>,
     /// The `ticker_any_of` argument.
+    #[serde(rename = "ticker.any_of", skip_serializing_if = "Option::is_none")]
     pub ticker_any_of: Option<String>,
     /// The `ticker_gt` argument.
+    #[serde(rename = "ticker.gt", skip_serializing_if = "Option::is_none")]
     pub ticker_gt: Option<String>,
     /// The `ticker_gte` argument.
+    #[serde(rename = "ticker.gte", skip_serializing_if = "Option::is_none")]
     pub ticker_gte: Option<String>,
     /// The `ticker_lt` argument.
+    #[serde(rename = "ticker.lt", skip_serializing_if = "Option::is_none")]
     pub ticker_lt: Option<String>,
     /// The `ticker_lte` argument.
+    #[serde(rename = "ticker.lte", skip_serializing_if = "Option::is_none")]
     pub ticker_lte: Option<String>,
     /// The `benzinga_id` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub benzinga_id: Option<String>,
     /// The `benzinga_id_any_of` argument.
+    #[serde(rename = "benzinga_id.any_of", skip_serializing_if = "Option::is_none")]
     pub benzinga_id_any_of: Option<String>,
     /// The `benzinga_id_gt` argument.
+    #[serde(rename = "benzinga_id.gt", skip_serializing_if = "Option::is_none")]
     pub benzinga_id_gt: Option<String>,
     /// The `benzinga_id_gte` argument.
+    #[serde(rename = "benzinga_id.gte", skip_serializing_if = "Option::is_none")]
     pub benzinga_id_gte: Option<String>,
     /// The `benzinga_id_lt` argument.
+    #[serde(rename = "benzinga_id.lt", skip_serializing_if = "Option::is_none")]
     pub benzinga_id_lt: Option<String>,
     /// The `benzinga_id_lte` argument.
+    #[serde(rename = "benzinga_id.lte", skip_serializing_if = "Option::is_none")]
     pub benzinga_id_lte: Option<String>,
     /// The `last_updated` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub last_updated: Option<String>,
     /// The `last_updated_gt` argument.
+    #[serde(rename = "last_updated.gt", skip_serializing_if = "Option::is_none")]
     pub last_updated_gt: Option<String>,
     /// The `last_updated_gte` argument.
+    #[serde(rename = "last_updated.gte", skip_serializing_if = "Option::is_none")]
     pub last_updated_gte: Option<String>,
     /// The `last_updated_lt` argument.
+    #[serde(rename = "last_updated.lt", skip_serializing_if = "Option::is_none")]
     pub last_updated_lt: Option<String>,
     /// The `last_updated_lte` argument.
+    #[serde(rename = "last_updated.lte", skip_serializing_if = "Option::is_none")]
     pub last_updated_lte: Option<String>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `sort` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sort: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 

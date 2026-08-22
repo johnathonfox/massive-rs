@@ -155,3 +155,45 @@ async fn get_real_time_currency_conversion_sends_amount_and_precision() {
     assert_eq!(conversion.initial_amount, Some(100.0));
     assert_eq!(conversion.converted, Some(93.66));
 }
+
+#[tokio::test]
+async fn list_quotes_with_params_serializes_every_field() {
+    let server = MockServer::start().await;
+    Mock::given(method("GET"))
+        .and(path("/v3/quotes/AAPL"))
+        .and(query_param("timestamp", "2023-01-03"))
+        .and(query_param("timestamp.lt", "2023-01-04"))
+        .and(query_param("timestamp.lte", "2023-01-05"))
+        .and(query_param("timestamp.gt", "2023-01-01"))
+        .and(query_param("timestamp.gte", "2023-01-02"))
+        .and(query_param("limit", "10"))
+        .and(query_param("sort", "timestamp"))
+        .and(query_param("order", "asc"))
+        .and(header("Authorization", "Bearer test-key"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(serde_json::json!({
+            "status": "OK",
+            "results": [],
+            "count": 0
+        })))
+        .expect(1)
+        .mount(&server)
+        .await;
+
+    let client = Client::new("test-key").unwrap().with_base(server.uri());
+    let params = massive::rest::ListQuotesParams::new()
+        .timestamp("2023-01-03")
+        .timestamp_lt("2023-01-04")
+        .timestamp_lte("2023-01-05")
+        .timestamp_gt("2023-01-01")
+        .timestamp_gte("2023-01-02")
+        .limit(10)
+        .sort("timestamp")
+        .order("asc");
+    let quotes: Vec<_> = client
+        .list_quotes_with_params("AAPL", params)
+        .try_collect()
+        .await
+        .unwrap();
+
+    assert!(quotes.is_empty());
+}

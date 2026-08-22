@@ -9,6 +9,39 @@ pub type BoxFuture<'a, T> = Pin<Box<dyn Future<Output = Result<T>> + Send + 'a>>
 /// Boxed stream returned by every object-safe `list_*` REST trait method.
 pub type BoxStream<'a, T> = Pin<Box<dyn Stream<Item = Result<T>> + Send + 'a>>;
 
+/// Serialize a params struct to a URL-encoded query string (no leading `?`).
+///
+/// Wire keys come from each field's serde attributes: `rename` supplies dotted
+/// filter operators (`ticker.gte`), `skip_serializing_if` omits unset options,
+/// and path-consumed fields plus `options` are `skip`ped. Infallible in
+/// practice: params structs contain only scalar `Option` fields.
+pub(crate) fn encode_query<T: serde::Serialize>(params: &T) -> String {
+    serde_urlencoded::to_string(params).unwrap_or_default()
+}
+
+/// Serialize an optional float with `f64::to_string` semantics (`"5"`, not
+/// ryu's `"5.0"`), matching the Python client's wire format.
+pub(crate) fn ser_opt_f64<S: serde::Serializer>(
+    value: &Option<f64>,
+    serializer: S,
+) -> std::result::Result<S::Ok, S::Error> {
+    match value {
+        Some(v) => serializer.serialize_str(&v.to_string()),
+        None => serializer.serialize_none(),
+    }
+}
+
+/// Serialize an optional string list as one comma-joined value (`"a,b,c"`).
+pub(crate) fn ser_comma_join<S: serde::Serializer>(
+    value: &Option<Vec<String>>,
+    serializer: S,
+) -> std::result::Result<S::Ok, S::Error> {
+    match value {
+        Some(v) => serializer.serialize_str(&v.join(",")),
+        None => serializer.serialize_none(),
+    }
+}
+
 pub mod aggs;
 pub mod benzinga;
 pub mod economy;

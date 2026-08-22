@@ -4,7 +4,7 @@
 
 use futures::TryStreamExt;
 use massive::rest::{GetSummariesParams, ListTradesParams};
-use massive::{rest::SummariesApi, rest::TradesApi, Client};
+use massive::{rest::AggsApi, rest::SummariesApi, rest::TradesApi, Client};
 use wiremock::matchers::{header, method, path, query_param};
 use wiremock::{Mock, MockServer, ResponseTemplate};
 
@@ -84,4 +84,59 @@ async fn get_summaries_with_params_serializes_any_of_list() {
     let params = GetSummariesParams::new().ticker_any_of(&["AAPL", "MSFT"]);
     let results = client.get_summaries_with_params(params).await.unwrap();
     assert!(results.is_empty());
+}
+
+#[tokio::test]
+async fn aggs_params_serialize_full_query() {
+    use massive::rest::{GetGroupedDailyAggsParams, ListAggsParams};
+    use wiremock::matchers::{method, path, query_param};
+    use wiremock::{Mock, MockServer, ResponseTemplate};
+
+    let server = MockServer::start().await;
+    Mock::given(method("GET"))
+        .and(path("/v2/aggs/ticker/AAPL/range/1/day/2023-01-01/2023-06-13"))
+        .and(query_param("adjusted", "true"))
+        .and(query_param("sort", "asc"))
+        .and(query_param("limit", "50000"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(serde_json::json!({
+            "status": "OK", "results": []
+        })))
+        .expect(1)
+        .mount(&server)
+        .await;
+    Mock::given(method("GET"))
+        .and(path("/v2/aggs/grouped/locale/de/market/stocks/2023-01-03"))
+        .and(query_param("adjusted", "false"))
+        .and(query_param("include_otc", "true"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(serde_json::json!({
+            "status": "OK", "results": []
+        })))
+        .expect(1)
+        .mount(&server)
+        .await;
+
+    let client = massive::Client::new("test-key").unwrap().with_base(server.uri());
+    let _: Vec<_> = futures::TryStreamExt::try_collect(
+        client.list_aggs_with_params(
+            "AAPL",
+            1,
+            "day",
+            "2023-01-01",
+            "2023-06-13",
+            ListAggsParams::new().adjusted(true).sort("asc").limit(50000),
+        ),
+    )
+    .await
+    .unwrap();
+    let _ = client
+        .get_grouped_daily_aggs_with_params(
+            "2023-01-03",
+            GetGroupedDailyAggsParams::new()
+                .adjusted(false)
+                .locale("de")
+                .market_type("stocks")
+                .include_otc(true),
+        )
+        .await
+        .unwrap();
 }

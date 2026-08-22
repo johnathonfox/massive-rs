@@ -1,18 +1,6 @@
-use super::BoxStream;
+use super::{encode_query, BoxStream};
 use crate::client::{Client, RequestOptions};
 use crate::models::TmxCorporateEvent;
-
-/// Push a query param when the optional value is present, using the literal
-/// (possibly dotted) wire key.
-fn push_param<T: ToString>(
-    params: &mut Vec<(&'static str, String)>,
-    key: &'static str,
-    value: Option<T>,
-) {
-    if let Some(v) = value {
-        params.push((key, v.to_string()));
-    }
-}
 
 /// TMX API.
 pub trait TmxApi {
@@ -197,157 +185,9 @@ impl TmxApi for Client {
         params: ListTmxCorporateEventsParams,
     ) -> BoxStream<'a, TmxCorporateEvent> {
         Box::pin({
-            let ListTmxCorporateEventsParams {
-                date,
-                date_any_of,
-                date_gt,
-                date_gte,
-                date_lt,
-                date_lte,
-                r#type,
-                type_any_of,
-                type_gt,
-                type_gte,
-                type_lt,
-                type_lte,
-                status,
-                status_any_of,
-                status_gt,
-                status_gte,
-                status_lt,
-                status_lte,
-                ticker,
-                ticker_any_of,
-                ticker_gt,
-                ticker_gte,
-                ticker_lt,
-                ticker_lte,
-                isin,
-                isin_any_of,
-                isin_gt,
-                isin_gte,
-                isin_lt,
-                isin_lte,
-                trading_venue,
-                trading_venue_any_of,
-                trading_venue_gt,
-                trading_venue_gte,
-                trading_venue_lt,
-                trading_venue_lte,
-                tmx_company_id,
-                tmx_company_id_any_of,
-                tmx_company_id_gt,
-                tmx_company_id_gte,
-                tmx_company_id_lt,
-                tmx_company_id_lte,
-                tmx_record_id,
-                tmx_record_id_any_of,
-                tmx_record_id_gt,
-                tmx_record_id_gte,
-                tmx_record_id_lt,
-                tmx_record_id_lte,
-                limit,
-                sort,
-                options,
-            } = params;
-            let date = date.as_deref();
-            let date_any_of = date_any_of.as_deref();
-            let date_gt = date_gt.as_deref();
-            let date_gte = date_gte.as_deref();
-            let date_lt = date_lt.as_deref();
-            let date_lte = date_lte.as_deref();
-            let r#type = r#type.as_deref();
-            let type_any_of = type_any_of.as_deref();
-            let type_gt = type_gt.as_deref();
-            let type_gte = type_gte.as_deref();
-            let type_lt = type_lt.as_deref();
-            let type_lte = type_lte.as_deref();
-            let status = status.as_deref();
-            let status_any_of = status_any_of.as_deref();
-            let status_gt = status_gt.as_deref();
-            let status_gte = status_gte.as_deref();
-            let status_lt = status_lt.as_deref();
-            let status_lte = status_lte.as_deref();
-            let ticker = ticker.as_deref();
-            let ticker_any_of = ticker_any_of.as_deref();
-            let ticker_gt = ticker_gt.as_deref();
-            let ticker_gte = ticker_gte.as_deref();
-            let ticker_lt = ticker_lt.as_deref();
-            let ticker_lte = ticker_lte.as_deref();
-            let isin = isin.as_deref();
-            let isin_any_of = isin_any_of.as_deref();
-            let isin_gt = isin_gt.as_deref();
-            let isin_gte = isin_gte.as_deref();
-            let isin_lt = isin_lt.as_deref();
-            let isin_lte = isin_lte.as_deref();
-            let trading_venue = trading_venue.as_deref();
-            let trading_venue_any_of = trading_venue_any_of.as_deref();
-            let trading_venue_gt = trading_venue_gt.as_deref();
-            let trading_venue_gte = trading_venue_gte.as_deref();
-            let trading_venue_lt = trading_venue_lt.as_deref();
-            let trading_venue_lte = trading_venue_lte.as_deref();
-            let tmx_company_id_any_of = tmx_company_id_any_of.as_deref();
-            let tmx_record_id = tmx_record_id.as_deref();
-            let tmx_record_id_any_of = tmx_record_id_any_of.as_deref();
-            let tmx_record_id_gt = tmx_record_id_gt.as_deref();
-            let tmx_record_id_gte = tmx_record_id_gte.as_deref();
-            let tmx_record_id_lt = tmx_record_id_lt.as_deref();
-            let tmx_record_id_lte = tmx_record_id_lte.as_deref();
-            let sort = sort.as_deref();
-            let options = options.as_ref();
             let path = "/tmx/v1/corporate-events".to_string();
-            let mut query: Vec<(&str, String)> = Vec::new();
-            push_param(&mut query, "date", date);
-            push_param(&mut query, "date.any_of", date_any_of);
-            push_param(&mut query, "date.gt", date_gt);
-            push_param(&mut query, "date.gte", date_gte);
-            push_param(&mut query, "date.lt", date_lt);
-            push_param(&mut query, "date.lte", date_lte);
-            push_param(&mut query, "type", r#type);
-            push_param(&mut query, "type.any_of", type_any_of);
-            push_param(&mut query, "type.gt", type_gt);
-            push_param(&mut query, "type.gte", type_gte);
-            push_param(&mut query, "type.lt", type_lt);
-            push_param(&mut query, "type.lte", type_lte);
-            push_param(&mut query, "status", status);
-            push_param(&mut query, "status.any_of", status_any_of);
-            push_param(&mut query, "status.gt", status_gt);
-            push_param(&mut query, "status.gte", status_gte);
-            push_param(&mut query, "status.lt", status_lt);
-            push_param(&mut query, "status.lte", status_lte);
-            push_param(&mut query, "ticker", ticker);
-            push_param(&mut query, "ticker.any_of", ticker_any_of);
-            push_param(&mut query, "ticker.gt", ticker_gt);
-            push_param(&mut query, "ticker.gte", ticker_gte);
-            push_param(&mut query, "ticker.lt", ticker_lt);
-            push_param(&mut query, "ticker.lte", ticker_lte);
-            push_param(&mut query, "isin", isin);
-            push_param(&mut query, "isin.any_of", isin_any_of);
-            push_param(&mut query, "isin.gt", isin_gt);
-            push_param(&mut query, "isin.gte", isin_gte);
-            push_param(&mut query, "isin.lt", isin_lt);
-            push_param(&mut query, "isin.lte", isin_lte);
-            push_param(&mut query, "trading_venue", trading_venue);
-            push_param(&mut query, "trading_venue.any_of", trading_venue_any_of);
-            push_param(&mut query, "trading_venue.gt", trading_venue_gt);
-            push_param(&mut query, "trading_venue.gte", trading_venue_gte);
-            push_param(&mut query, "trading_venue.lt", trading_venue_lt);
-            push_param(&mut query, "trading_venue.lte", trading_venue_lte);
-            push_param(&mut query, "tmx_company_id", tmx_company_id);
-            push_param(&mut query, "tmx_company_id.any_of", tmx_company_id_any_of);
-            push_param(&mut query, "tmx_company_id.gt", tmx_company_id_gt);
-            push_param(&mut query, "tmx_company_id.gte", tmx_company_id_gte);
-            push_param(&mut query, "tmx_company_id.lt", tmx_company_id_lt);
-            push_param(&mut query, "tmx_company_id.lte", tmx_company_id_lte);
-            push_param(&mut query, "tmx_record_id", tmx_record_id);
-            push_param(&mut query, "tmx_record_id.any_of", tmx_record_id_any_of);
-            push_param(&mut query, "tmx_record_id.gt", tmx_record_id_gt);
-            push_param(&mut query, "tmx_record_id.gte", tmx_record_id_gte);
-            push_param(&mut query, "tmx_record_id.lt", tmx_record_id_lt);
-            push_param(&mut query, "tmx_record_id.lte", tmx_record_id_lte);
-            push_param(&mut query, "limit", limit);
-            push_param(&mut query, "sort", sort);
-            self.list::<TmxCorporateEvent>(&path, Some(&query), options)
+            let query = encode_query(&params);
+            self.list::<TmxCorporateEvent>(&path, &query, params.options.as_ref())
         })
     }
 }
@@ -355,109 +195,193 @@ impl TmxApi for Client {
 // --- Params structs (additive builder API) ---
 
 /// Optional arguments for [`TmxApi::list_tmx_corporate_events`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct ListTmxCorporateEventsParams {
     /// The `date` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub date: Option<String>,
     /// The `date_any_of` argument.
+    #[serde(rename = "date.any_of", skip_serializing_if = "Option::is_none")]
     pub date_any_of: Option<String>,
     /// The `date_gt` argument.
+    #[serde(rename = "date.gt", skip_serializing_if = "Option::is_none")]
     pub date_gt: Option<String>,
     /// The `date_gte` argument.
+    #[serde(rename = "date.gte", skip_serializing_if = "Option::is_none")]
     pub date_gte: Option<String>,
     /// The `date_lt` argument.
+    #[serde(rename = "date.lt", skip_serializing_if = "Option::is_none")]
     pub date_lt: Option<String>,
     /// The `date_lte` argument.
+    #[serde(rename = "date.lte", skip_serializing_if = "Option::is_none")]
     pub date_lte: Option<String>,
     /// The `type` argument.
+    #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
     pub r#type: Option<String>,
     /// The `type_any_of` argument.
+    #[serde(rename = "type.any_of", skip_serializing_if = "Option::is_none")]
     pub type_any_of: Option<String>,
     /// The `type_gt` argument.
+    #[serde(rename = "type.gt", skip_serializing_if = "Option::is_none")]
     pub type_gt: Option<String>,
     /// The `type_gte` argument.
+    #[serde(rename = "type.gte", skip_serializing_if = "Option::is_none")]
     pub type_gte: Option<String>,
     /// The `type_lt` argument.
+    #[serde(rename = "type.lt", skip_serializing_if = "Option::is_none")]
     pub type_lt: Option<String>,
     /// The `type_lte` argument.
+    #[serde(rename = "type.lte", skip_serializing_if = "Option::is_none")]
     pub type_lte: Option<String>,
     /// The `status` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub status: Option<String>,
     /// The `status_any_of` argument.
+    #[serde(rename = "status.any_of", skip_serializing_if = "Option::is_none")]
     pub status_any_of: Option<String>,
     /// The `status_gt` argument.
+    #[serde(rename = "status.gt", skip_serializing_if = "Option::is_none")]
     pub status_gt: Option<String>,
     /// The `status_gte` argument.
+    #[serde(rename = "status.gte", skip_serializing_if = "Option::is_none")]
     pub status_gte: Option<String>,
     /// The `status_lt` argument.
+    #[serde(rename = "status.lt", skip_serializing_if = "Option::is_none")]
     pub status_lt: Option<String>,
     /// The `status_lte` argument.
+    #[serde(rename = "status.lte", skip_serializing_if = "Option::is_none")]
     pub status_lte: Option<String>,
     /// The `ticker` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub ticker: Option<String>,
     /// The `ticker_any_of` argument.
+    #[serde(rename = "ticker.any_of", skip_serializing_if = "Option::is_none")]
     pub ticker_any_of: Option<String>,
     /// The `ticker_gt` argument.
+    #[serde(rename = "ticker.gt", skip_serializing_if = "Option::is_none")]
     pub ticker_gt: Option<String>,
     /// The `ticker_gte` argument.
+    #[serde(rename = "ticker.gte", skip_serializing_if = "Option::is_none")]
     pub ticker_gte: Option<String>,
     /// The `ticker_lt` argument.
+    #[serde(rename = "ticker.lt", skip_serializing_if = "Option::is_none")]
     pub ticker_lt: Option<String>,
     /// The `ticker_lte` argument.
+    #[serde(rename = "ticker.lte", skip_serializing_if = "Option::is_none")]
     pub ticker_lte: Option<String>,
     /// The `isin` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub isin: Option<String>,
     /// The `isin_any_of` argument.
+    #[serde(rename = "isin.any_of", skip_serializing_if = "Option::is_none")]
     pub isin_any_of: Option<String>,
     /// The `isin_gt` argument.
+    #[serde(rename = "isin.gt", skip_serializing_if = "Option::is_none")]
     pub isin_gt: Option<String>,
     /// The `isin_gte` argument.
+    #[serde(rename = "isin.gte", skip_serializing_if = "Option::is_none")]
     pub isin_gte: Option<String>,
     /// The `isin_lt` argument.
+    #[serde(rename = "isin.lt", skip_serializing_if = "Option::is_none")]
     pub isin_lt: Option<String>,
     /// The `isin_lte` argument.
+    #[serde(rename = "isin.lte", skip_serializing_if = "Option::is_none")]
     pub isin_lte: Option<String>,
     /// The `trading_venue` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub trading_venue: Option<String>,
     /// The `trading_venue_any_of` argument.
+    #[serde(
+        rename = "trading_venue.any_of",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub trading_venue_any_of: Option<String>,
     /// The `trading_venue_gt` argument.
+    #[serde(rename = "trading_venue.gt", skip_serializing_if = "Option::is_none")]
     pub trading_venue_gt: Option<String>,
     /// The `trading_venue_gte` argument.
+    #[serde(
+        rename = "trading_venue.gte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub trading_venue_gte: Option<String>,
     /// The `trading_venue_lt` argument.
+    #[serde(rename = "trading_venue.lt", skip_serializing_if = "Option::is_none")]
     pub trading_venue_lt: Option<String>,
     /// The `trading_venue_lte` argument.
+    #[serde(
+        rename = "trading_venue.lte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub trading_venue_lte: Option<String>,
     /// The `tmx_company_id` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub tmx_company_id: Option<i64>,
     /// The `tmx_company_id_any_of` argument.
+    #[serde(
+        rename = "tmx_company_id.any_of",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub tmx_company_id_any_of: Option<String>,
     /// The `tmx_company_id_gt` argument.
+    #[serde(
+        rename = "tmx_company_id.gt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub tmx_company_id_gt: Option<i64>,
     /// The `tmx_company_id_gte` argument.
+    #[serde(
+        rename = "tmx_company_id.gte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub tmx_company_id_gte: Option<i64>,
     /// The `tmx_company_id_lt` argument.
+    #[serde(
+        rename = "tmx_company_id.lt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub tmx_company_id_lt: Option<i64>,
     /// The `tmx_company_id_lte` argument.
+    #[serde(
+        rename = "tmx_company_id.lte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub tmx_company_id_lte: Option<i64>,
     /// The `tmx_record_id` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub tmx_record_id: Option<String>,
     /// The `tmx_record_id_any_of` argument.
+    #[serde(
+        rename = "tmx_record_id.any_of",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub tmx_record_id_any_of: Option<String>,
     /// The `tmx_record_id_gt` argument.
+    #[serde(rename = "tmx_record_id.gt", skip_serializing_if = "Option::is_none")]
     pub tmx_record_id_gt: Option<String>,
     /// The `tmx_record_id_gte` argument.
+    #[serde(
+        rename = "tmx_record_id.gte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub tmx_record_id_gte: Option<String>,
     /// The `tmx_record_id_lt` argument.
+    #[serde(rename = "tmx_record_id.lt", skip_serializing_if = "Option::is_none")]
     pub tmx_record_id_lt: Option<String>,
     /// The `tmx_record_id_lte` argument.
+    #[serde(
+        rename = "tmx_record_id.lte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub tmx_record_id_lte: Option<String>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `sort` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sort: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 

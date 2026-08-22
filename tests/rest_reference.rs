@@ -1,5 +1,8 @@
 use futures::TryStreamExt;
-use massive::{rest::ReferenceApi, Client};
+use massive::{
+    rest::{ListDividendsParams, ReferenceApi},
+    Client,
+};
 use wiremock::matchers::{header, method, path, query_param};
 use wiremock::{Mock, MockServer, ResponseTemplate};
 
@@ -890,4 +893,117 @@ async fn list_stocks_filings_8k_text_collects_page_and_sends_filters() {
         .as_deref()
         .unwrap()
         .contains("Item 5.02"));
+}
+
+#[tokio::test]
+async fn list_dividends_with_params_sends_every_filter() {
+    let server = MockServer::start().await;
+    Mock::given(method("GET"))
+        .and(path("/v3/reference/dividends"))
+        .and(header(AUTH.0, AUTH.1))
+        .and(query_param("ticker", "AAPL"))
+        .and(query_param("ticker.lt", "ZZZ"))
+        .and(query_param("ticker.lte", "ZZ"))
+        .and(query_param("ticker.gt", "A"))
+        .and(query_param("ticker.gte", "AA"))
+        .and(query_param("ex_dividend_date", "2024-05-10"))
+        .and(query_param("ex_dividend_date.lt", "2024-06-01"))
+        .and(query_param("ex_dividend_date.lte", "2024-05-31"))
+        .and(query_param("ex_dividend_date.gt", "2024-01-01"))
+        .and(query_param("ex_dividend_date.gte", "2024-02-01"))
+        .and(query_param("record_date", "2024-05-13"))
+        .and(query_param("record_date.lt", "2024-06-13"))
+        .and(query_param("record_date.lte", "2024-05-30"))
+        .and(query_param("record_date.gt", "2024-01-13"))
+        .and(query_param("record_date.gte", "2024-02-13"))
+        .and(query_param("declaration_date", "2024-05-02"))
+        .and(query_param("declaration_date.lt", "2024-06-02"))
+        .and(query_param("declaration_date.lte", "2024-05-29"))
+        .and(query_param("declaration_date.gt", "2024-01-02"))
+        .and(query_param("declaration_date.gte", "2024-02-02"))
+        .and(query_param("pay_date", "2024-05-16"))
+        .and(query_param("pay_date.lt", "2024-06-16"))
+        .and(query_param("pay_date.lte", "2024-05-28"))
+        .and(query_param("pay_date.gt", "2024-01-16"))
+        .and(query_param("pay_date.gte", "2024-02-16"))
+        .and(query_param("frequency", "4"))
+        .and(query_param("cash_amount", "0.5"))
+        // integer-valued floats serialize as "10"/"1", not "10.0"/"1.0"
+        .and(query_param("cash_amount.lt", "10"))
+        .and(query_param("cash_amount.lte", "9.5"))
+        .and(query_param("cash_amount.gt", "0.1"))
+        .and(query_param("cash_amount.gte", "1"))
+        .and(query_param("dividend_type", "CD"))
+        .and(query_param("limit", "100"))
+        .and(query_param("sort", "ticker"))
+        .and(query_param("order", "asc"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(serde_json::json!({
+            "status": "OK",
+            "count": 1,
+            "results": [
+                {
+                    "id": 7,
+                    "cash_amount": 0.5,
+                    "currency": "USD",
+                    "declaration_date": "2024-05-02",
+                    "dividend_type": "CD",
+                    "ex_dividend_date": "2024-05-10",
+                    "frequency": 4,
+                    "pay_date": "2024-05-16",
+                    "record_date": "2024-05-13",
+                    "ticker": "AAPL"
+                }
+            ]
+        })))
+        .expect(1)
+        .mount(&server)
+        .await;
+
+    let params = ListDividendsParams::new()
+        .ticker("AAPL")
+        .ticker_lt("ZZZ")
+        .ticker_lte("ZZ")
+        .ticker_gt("A")
+        .ticker_gte("AA")
+        .ex_dividend_date("2024-05-10")
+        .ex_dividend_date_lt("2024-06-01")
+        .ex_dividend_date_lte("2024-05-31")
+        .ex_dividend_date_gt("2024-01-01")
+        .ex_dividend_date_gte("2024-02-01")
+        .record_date("2024-05-13")
+        .record_date_lt("2024-06-13")
+        .record_date_lte("2024-05-30")
+        .record_date_gt("2024-01-13")
+        .record_date_gte("2024-02-13")
+        .declaration_date("2024-05-02")
+        .declaration_date_lt("2024-06-02")
+        .declaration_date_lte("2024-05-29")
+        .declaration_date_gt("2024-01-02")
+        .declaration_date_gte("2024-02-02")
+        .pay_date("2024-05-16")
+        .pay_date_lt("2024-06-16")
+        .pay_date_lte("2024-05-28")
+        .pay_date_gt("2024-01-16")
+        .pay_date_gte("2024-02-16")
+        .frequency(4)
+        .cash_amount(0.5)
+        .cash_amount_lt(10.0)
+        .cash_amount_lte(9.5)
+        .cash_amount_gt(0.1)
+        .cash_amount_gte(1.0)
+        .dividend_type("CD")
+        .limit(100)
+        .sort("ticker")
+        .order("asc");
+
+    let dividends: Vec<_> = client(&server)
+        .list_dividends_with_params(params)
+        .try_collect()
+        .await
+        .unwrap();
+
+    assert_eq!(dividends.len(), 1);
+    assert_eq!(dividends[0].ticker.as_deref(), Some("AAPL"));
+    assert_eq!(dividends[0].cash_amount, Some(0.5));
+    assert_eq!(dividends[0].dividend_type.as_deref(), Some("CD"));
 }

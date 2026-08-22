@@ -1,5 +1,5 @@
 use futures::TryStreamExt;
-use massive::rest::SnapshotApi;
+use massive::rest::{ListUniversalSnapshotsParams, SnapshotApi};
 use massive::Client;
 use wiremock::matchers::{header, method, path, query_param};
 use wiremock::{Mock, MockServer, ResponseTemplate};
@@ -310,4 +310,53 @@ async fn get_snapshot_indices_hits_expected_path() {
         snapshots[0].session.as_ref().unwrap().change_percent,
         Some(0.35)
     );
+}
+
+#[tokio::test]
+async fn list_universal_snapshots_with_params_all_fields() {
+    let server = MockServer::start().await;
+    Mock::given(method("GET"))
+        .and(path("/v3/snapshot"))
+        .and(query_param("type", "stocks"))
+        .and(query_param("ticker_any_of", "AAPL,MSFT"))
+        .and(query_param("order", "asc"))
+        .and(query_param("limit", "10"))
+        .and(query_param("sort", "ticker"))
+        .and(query_param("ticker.lt", "M"))
+        .and(query_param("ticker.lte", "MZZZ"))
+        .and(query_param("ticker.gt", "A"))
+        .and(query_param("ticker.gte", "AAAA"))
+        .and(header("Authorization", "Bearer test-key"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(serde_json::json!({
+            "status": "OK",
+            "count": 1,
+            "results": [{
+                "ticker": "AAPL",
+                "type": "stocks",
+                "market_status": "open",
+                "session": {"price": 142.13, "change": 1.13, "change_percent": 0.8, "open": 141.0, "close": 142.13, "volume": 2000000.0},
+                "last_updated": 1675283458000000000i64
+            }]
+        })))
+        .expect(1)
+        .mount(&server)
+        .await;
+    let client = Client::new("test-key").unwrap().with_base(server.uri());
+    let params = ListUniversalSnapshotsParams::new()
+        .r#type("stocks")
+        .ticker_any_of("AAPL,MSFT")
+        .order("asc")
+        .limit(10)
+        .sort("ticker")
+        .ticker_lt("M")
+        .ticker_lte("MZZZ")
+        .ticker_gt("A")
+        .ticker_gte("AAAA");
+    let snapshots = client
+        .list_universal_snapshots_with_params(params)
+        .try_collect::<Vec<_>>()
+        .await
+        .unwrap();
+    assert_eq!(snapshots.len(), 1);
+    assert_eq!(snapshots[0].ticker.as_deref(), Some("AAPL"));
 }

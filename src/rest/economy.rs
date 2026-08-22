@@ -1,4 +1,4 @@
-use super::BoxStream;
+use super::{encode_query, BoxStream};
 use crate::client::{Client, RequestOptions};
 use crate::models::{
     EUMerchantAggregate, EUMerchantHierarchy, FedInflation, FedInflationExpectations,
@@ -203,57 +203,9 @@ impl EconomyApi for Client {
         params: ListTreasuryYieldsParams,
     ) -> BoxStream<'a, TreasuryYield> {
         Box::pin({
-            let ListTreasuryYieldsParams {
-                date,
-                date_any_of,
-                date_gt,
-                date_gte,
-                date_lt,
-                date_lte,
-                limit,
-                sort,
-                order,
-                options,
-            } = params;
-            let date = date.as_deref();
-            let date_any_of = date_any_of.as_deref();
-            let date_gt = date_gt.as_deref();
-            let date_gte = date_gte.as_deref();
-            let date_lt = date_lt.as_deref();
-            let date_lte = date_lte.as_deref();
-            let sort = sort.as_deref();
-            let order = order.as_deref();
-            let options = options.as_ref();
             let path = "/fed/v1/treasury-yields".to_string();
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(v) = date {
-                query.push(("date", v.to_string()));
-            }
-            if let Some(v) = date_any_of {
-                query.push(("date.any_of", v.to_string()));
-            }
-            if let Some(v) = date_gt {
-                query.push(("date.gt", v.to_string()));
-            }
-            if let Some(v) = date_gte {
-                query.push(("date.gte", v.to_string()));
-            }
-            if let Some(v) = date_lt {
-                query.push(("date.lt", v.to_string()));
-            }
-            if let Some(v) = date_lte {
-                query.push(("date.lte", v.to_string()));
-            }
-            if let Some(v) = limit {
-                query.push(("limit", v.to_string()));
-            }
-            if let Some(v) = sort {
-                query.push(("sort", v.to_string()));
-            }
-            if let Some(v) = order {
-                query.push(("order", v.to_string()));
-            }
-            self.list::<TreasuryYield>(&path, Some(&query), options)
+            let query = encode_query(&params);
+            self.list::<TreasuryYield>(&path, &query, params.options.as_ref())
         })
     }
 
@@ -287,52 +239,9 @@ impl EconomyApi for Client {
         params: ListInflationParams,
     ) -> BoxStream<'a, FedInflation> {
         Box::pin({
-            let ListInflationParams {
-                date,
-                date_any_of,
-                date_gt,
-                date_gte,
-                date_lt,
-                date_lte,
-                limit,
-                sort,
-                options,
-            } = params;
-            let date = date.as_deref();
-            let date_any_of = date_any_of.as_deref();
-            let date_gt = date_gt.as_deref();
-            let date_gte = date_gte.as_deref();
-            let date_lt = date_lt.as_deref();
-            let date_lte = date_lte.as_deref();
-            let sort = sort.as_deref();
-            let options = options.as_ref();
             let path = "/fed/v1/inflation".to_string();
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(v) = date {
-                query.push(("date", v.to_string()));
-            }
-            if let Some(v) = date_any_of {
-                query.push(("date.any_of", v.to_string()));
-            }
-            if let Some(v) = date_gt {
-                query.push(("date.gt", v.to_string()));
-            }
-            if let Some(v) = date_gte {
-                query.push(("date.gte", v.to_string()));
-            }
-            if let Some(v) = date_lt {
-                query.push(("date.lt", v.to_string()));
-            }
-            if let Some(v) = date_lte {
-                query.push(("date.lte", v.to_string()));
-            }
-            if let Some(v) = limit {
-                query.push(("limit", v.to_string()));
-            }
-            if let Some(v) = sort {
-                query.push(("sort", v.to_string()));
-            }
-            self.list::<FedInflation>(&path, Some(&query), options)
+            let query = encode_query(&params);
+            self.list::<FedInflation>(&path, &query, params.options.as_ref())
         })
     }
 
@@ -366,52 +275,9 @@ impl EconomyApi for Client {
         params: ListInflationExpectationsParams,
     ) -> BoxStream<'a, FedInflationExpectations> {
         Box::pin({
-            let ListInflationExpectationsParams {
-                date,
-                date_any_of,
-                date_gt,
-                date_gte,
-                date_lt,
-                date_lte,
-                limit,
-                sort,
-                options,
-            } = params;
-            let date = date.as_deref();
-            let date_any_of = date_any_of.as_deref();
-            let date_gt = date_gt.as_deref();
-            let date_gte = date_gte.as_deref();
-            let date_lt = date_lt.as_deref();
-            let date_lte = date_lte.as_deref();
-            let sort = sort.as_deref();
-            let options = options.as_ref();
             let path = "/fed/v1/inflation-expectations".to_string();
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(v) = date {
-                query.push(("date", v.to_string()));
-            }
-            if let Some(v) = date_any_of {
-                query.push(("date.any_of", v.to_string()));
-            }
-            if let Some(v) = date_gt {
-                query.push(("date.gt", v.to_string()));
-            }
-            if let Some(v) = date_gte {
-                query.push(("date.gte", v.to_string()));
-            }
-            if let Some(v) = date_lt {
-                query.push(("date.lt", v.to_string()));
-            }
-            if let Some(v) = date_lte {
-                query.push(("date.lte", v.to_string()));
-            }
-            if let Some(v) = limit {
-                query.push(("limit", v.to_string()));
-            }
-            if let Some(v) = sort {
-                query.push(("sort", v.to_string()));
-            }
-            self.list::<FedInflationExpectations>(&path, Some(&query), options)
+            let query = encode_query(&params);
+            self.list::<FedInflationExpectations>(&path, &query, params.options.as_ref())
         })
     }
 
@@ -445,52 +311,9 @@ impl EconomyApi for Client {
         params: ListLaborMarketIndicatorsParams,
     ) -> BoxStream<'a, FedLaborMarket> {
         Box::pin({
-            let ListLaborMarketIndicatorsParams {
-                date,
-                date_any_of,
-                date_gt,
-                date_gte,
-                date_lt,
-                date_lte,
-                limit,
-                sort,
-                options,
-            } = params;
-            let date = date.as_deref();
-            let date_any_of = date_any_of.as_deref();
-            let date_gt = date_gt.as_deref();
-            let date_gte = date_gte.as_deref();
-            let date_lt = date_lt.as_deref();
-            let date_lte = date_lte.as_deref();
-            let sort = sort.as_deref();
-            let options = options.as_ref();
             let path = "/fed/v1/labor-market".to_string();
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(v) = date {
-                query.push(("date", v.to_string()));
-            }
-            if let Some(v) = date_any_of {
-                query.push(("date.any_of", v.to_string()));
-            }
-            if let Some(v) = date_gt {
-                query.push(("date.gt", v.to_string()));
-            }
-            if let Some(v) = date_gte {
-                query.push(("date.gte", v.to_string()));
-            }
-            if let Some(v) = date_lt {
-                query.push(("date.lt", v.to_string()));
-            }
-            if let Some(v) = date_lte {
-                query.push(("date.lte", v.to_string()));
-            }
-            if let Some(v) = limit {
-                query.push(("limit", v.to_string()));
-            }
-            if let Some(v) = sort {
-                query.push(("sort", v.to_string()));
-            }
-            self.list::<FedLaborMarket>(&path, Some(&query), options)
+            let query = encode_query(&params);
+            self.list::<FedLaborMarket>(&path, &query, params.options.as_ref())
         })
     }
 
@@ -558,137 +381,9 @@ impl EconomyApi for Client {
         params: ListEuMerchantAggregatesParams,
     ) -> BoxStream<'a, EUMerchantAggregate> {
         Box::pin({
-            let ListEuMerchantAggregatesParams {
-                transaction_date,
-                transaction_date_gt,
-                transaction_date_gte,
-                transaction_date_lt,
-                transaction_date_lte,
-                name,
-                name_any_of,
-                name_gt,
-                name_gte,
-                name_lt,
-                name_lte,
-                user_country,
-                user_country_any_of,
-                channel,
-                channel_any_of,
-                consumer_type,
-                consumer_type_any_of,
-                parent_name,
-                parent_name_any_of,
-                parent_name_gt,
-                parent_name_gte,
-                parent_name_lt,
-                parent_name_lte,
-                limit,
-                sort,
-                options,
-            } = params;
-            let transaction_date = transaction_date.as_deref();
-            let transaction_date_gt = transaction_date_gt.as_deref();
-            let transaction_date_gte = transaction_date_gte.as_deref();
-            let transaction_date_lt = transaction_date_lt.as_deref();
-            let transaction_date_lte = transaction_date_lte.as_deref();
-            let name = name.as_deref();
-            let name_any_of = name_any_of.as_deref();
-            let name_gt = name_gt.as_deref();
-            let name_gte = name_gte.as_deref();
-            let name_lt = name_lt.as_deref();
-            let name_lte = name_lte.as_deref();
-            let user_country = user_country.as_deref();
-            let user_country_any_of = user_country_any_of.as_deref();
-            let channel = channel.as_deref();
-            let channel_any_of = channel_any_of.as_deref();
-            let consumer_type = consumer_type.as_deref();
-            let consumer_type_any_of = consumer_type_any_of.as_deref();
-            let parent_name = parent_name.as_deref();
-            let parent_name_any_of = parent_name_any_of.as_deref();
-            let parent_name_gt = parent_name_gt.as_deref();
-            let parent_name_gte = parent_name_gte.as_deref();
-            let parent_name_lt = parent_name_lt.as_deref();
-            let parent_name_lte = parent_name_lte.as_deref();
-            let sort = sort.as_deref();
-            let options = options.as_ref();
             let path = "/consumer-spending/eu/v1/merchant-aggregates".to_string();
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(v) = transaction_date {
-                query.push(("transaction_date", v.to_string()));
-            }
-            if let Some(v) = transaction_date_gt {
-                query.push(("transaction_date.gt", v.to_string()));
-            }
-            if let Some(v) = transaction_date_gte {
-                query.push(("transaction_date.gte", v.to_string()));
-            }
-            if let Some(v) = transaction_date_lt {
-                query.push(("transaction_date.lt", v.to_string()));
-            }
-            if let Some(v) = transaction_date_lte {
-                query.push(("transaction_date.lte", v.to_string()));
-            }
-            if let Some(v) = name {
-                query.push(("name", v.to_string()));
-            }
-            if let Some(v) = name_any_of {
-                query.push(("name.any_of", v.to_string()));
-            }
-            if let Some(v) = name_gt {
-                query.push(("name.gt", v.to_string()));
-            }
-            if let Some(v) = name_gte {
-                query.push(("name.gte", v.to_string()));
-            }
-            if let Some(v) = name_lt {
-                query.push(("name.lt", v.to_string()));
-            }
-            if let Some(v) = name_lte {
-                query.push(("name.lte", v.to_string()));
-            }
-            if let Some(v) = user_country {
-                query.push(("user_country", v.to_string()));
-            }
-            if let Some(v) = user_country_any_of {
-                query.push(("user_country.any_of", v.to_string()));
-            }
-            if let Some(v) = channel {
-                query.push(("channel", v.to_string()));
-            }
-            if let Some(v) = channel_any_of {
-                query.push(("channel.any_of", v.to_string()));
-            }
-            if let Some(v) = consumer_type {
-                query.push(("consumer_type", v.to_string()));
-            }
-            if let Some(v) = consumer_type_any_of {
-                query.push(("consumer_type.any_of", v.to_string()));
-            }
-            if let Some(v) = parent_name {
-                query.push(("parent_name", v.to_string()));
-            }
-            if let Some(v) = parent_name_any_of {
-                query.push(("parent_name.any_of", v.to_string()));
-            }
-            if let Some(v) = parent_name_gt {
-                query.push(("parent_name.gt", v.to_string()));
-            }
-            if let Some(v) = parent_name_gte {
-                query.push(("parent_name.gte", v.to_string()));
-            }
-            if let Some(v) = parent_name_lt {
-                query.push(("parent_name.lt", v.to_string()));
-            }
-            if let Some(v) = parent_name_lte {
-                query.push(("parent_name.lte", v.to_string()));
-            }
-            if let Some(v) = limit {
-                query.push(("limit", v.to_string()));
-            }
-            if let Some(v) = sort {
-                query.push(("sort", v.to_string()));
-            }
-            self.list::<EUMerchantAggregate>(&path, Some(&query), options)
+            let query = encode_query(&params);
+            self.list::<EUMerchantAggregate>(&path, &query, params.options.as_ref())
         })
     }
 
@@ -758,170 +453,50 @@ impl EconomyApi for Client {
         params: ListEuMerchantHierarchyParams,
     ) -> BoxStream<'a, EUMerchantHierarchy> {
         Box::pin({
-            let ListEuMerchantHierarchyParams {
-                lookup_name,
-                lookup_name_any_of,
-                lookup_name_gt,
-                lookup_name_gte,
-                lookup_name_lt,
-                lookup_name_lte,
-                ticker,
-                ticker_any_of,
-                ticker_gt,
-                ticker_gte,
-                ticker_lt,
-                ticker_lte,
-                listing_status,
-                listing_status_any_of,
-                active_from,
-                active_from_gt,
-                active_from_gte,
-                active_from_lt,
-                active_from_lte,
-                active_to,
-                active_to_gt,
-                active_to_gte,
-                active_to_lt,
-                active_to_lte,
-                limit,
-                sort,
-                options,
-            } = params;
-            let lookup_name = lookup_name.as_deref();
-            let lookup_name_any_of = lookup_name_any_of.as_deref();
-            let lookup_name_gt = lookup_name_gt.as_deref();
-            let lookup_name_gte = lookup_name_gte.as_deref();
-            let lookup_name_lt = lookup_name_lt.as_deref();
-            let lookup_name_lte = lookup_name_lte.as_deref();
-            let ticker = ticker.as_deref();
-            let ticker_any_of = ticker_any_of.as_deref();
-            let ticker_gt = ticker_gt.as_deref();
-            let ticker_gte = ticker_gte.as_deref();
-            let ticker_lt = ticker_lt.as_deref();
-            let ticker_lte = ticker_lte.as_deref();
-            let listing_status = listing_status.as_deref();
-            let listing_status_any_of = listing_status_any_of.as_deref();
-            let active_from = active_from.as_deref();
-            let active_from_gt = active_from_gt.as_deref();
-            let active_from_gte = active_from_gte.as_deref();
-            let active_from_lt = active_from_lt.as_deref();
-            let active_from_lte = active_from_lte.as_deref();
-            let active_to = active_to.as_deref();
-            let active_to_gt = active_to_gt.as_deref();
-            let active_to_gte = active_to_gte.as_deref();
-            let active_to_lt = active_to_lt.as_deref();
-            let active_to_lte = active_to_lte.as_deref();
-            let sort = sort.as_deref();
-            let options = options.as_ref();
             let path = "/consumer-spending/eu/v1/merchant-hierarchy".to_string();
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(v) = lookup_name {
-                query.push(("lookup_name", v.to_string()));
-            }
-            if let Some(v) = lookup_name_any_of {
-                query.push(("lookup_name.any_of", v.to_string()));
-            }
-            if let Some(v) = lookup_name_gt {
-                query.push(("lookup_name.gt", v.to_string()));
-            }
-            if let Some(v) = lookup_name_gte {
-                query.push(("lookup_name.gte", v.to_string()));
-            }
-            if let Some(v) = lookup_name_lt {
-                query.push(("lookup_name.lt", v.to_string()));
-            }
-            if let Some(v) = lookup_name_lte {
-                query.push(("lookup_name.lte", v.to_string()));
-            }
-            if let Some(v) = ticker {
-                query.push(("ticker", v.to_string()));
-            }
-            if let Some(v) = ticker_any_of {
-                query.push(("ticker.any_of", v.to_string()));
-            }
-            if let Some(v) = ticker_gt {
-                query.push(("ticker.gt", v.to_string()));
-            }
-            if let Some(v) = ticker_gte {
-                query.push(("ticker.gte", v.to_string()));
-            }
-            if let Some(v) = ticker_lt {
-                query.push(("ticker.lt", v.to_string()));
-            }
-            if let Some(v) = ticker_lte {
-                query.push(("ticker.lte", v.to_string()));
-            }
-            if let Some(v) = listing_status {
-                query.push(("listing_status", v.to_string()));
-            }
-            if let Some(v) = listing_status_any_of {
-                query.push(("listing_status.any_of", v.to_string()));
-            }
-            if let Some(v) = active_from {
-                query.push(("active_from", v.to_string()));
-            }
-            if let Some(v) = active_from_gt {
-                query.push(("active_from.gt", v.to_string()));
-            }
-            if let Some(v) = active_from_gte {
-                query.push(("active_from.gte", v.to_string()));
-            }
-            if let Some(v) = active_from_lt {
-                query.push(("active_from.lt", v.to_string()));
-            }
-            if let Some(v) = active_from_lte {
-                query.push(("active_from.lte", v.to_string()));
-            }
-            if let Some(v) = active_to {
-                query.push(("active_to", v.to_string()));
-            }
-            if let Some(v) = active_to_gt {
-                query.push(("active_to.gt", v.to_string()));
-            }
-            if let Some(v) = active_to_gte {
-                query.push(("active_to.gte", v.to_string()));
-            }
-            if let Some(v) = active_to_lt {
-                query.push(("active_to.lt", v.to_string()));
-            }
-            if let Some(v) = active_to_lte {
-                query.push(("active_to.lte", v.to_string()));
-            }
-            if let Some(v) = limit {
-                query.push(("limit", v.to_string()));
-            }
-            if let Some(v) = sort {
-                query.push(("sort", v.to_string()));
-            }
-            self.list::<EUMerchantHierarchy>(&path, Some(&query), options)
+            let query = encode_query(&params);
+            self.list::<EUMerchantHierarchy>(&path, &query, params.options.as_ref())
         })
     }
 }
 
 // --- Params structs (additive builder API) ---
+//
+// Query serialization is derived: field order is wire order, `rename` carries
+// dotted filter operators, unset fields are omitted, and `options` is skipped.
 
 /// Optional arguments for [`EconomyApi::list_treasury_yields`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct ListTreasuryYieldsParams {
     /// The `date` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub date: Option<String>,
     /// The `date_any_of` argument.
+    #[serde(rename = "date.any_of", skip_serializing_if = "Option::is_none")]
     pub date_any_of: Option<String>,
     /// The `date_gt` argument.
+    #[serde(rename = "date.gt", skip_serializing_if = "Option::is_none")]
     pub date_gt: Option<String>,
     /// The `date_gte` argument.
+    #[serde(rename = "date.gte", skip_serializing_if = "Option::is_none")]
     pub date_gte: Option<String>,
     /// The `date_lt` argument.
+    #[serde(rename = "date.lt", skip_serializing_if = "Option::is_none")]
     pub date_lt: Option<String>,
     /// The `date_lte` argument.
+    #[serde(rename = "date.lte", skip_serializing_if = "Option::is_none")]
     pub date_lte: Option<String>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `sort` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sort: Option<String>,
     /// The `order` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub order: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -993,25 +568,34 @@ impl ListTreasuryYieldsParams {
 }
 
 /// Optional arguments for [`EconomyApi::list_inflation`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct ListInflationParams {
     /// The `date` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub date: Option<String>,
     /// The `date_any_of` argument.
+    #[serde(rename = "date.any_of", skip_serializing_if = "Option::is_none")]
     pub date_any_of: Option<String>,
     /// The `date_gt` argument.
+    #[serde(rename = "date.gt", skip_serializing_if = "Option::is_none")]
     pub date_gt: Option<String>,
     /// The `date_gte` argument.
+    #[serde(rename = "date.gte", skip_serializing_if = "Option::is_none")]
     pub date_gte: Option<String>,
     /// The `date_lt` argument.
+    #[serde(rename = "date.lt", skip_serializing_if = "Option::is_none")]
     pub date_lt: Option<String>,
     /// The `date_lte` argument.
+    #[serde(rename = "date.lte", skip_serializing_if = "Option::is_none")]
     pub date_lte: Option<String>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `sort` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sort: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -1077,25 +661,34 @@ impl ListInflationParams {
 }
 
 /// Optional arguments for [`EconomyApi::list_inflation_expectations`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct ListInflationExpectationsParams {
     /// The `date` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub date: Option<String>,
     /// The `date_any_of` argument.
+    #[serde(rename = "date.any_of", skip_serializing_if = "Option::is_none")]
     pub date_any_of: Option<String>,
     /// The `date_gt` argument.
+    #[serde(rename = "date.gt", skip_serializing_if = "Option::is_none")]
     pub date_gt: Option<String>,
     /// The `date_gte` argument.
+    #[serde(rename = "date.gte", skip_serializing_if = "Option::is_none")]
     pub date_gte: Option<String>,
     /// The `date_lt` argument.
+    #[serde(rename = "date.lt", skip_serializing_if = "Option::is_none")]
     pub date_lt: Option<String>,
     /// The `date_lte` argument.
+    #[serde(rename = "date.lte", skip_serializing_if = "Option::is_none")]
     pub date_lte: Option<String>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `sort` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sort: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -1161,25 +754,34 @@ impl ListInflationExpectationsParams {
 }
 
 /// Optional arguments for [`EconomyApi::list_labor_market_indicators`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct ListLaborMarketIndicatorsParams {
     /// The `date` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub date: Option<String>,
     /// The `date_any_of` argument.
+    #[serde(rename = "date.any_of", skip_serializing_if = "Option::is_none")]
     pub date_any_of: Option<String>,
     /// The `date_gt` argument.
+    #[serde(rename = "date.gt", skip_serializing_if = "Option::is_none")]
     pub date_gt: Option<String>,
     /// The `date_gte` argument.
+    #[serde(rename = "date.gte", skip_serializing_if = "Option::is_none")]
     pub date_gte: Option<String>,
     /// The `date_lt` argument.
+    #[serde(rename = "date.lt", skip_serializing_if = "Option::is_none")]
     pub date_lt: Option<String>,
     /// The `date_lte` argument.
+    #[serde(rename = "date.lte", skip_serializing_if = "Option::is_none")]
     pub date_lte: Option<String>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `sort` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sort: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -1245,59 +847,85 @@ impl ListLaborMarketIndicatorsParams {
 }
 
 /// Optional arguments for [`EconomyApi::list_eu_merchant_aggregates`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct ListEuMerchantAggregatesParams {
     /// The `transaction_date` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub transaction_date: Option<String>,
     /// The `transaction_date_gt` argument.
+    #[serde(rename = "transaction_date.gt", skip_serializing_if = "Option::is_none")]
     pub transaction_date_gt: Option<String>,
     /// The `transaction_date_gte` argument.
+    #[serde(rename = "transaction_date.gte", skip_serializing_if = "Option::is_none")]
     pub transaction_date_gte: Option<String>,
     /// The `transaction_date_lt` argument.
+    #[serde(rename = "transaction_date.lt", skip_serializing_if = "Option::is_none")]
     pub transaction_date_lt: Option<String>,
     /// The `transaction_date_lte` argument.
+    #[serde(rename = "transaction_date.lte", skip_serializing_if = "Option::is_none")]
     pub transaction_date_lte: Option<String>,
     /// The `name` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
     /// The `name_any_of` argument.
+    #[serde(rename = "name.any_of", skip_serializing_if = "Option::is_none")]
     pub name_any_of: Option<String>,
     /// The `name_gt` argument.
+    #[serde(rename = "name.gt", skip_serializing_if = "Option::is_none")]
     pub name_gt: Option<String>,
     /// The `name_gte` argument.
+    #[serde(rename = "name.gte", skip_serializing_if = "Option::is_none")]
     pub name_gte: Option<String>,
     /// The `name_lt` argument.
+    #[serde(rename = "name.lt", skip_serializing_if = "Option::is_none")]
     pub name_lt: Option<String>,
     /// The `name_lte` argument.
+    #[serde(rename = "name.lte", skip_serializing_if = "Option::is_none")]
     pub name_lte: Option<String>,
     /// The `user_country` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub user_country: Option<String>,
     /// The `user_country_any_of` argument.
+    #[serde(rename = "user_country.any_of", skip_serializing_if = "Option::is_none")]
     pub user_country_any_of: Option<String>,
     /// The `channel` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub channel: Option<String>,
     /// The `channel_any_of` argument.
+    #[serde(rename = "channel.any_of", skip_serializing_if = "Option::is_none")]
     pub channel_any_of: Option<String>,
     /// The `consumer_type` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub consumer_type: Option<String>,
     /// The `consumer_type_any_of` argument.
+    #[serde(rename = "consumer_type.any_of", skip_serializing_if = "Option::is_none")]
     pub consumer_type_any_of: Option<String>,
     /// The `parent_name` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub parent_name: Option<String>,
     /// The `parent_name_any_of` argument.
+    #[serde(rename = "parent_name.any_of", skip_serializing_if = "Option::is_none")]
     pub parent_name_any_of: Option<String>,
     /// The `parent_name_gt` argument.
+    #[serde(rename = "parent_name.gt", skip_serializing_if = "Option::is_none")]
     pub parent_name_gt: Option<String>,
     /// The `parent_name_gte` argument.
+    #[serde(rename = "parent_name.gte", skip_serializing_if = "Option::is_none")]
     pub parent_name_gte: Option<String>,
     /// The `parent_name_lt` argument.
+    #[serde(rename = "parent_name.lt", skip_serializing_if = "Option::is_none")]
     pub parent_name_lt: Option<String>,
     /// The `parent_name_lte` argument.
+    #[serde(rename = "parent_name.lte", skip_serializing_if = "Option::is_none")]
     pub parent_name_lte: Option<String>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `sort` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sort: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -1465,61 +1093,88 @@ impl ListEuMerchantAggregatesParams {
 }
 
 /// Optional arguments for [`EconomyApi::list_eu_merchant_hierarchy`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct ListEuMerchantHierarchyParams {
     /// The `lookup_name` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub lookup_name: Option<String>,
     /// The `lookup_name_any_of` argument.
+    #[serde(rename = "lookup_name.any_of", skip_serializing_if = "Option::is_none")]
     pub lookup_name_any_of: Option<String>,
     /// The `lookup_name_gt` argument.
+    #[serde(rename = "lookup_name.gt", skip_serializing_if = "Option::is_none")]
     pub lookup_name_gt: Option<String>,
     /// The `lookup_name_gte` argument.
+    #[serde(rename = "lookup_name.gte", skip_serializing_if = "Option::is_none")]
     pub lookup_name_gte: Option<String>,
     /// The `lookup_name_lt` argument.
+    #[serde(rename = "lookup_name.lt", skip_serializing_if = "Option::is_none")]
     pub lookup_name_lt: Option<String>,
     /// The `lookup_name_lte` argument.
+    #[serde(rename = "lookup_name.lte", skip_serializing_if = "Option::is_none")]
     pub lookup_name_lte: Option<String>,
     /// The `ticker` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub ticker: Option<String>,
     /// The `ticker_any_of` argument.
+    #[serde(rename = "ticker.any_of", skip_serializing_if = "Option::is_none")]
     pub ticker_any_of: Option<String>,
     /// The `ticker_gt` argument.
+    #[serde(rename = "ticker.gt", skip_serializing_if = "Option::is_none")]
     pub ticker_gt: Option<String>,
     /// The `ticker_gte` argument.
+    #[serde(rename = "ticker.gte", skip_serializing_if = "Option::is_none")]
     pub ticker_gte: Option<String>,
     /// The `ticker_lt` argument.
+    #[serde(rename = "ticker.lt", skip_serializing_if = "Option::is_none")]
     pub ticker_lt: Option<String>,
     /// The `ticker_lte` argument.
+    #[serde(rename = "ticker.lte", skip_serializing_if = "Option::is_none")]
     pub ticker_lte: Option<String>,
     /// The `listing_status` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub listing_status: Option<String>,
     /// The `listing_status_any_of` argument.
+    #[serde(rename = "listing_status.any_of", skip_serializing_if = "Option::is_none")]
     pub listing_status_any_of: Option<String>,
     /// The `active_from` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub active_from: Option<String>,
     /// The `active_from_gt` argument.
+    #[serde(rename = "active_from.gt", skip_serializing_if = "Option::is_none")]
     pub active_from_gt: Option<String>,
     /// The `active_from_gte` argument.
+    #[serde(rename = "active_from.gte", skip_serializing_if = "Option::is_none")]
     pub active_from_gte: Option<String>,
     /// The `active_from_lt` argument.
+    #[serde(rename = "active_from.lt", skip_serializing_if = "Option::is_none")]
     pub active_from_lt: Option<String>,
     /// The `active_from_lte` argument.
+    #[serde(rename = "active_from.lte", skip_serializing_if = "Option::is_none")]
     pub active_from_lte: Option<String>,
     /// The `active_to` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub active_to: Option<String>,
     /// The `active_to_gt` argument.
+    #[serde(rename = "active_to.gt", skip_serializing_if = "Option::is_none")]
     pub active_to_gt: Option<String>,
     /// The `active_to_gte` argument.
+    #[serde(rename = "active_to.gte", skip_serializing_if = "Option::is_none")]
     pub active_to_gte: Option<String>,
     /// The `active_to_lt` argument.
+    #[serde(rename = "active_to.lt", skip_serializing_if = "Option::is_none")]
     pub active_to_lt: Option<String>,
     /// The `active_to_lte` argument.
+    #[serde(rename = "active_to.lte", skip_serializing_if = "Option::is_none")]
     pub active_to_lte: Option<String>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `sort` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sort: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 

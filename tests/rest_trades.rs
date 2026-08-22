@@ -205,3 +205,48 @@ async fn get_last_crypto_trade_unwraps_last() {
     assert_eq!(trade.exchange, Some(1));
     assert_eq!(trade.timestamp, Some(1672750800000));
 }
+
+#[tokio::test]
+async fn list_trades_with_params_serializes_all_query_params() {
+    let server = MockServer::start().await;
+    Mock::given(method("GET"))
+        .and(path("/v3/trades/AAPL"))
+        .and(query_param("timestamp", "2023-01-03"))
+        .and(query_param("timestamp.lt", "2023-01-10"))
+        .and(query_param("timestamp.lte", "2023-01-09"))
+        .and(query_param("timestamp.gt", "2023-01-01"))
+        .and(query_param("timestamp.gte", "2023-01-02"))
+        .and(query_param("limit", "100"))
+        .and(query_param("sort", "timestamp"))
+        .and(query_param("order", "desc"))
+        .and(header("Authorization", "Bearer test-key"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(serde_json::json!({
+            "status": "OK",
+            "results": [
+                {"id": "1", "price": 125.5, "size": 100.0, "sip_timestamp": 1672750800000000000i64}
+            ],
+            "count": 1
+        })))
+        .expect(1)
+        .mount(&server)
+        .await;
+
+    let client = Client::new("test-key").unwrap().with_base(server.uri());
+    let params = massive::rest::ListTradesParams::new()
+        .timestamp("2023-01-03")
+        .timestamp_lt("2023-01-10")
+        .timestamp_lte("2023-01-09")
+        .timestamp_gt("2023-01-01")
+        .timestamp_gte("2023-01-02")
+        .limit(100)
+        .sort("timestamp")
+        .order("desc");
+    let trades: Vec<_> = client
+        .list_trades_with_params("AAPL", params)
+        .try_collect()
+        .await
+        .unwrap();
+
+    assert_eq!(trades.len(), 1);
+    assert_eq!(trades[0].id.as_deref(), Some("1"));
+}

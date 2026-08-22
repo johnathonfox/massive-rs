@@ -1,21 +1,9 @@
-use super::BoxStream;
+use super::{encode_query, BoxStream};
 use crate::client::{Client, RequestOptions};
 use crate::models::{
     EtfGlobalAnalytics, EtfGlobalConstituent, EtfGlobalFundFlow, EtfGlobalProfile,
     EtfGlobalTaxonomy,
 };
-
-/// Push a query param when the optional value is present, using the literal
-/// (possibly dotted) wire key.
-fn push_param<T: ToString>(
-    params: &mut Vec<(&'static str, String)>,
-    key: &'static str,
-    value: Option<T>,
-) {
-    if let Some(v) = value {
-        params.push((key, v.to_string()));
-    }
-}
 
 /// ETF Global API.
 pub trait EtfGlobalApi {
@@ -409,294 +397,9 @@ impl EtfGlobalApi for Client {
         params: GetEtfGlobalAnalyticsParams,
     ) -> BoxStream<'a, EtfGlobalAnalytics> {
         Box::pin({
-            let GetEtfGlobalAnalyticsParams {
-                composite_ticker,
-                composite_ticker_any_of,
-                composite_ticker_gt,
-                composite_ticker_gte,
-                composite_ticker_lt,
-                composite_ticker_lte,
-                processed_date,
-                processed_date_gt,
-                processed_date_gte,
-                processed_date_lt,
-                processed_date_lte,
-                effective_date,
-                effective_date_gt,
-                effective_date_gte,
-                effective_date_lt,
-                effective_date_lte,
-                risk_total_score,
-                risk_total_score_gt,
-                risk_total_score_gte,
-                risk_total_score_lt,
-                risk_total_score_lte,
-                reward_score,
-                reward_score_gt,
-                reward_score_gte,
-                reward_score_lt,
-                reward_score_lte,
-                quant_total_score,
-                quant_total_score_gt,
-                quant_total_score_gte,
-                quant_total_score_lt,
-                quant_total_score_lte,
-                quant_grade,
-                quant_grade_any_of,
-                quant_grade_gt,
-                quant_grade_gte,
-                quant_grade_lt,
-                quant_grade_lte,
-                quant_composite_technical,
-                quant_composite_technical_gt,
-                quant_composite_technical_gte,
-                quant_composite_technical_lt,
-                quant_composite_technical_lte,
-                quant_composite_sentiment,
-                quant_composite_sentiment_gt,
-                quant_composite_sentiment_gte,
-                quant_composite_sentiment_lt,
-                quant_composite_sentiment_lte,
-                quant_composite_behavioral,
-                quant_composite_behavioral_gt,
-                quant_composite_behavioral_gte,
-                quant_composite_behavioral_lt,
-                quant_composite_behavioral_lte,
-                quant_composite_fundamental,
-                quant_composite_fundamental_gt,
-                quant_composite_fundamental_gte,
-                quant_composite_fundamental_lt,
-                quant_composite_fundamental_lte,
-                quant_composite_global,
-                quant_composite_global_gt,
-                quant_composite_global_gte,
-                quant_composite_global_lt,
-                quant_composite_global_lte,
-                quant_composite_quality,
-                quant_composite_quality_gt,
-                quant_composite_quality_gte,
-                quant_composite_quality_lt,
-                quant_composite_quality_lte,
-                limit,
-                sort,
-                options,
-            } = params;
-            let composite_ticker = composite_ticker.as_deref();
-            let composite_ticker_any_of = composite_ticker_any_of.as_deref();
-            let composite_ticker_gt = composite_ticker_gt.as_deref();
-            let composite_ticker_gte = composite_ticker_gte.as_deref();
-            let composite_ticker_lt = composite_ticker_lt.as_deref();
-            let composite_ticker_lte = composite_ticker_lte.as_deref();
-            let processed_date = processed_date.as_deref();
-            let processed_date_gt = processed_date_gt.as_deref();
-            let processed_date_gte = processed_date_gte.as_deref();
-            let processed_date_lt = processed_date_lt.as_deref();
-            let processed_date_lte = processed_date_lte.as_deref();
-            let effective_date = effective_date.as_deref();
-            let effective_date_gt = effective_date_gt.as_deref();
-            let effective_date_gte = effective_date_gte.as_deref();
-            let effective_date_lt = effective_date_lt.as_deref();
-            let effective_date_lte = effective_date_lte.as_deref();
-            let quant_grade = quant_grade.as_deref();
-            let quant_grade_any_of = quant_grade_any_of.as_deref();
-            let quant_grade_gt = quant_grade_gt.as_deref();
-            let quant_grade_gte = quant_grade_gte.as_deref();
-            let quant_grade_lt = quant_grade_lt.as_deref();
-            let quant_grade_lte = quant_grade_lte.as_deref();
-            let sort = sort.as_deref();
-            let options = options.as_ref();
             let path = "/etf-global/v1/analytics".to_string();
-            let mut query: Vec<(&str, String)> = Vec::new();
-            push_param(&mut query, "composite_ticker", composite_ticker);
-            push_param(
-                &mut query,
-                "composite_ticker.any_of",
-                composite_ticker_any_of,
-            );
-            push_param(&mut query, "composite_ticker.gt", composite_ticker_gt);
-            push_param(&mut query, "composite_ticker.gte", composite_ticker_gte);
-            push_param(&mut query, "composite_ticker.lt", composite_ticker_lt);
-            push_param(&mut query, "composite_ticker.lte", composite_ticker_lte);
-            push_param(&mut query, "processed_date", processed_date);
-            push_param(&mut query, "processed_date.gt", processed_date_gt);
-            push_param(&mut query, "processed_date.gte", processed_date_gte);
-            push_param(&mut query, "processed_date.lt", processed_date_lt);
-            push_param(&mut query, "processed_date.lte", processed_date_lte);
-            push_param(&mut query, "effective_date", effective_date);
-            push_param(&mut query, "effective_date.gt", effective_date_gt);
-            push_param(&mut query, "effective_date.gte", effective_date_gte);
-            push_param(&mut query, "effective_date.lt", effective_date_lt);
-            push_param(&mut query, "effective_date.lte", effective_date_lte);
-            push_param(&mut query, "risk_total_score", risk_total_score);
-            push_param(&mut query, "risk_total_score.gt", risk_total_score_gt);
-            push_param(&mut query, "risk_total_score.gte", risk_total_score_gte);
-            push_param(&mut query, "risk_total_score.lt", risk_total_score_lt);
-            push_param(&mut query, "risk_total_score.lte", risk_total_score_lte);
-            push_param(&mut query, "reward_score", reward_score);
-            push_param(&mut query, "reward_score.gt", reward_score_gt);
-            push_param(&mut query, "reward_score.gte", reward_score_gte);
-            push_param(&mut query, "reward_score.lt", reward_score_lt);
-            push_param(&mut query, "reward_score.lte", reward_score_lte);
-            push_param(&mut query, "quant_total_score", quant_total_score);
-            push_param(&mut query, "quant_total_score.gt", quant_total_score_gt);
-            push_param(&mut query, "quant_total_score.gte", quant_total_score_gte);
-            push_param(&mut query, "quant_total_score.lt", quant_total_score_lt);
-            push_param(&mut query, "quant_total_score.lte", quant_total_score_lte);
-            push_param(&mut query, "quant_grade", quant_grade);
-            push_param(&mut query, "quant_grade.any_of", quant_grade_any_of);
-            push_param(&mut query, "quant_grade.gt", quant_grade_gt);
-            push_param(&mut query, "quant_grade.gte", quant_grade_gte);
-            push_param(&mut query, "quant_grade.lt", quant_grade_lt);
-            push_param(&mut query, "quant_grade.lte", quant_grade_lte);
-            push_param(
-                &mut query,
-                "quant_composite_technical",
-                quant_composite_technical,
-            );
-            push_param(
-                &mut query,
-                "quant_composite_technical.gt",
-                quant_composite_technical_gt,
-            );
-            push_param(
-                &mut query,
-                "quant_composite_technical.gte",
-                quant_composite_technical_gte,
-            );
-            push_param(
-                &mut query,
-                "quant_composite_technical.lt",
-                quant_composite_technical_lt,
-            );
-            push_param(
-                &mut query,
-                "quant_composite_technical.lte",
-                quant_composite_technical_lte,
-            );
-            push_param(
-                &mut query,
-                "quant_composite_sentiment",
-                quant_composite_sentiment,
-            );
-            push_param(
-                &mut query,
-                "quant_composite_sentiment.gt",
-                quant_composite_sentiment_gt,
-            );
-            push_param(
-                &mut query,
-                "quant_composite_sentiment.gte",
-                quant_composite_sentiment_gte,
-            );
-            push_param(
-                &mut query,
-                "quant_composite_sentiment.lt",
-                quant_composite_sentiment_lt,
-            );
-            push_param(
-                &mut query,
-                "quant_composite_sentiment.lte",
-                quant_composite_sentiment_lte,
-            );
-            push_param(
-                &mut query,
-                "quant_composite_behavioral",
-                quant_composite_behavioral,
-            );
-            push_param(
-                &mut query,
-                "quant_composite_behavioral.gt",
-                quant_composite_behavioral_gt,
-            );
-            push_param(
-                &mut query,
-                "quant_composite_behavioral.gte",
-                quant_composite_behavioral_gte,
-            );
-            push_param(
-                &mut query,
-                "quant_composite_behavioral.lt",
-                quant_composite_behavioral_lt,
-            );
-            push_param(
-                &mut query,
-                "quant_composite_behavioral.lte",
-                quant_composite_behavioral_lte,
-            );
-            push_param(
-                &mut query,
-                "quant_composite_fundamental",
-                quant_composite_fundamental,
-            );
-            push_param(
-                &mut query,
-                "quant_composite_fundamental.gt",
-                quant_composite_fundamental_gt,
-            );
-            push_param(
-                &mut query,
-                "quant_composite_fundamental.gte",
-                quant_composite_fundamental_gte,
-            );
-            push_param(
-                &mut query,
-                "quant_composite_fundamental.lt",
-                quant_composite_fundamental_lt,
-            );
-            push_param(
-                &mut query,
-                "quant_composite_fundamental.lte",
-                quant_composite_fundamental_lte,
-            );
-            push_param(&mut query, "quant_composite_global", quant_composite_global);
-            push_param(
-                &mut query,
-                "quant_composite_global.gt",
-                quant_composite_global_gt,
-            );
-            push_param(
-                &mut query,
-                "quant_composite_global.gte",
-                quant_composite_global_gte,
-            );
-            push_param(
-                &mut query,
-                "quant_composite_global.lt",
-                quant_composite_global_lt,
-            );
-            push_param(
-                &mut query,
-                "quant_composite_global.lte",
-                quant_composite_global_lte,
-            );
-            push_param(
-                &mut query,
-                "quant_composite_quality",
-                quant_composite_quality,
-            );
-            push_param(
-                &mut query,
-                "quant_composite_quality.gt",
-                quant_composite_quality_gt,
-            );
-            push_param(
-                &mut query,
-                "quant_composite_quality.gte",
-                quant_composite_quality_gte,
-            );
-            push_param(
-                &mut query,
-                "quant_composite_quality.lt",
-                quant_composite_quality_lt,
-            );
-            push_param(
-                &mut query,
-                "quant_composite_quality.lte",
-                quant_composite_quality_lte,
-            );
-            push_param(&mut query, "limit", limit);
-            push_param(&mut query, "sort", sort);
-            self.list::<EtfGlobalAnalytics>(&path, Some(&query), options)
+            let query = encode_query(&params);
+            self.list::<EtfGlobalAnalytics>(&path, &query, params.options.as_ref())
         })
     }
 
@@ -810,164 +513,9 @@ impl EtfGlobalApi for Client {
         params: GetEtfGlobalConstituentsParams,
     ) -> BoxStream<'a, EtfGlobalConstituent> {
         Box::pin({
-            let GetEtfGlobalConstituentsParams {
-                composite_ticker,
-                composite_ticker_any_of,
-                composite_ticker_gt,
-                composite_ticker_gte,
-                composite_ticker_lt,
-                composite_ticker_lte,
-                constituent_ticker,
-                constituent_ticker_any_of,
-                constituent_ticker_gt,
-                constituent_ticker_gte,
-                constituent_ticker_lt,
-                constituent_ticker_lte,
-                effective_date,
-                effective_date_gt,
-                effective_date_gte,
-                effective_date_lt,
-                effective_date_lte,
-                processed_date,
-                processed_date_gt,
-                processed_date_gte,
-                processed_date_lt,
-                processed_date_lte,
-                us_code,
-                us_code_any_of,
-                us_code_gt,
-                us_code_gte,
-                us_code_lt,
-                us_code_lte,
-                isin,
-                isin_any_of,
-                isin_gt,
-                isin_gte,
-                isin_lt,
-                isin_lte,
-                figi,
-                figi_any_of,
-                figi_gt,
-                figi_gte,
-                figi_lt,
-                figi_lte,
-                sedol,
-                sedol_any_of,
-                sedol_gt,
-                sedol_gte,
-                sedol_lt,
-                sedol_lte,
-                limit,
-                sort,
-                options,
-            } = params;
-            let composite_ticker = composite_ticker.as_deref();
-            let composite_ticker_any_of = composite_ticker_any_of.as_deref();
-            let composite_ticker_gt = composite_ticker_gt.as_deref();
-            let composite_ticker_gte = composite_ticker_gte.as_deref();
-            let composite_ticker_lt = composite_ticker_lt.as_deref();
-            let composite_ticker_lte = composite_ticker_lte.as_deref();
-            let constituent_ticker = constituent_ticker.as_deref();
-            let constituent_ticker_any_of = constituent_ticker_any_of.as_deref();
-            let constituent_ticker_gt = constituent_ticker_gt.as_deref();
-            let constituent_ticker_gte = constituent_ticker_gte.as_deref();
-            let constituent_ticker_lt = constituent_ticker_lt.as_deref();
-            let constituent_ticker_lte = constituent_ticker_lte.as_deref();
-            let effective_date = effective_date.as_deref();
-            let effective_date_gt = effective_date_gt.as_deref();
-            let effective_date_gte = effective_date_gte.as_deref();
-            let effective_date_lt = effective_date_lt.as_deref();
-            let effective_date_lte = effective_date_lte.as_deref();
-            let processed_date = processed_date.as_deref();
-            let processed_date_gt = processed_date_gt.as_deref();
-            let processed_date_gte = processed_date_gte.as_deref();
-            let processed_date_lt = processed_date_lt.as_deref();
-            let processed_date_lte = processed_date_lte.as_deref();
-            let us_code = us_code.as_deref();
-            let us_code_any_of = us_code_any_of.as_deref();
-            let us_code_gt = us_code_gt.as_deref();
-            let us_code_gte = us_code_gte.as_deref();
-            let us_code_lt = us_code_lt.as_deref();
-            let us_code_lte = us_code_lte.as_deref();
-            let isin = isin.as_deref();
-            let isin_any_of = isin_any_of.as_deref();
-            let isin_gt = isin_gt.as_deref();
-            let isin_gte = isin_gte.as_deref();
-            let isin_lt = isin_lt.as_deref();
-            let isin_lte = isin_lte.as_deref();
-            let figi = figi.as_deref();
-            let figi_any_of = figi_any_of.as_deref();
-            let figi_gt = figi_gt.as_deref();
-            let figi_gte = figi_gte.as_deref();
-            let figi_lt = figi_lt.as_deref();
-            let figi_lte = figi_lte.as_deref();
-            let sedol = sedol.as_deref();
-            let sedol_any_of = sedol_any_of.as_deref();
-            let sedol_gt = sedol_gt.as_deref();
-            let sedol_gte = sedol_gte.as_deref();
-            let sedol_lt = sedol_lt.as_deref();
-            let sedol_lte = sedol_lte.as_deref();
-            let sort = sort.as_deref();
-            let options = options.as_ref();
             let path = "/etf-global/v1/constituents".to_string();
-            let mut query: Vec<(&str, String)> = Vec::new();
-            push_param(&mut query, "composite_ticker", composite_ticker);
-            push_param(
-                &mut query,
-                "composite_ticker.any_of",
-                composite_ticker_any_of,
-            );
-            push_param(&mut query, "composite_ticker.gt", composite_ticker_gt);
-            push_param(&mut query, "composite_ticker.gte", composite_ticker_gte);
-            push_param(&mut query, "composite_ticker.lt", composite_ticker_lt);
-            push_param(&mut query, "composite_ticker.lte", composite_ticker_lte);
-            push_param(&mut query, "constituent_ticker", constituent_ticker);
-            push_param(
-                &mut query,
-                "constituent_ticker.any_of",
-                constituent_ticker_any_of,
-            );
-            push_param(&mut query, "constituent_ticker.gt", constituent_ticker_gt);
-            push_param(&mut query, "constituent_ticker.gte", constituent_ticker_gte);
-            push_param(&mut query, "constituent_ticker.lt", constituent_ticker_lt);
-            push_param(&mut query, "constituent_ticker.lte", constituent_ticker_lte);
-            push_param(&mut query, "effective_date", effective_date);
-            push_param(&mut query, "effective_date.gt", effective_date_gt);
-            push_param(&mut query, "effective_date.gte", effective_date_gte);
-            push_param(&mut query, "effective_date.lt", effective_date_lt);
-            push_param(&mut query, "effective_date.lte", effective_date_lte);
-            push_param(&mut query, "processed_date", processed_date);
-            push_param(&mut query, "processed_date.gt", processed_date_gt);
-            push_param(&mut query, "processed_date.gte", processed_date_gte);
-            push_param(&mut query, "processed_date.lt", processed_date_lt);
-            push_param(&mut query, "processed_date.lte", processed_date_lte);
-            push_param(&mut query, "us_code", us_code);
-            push_param(&mut query, "us_code.any_of", us_code_any_of);
-            push_param(&mut query, "us_code.gt", us_code_gt);
-            push_param(&mut query, "us_code.gte", us_code_gte);
-            push_param(&mut query, "us_code.lt", us_code_lt);
-            push_param(&mut query, "us_code.lte", us_code_lte);
-            push_param(&mut query, "isin", isin);
-            push_param(&mut query, "isin.any_of", isin_any_of);
-            push_param(&mut query, "isin.gt", isin_gt);
-            push_param(&mut query, "isin.gte", isin_gte);
-            push_param(&mut query, "isin.lt", isin_lt);
-            push_param(&mut query, "isin.lte", isin_lte);
-            push_param(&mut query, "figi", figi);
-            push_param(&mut query, "figi.any_of", figi_any_of);
-            push_param(&mut query, "figi.gt", figi_gt);
-            push_param(&mut query, "figi.gte", figi_gte);
-            push_param(&mut query, "figi.lt", figi_lt);
-            push_param(&mut query, "figi.lte", figi_lte);
-            push_param(&mut query, "sedol", sedol);
-            push_param(&mut query, "sedol.any_of", sedol_any_of);
-            push_param(&mut query, "sedol.gt", sedol_gt);
-            push_param(&mut query, "sedol.gte", sedol_gte);
-            push_param(&mut query, "sedol.lt", sedol_lt);
-            push_param(&mut query, "sedol.lte", sedol_lte);
-            push_param(&mut query, "limit", limit);
-            push_param(&mut query, "sort", sort);
-            self.list::<EtfGlobalConstituent>(&path, Some(&query), options)
+            let query = encode_query(&params);
+            self.list::<EtfGlobalConstituent>(&path, &query, params.options.as_ref())
         })
     }
 
@@ -1021,70 +569,9 @@ impl EtfGlobalApi for Client {
         params: GetEtfGlobalFundFlowsParams,
     ) -> BoxStream<'a, EtfGlobalFundFlow> {
         Box::pin({
-            let GetEtfGlobalFundFlowsParams {
-                processed_date,
-                processed_date_gt,
-                processed_date_gte,
-                processed_date_lt,
-                processed_date_lte,
-                effective_date,
-                effective_date_gt,
-                effective_date_gte,
-                effective_date_lt,
-                effective_date_lte,
-                composite_ticker,
-                composite_ticker_any_of,
-                composite_ticker_gt,
-                composite_ticker_gte,
-                composite_ticker_lt,
-                composite_ticker_lte,
-                limit,
-                sort,
-                options,
-            } = params;
-            let processed_date = processed_date.as_deref();
-            let processed_date_gt = processed_date_gt.as_deref();
-            let processed_date_gte = processed_date_gte.as_deref();
-            let processed_date_lt = processed_date_lt.as_deref();
-            let processed_date_lte = processed_date_lte.as_deref();
-            let effective_date = effective_date.as_deref();
-            let effective_date_gt = effective_date_gt.as_deref();
-            let effective_date_gte = effective_date_gte.as_deref();
-            let effective_date_lt = effective_date_lt.as_deref();
-            let effective_date_lte = effective_date_lte.as_deref();
-            let composite_ticker = composite_ticker.as_deref();
-            let composite_ticker_any_of = composite_ticker_any_of.as_deref();
-            let composite_ticker_gt = composite_ticker_gt.as_deref();
-            let composite_ticker_gte = composite_ticker_gte.as_deref();
-            let composite_ticker_lt = composite_ticker_lt.as_deref();
-            let composite_ticker_lte = composite_ticker_lte.as_deref();
-            let sort = sort.as_deref();
-            let options = options.as_ref();
             let path = "/etf-global/v1/fund-flows".to_string();
-            let mut query: Vec<(&str, String)> = Vec::new();
-            push_param(&mut query, "processed_date", processed_date);
-            push_param(&mut query, "processed_date.gt", processed_date_gt);
-            push_param(&mut query, "processed_date.gte", processed_date_gte);
-            push_param(&mut query, "processed_date.lt", processed_date_lt);
-            push_param(&mut query, "processed_date.lte", processed_date_lte);
-            push_param(&mut query, "effective_date", effective_date);
-            push_param(&mut query, "effective_date.gt", effective_date_gt);
-            push_param(&mut query, "effective_date.gte", effective_date_gte);
-            push_param(&mut query, "effective_date.lt", effective_date_lt);
-            push_param(&mut query, "effective_date.lte", effective_date_lte);
-            push_param(&mut query, "composite_ticker", composite_ticker);
-            push_param(
-                &mut query,
-                "composite_ticker.any_of",
-                composite_ticker_any_of,
-            );
-            push_param(&mut query, "composite_ticker.gt", composite_ticker_gt);
-            push_param(&mut query, "composite_ticker.gte", composite_ticker_gte);
-            push_param(&mut query, "composite_ticker.lt", composite_ticker_lt);
-            push_param(&mut query, "composite_ticker.lte", composite_ticker_lte);
-            push_param(&mut query, "limit", limit);
-            push_param(&mut query, "sort", sort);
-            self.list::<EtfGlobalFundFlow>(&path, Some(&query), options)
+            let query = encode_query(&params);
+            self.list::<EtfGlobalFundFlow>(&path, &query, params.options.as_ref())
         })
     }
 
@@ -1138,70 +625,9 @@ impl EtfGlobalApi for Client {
         params: GetEtfGlobalProfilesParams,
     ) -> BoxStream<'a, EtfGlobalProfile> {
         Box::pin({
-            let GetEtfGlobalProfilesParams {
-                processed_date,
-                processed_date_gt,
-                processed_date_gte,
-                processed_date_lt,
-                processed_date_lte,
-                effective_date,
-                effective_date_gt,
-                effective_date_gte,
-                effective_date_lt,
-                effective_date_lte,
-                composite_ticker,
-                composite_ticker_any_of,
-                composite_ticker_gt,
-                composite_ticker_gte,
-                composite_ticker_lt,
-                composite_ticker_lte,
-                limit,
-                sort,
-                options,
-            } = params;
-            let processed_date = processed_date.as_deref();
-            let processed_date_gt = processed_date_gt.as_deref();
-            let processed_date_gte = processed_date_gte.as_deref();
-            let processed_date_lt = processed_date_lt.as_deref();
-            let processed_date_lte = processed_date_lte.as_deref();
-            let effective_date = effective_date.as_deref();
-            let effective_date_gt = effective_date_gt.as_deref();
-            let effective_date_gte = effective_date_gte.as_deref();
-            let effective_date_lt = effective_date_lt.as_deref();
-            let effective_date_lte = effective_date_lte.as_deref();
-            let composite_ticker = composite_ticker.as_deref();
-            let composite_ticker_any_of = composite_ticker_any_of.as_deref();
-            let composite_ticker_gt = composite_ticker_gt.as_deref();
-            let composite_ticker_gte = composite_ticker_gte.as_deref();
-            let composite_ticker_lt = composite_ticker_lt.as_deref();
-            let composite_ticker_lte = composite_ticker_lte.as_deref();
-            let sort = sort.as_deref();
-            let options = options.as_ref();
             let path = "/etf-global/v1/profiles".to_string();
-            let mut query: Vec<(&str, String)> = Vec::new();
-            push_param(&mut query, "processed_date", processed_date);
-            push_param(&mut query, "processed_date.gt", processed_date_gt);
-            push_param(&mut query, "processed_date.gte", processed_date_gte);
-            push_param(&mut query, "processed_date.lt", processed_date_lt);
-            push_param(&mut query, "processed_date.lte", processed_date_lte);
-            push_param(&mut query, "effective_date", effective_date);
-            push_param(&mut query, "effective_date.gt", effective_date_gt);
-            push_param(&mut query, "effective_date.gte", effective_date_gte);
-            push_param(&mut query, "effective_date.lt", effective_date_lt);
-            push_param(&mut query, "effective_date.lte", effective_date_lte);
-            push_param(&mut query, "composite_ticker", composite_ticker);
-            push_param(
-                &mut query,
-                "composite_ticker.any_of",
-                composite_ticker_any_of,
-            );
-            push_param(&mut query, "composite_ticker.gt", composite_ticker_gt);
-            push_param(&mut query, "composite_ticker.gte", composite_ticker_gte);
-            push_param(&mut query, "composite_ticker.lt", composite_ticker_lt);
-            push_param(&mut query, "composite_ticker.lte", composite_ticker_lte);
-            push_param(&mut query, "limit", limit);
-            push_param(&mut query, "sort", sort);
-            self.list::<EtfGlobalProfile>(&path, Some(&query), options)
+            let query = encode_query(&params);
+            self.list::<EtfGlobalProfile>(&path, &query, params.options.as_ref())
         })
     }
 
@@ -1255,70 +681,9 @@ impl EtfGlobalApi for Client {
         params: GetEtfGlobalTaxonomiesParams,
     ) -> BoxStream<'a, EtfGlobalTaxonomy> {
         Box::pin({
-            let GetEtfGlobalTaxonomiesParams {
-                processed_date,
-                processed_date_gt,
-                processed_date_gte,
-                processed_date_lt,
-                processed_date_lte,
-                effective_date,
-                effective_date_gt,
-                effective_date_gte,
-                effective_date_lt,
-                effective_date_lte,
-                composite_ticker,
-                composite_ticker_any_of,
-                composite_ticker_gt,
-                composite_ticker_gte,
-                composite_ticker_lt,
-                composite_ticker_lte,
-                limit,
-                sort,
-                options,
-            } = params;
-            let processed_date = processed_date.as_deref();
-            let processed_date_gt = processed_date_gt.as_deref();
-            let processed_date_gte = processed_date_gte.as_deref();
-            let processed_date_lt = processed_date_lt.as_deref();
-            let processed_date_lte = processed_date_lte.as_deref();
-            let effective_date = effective_date.as_deref();
-            let effective_date_gt = effective_date_gt.as_deref();
-            let effective_date_gte = effective_date_gte.as_deref();
-            let effective_date_lt = effective_date_lt.as_deref();
-            let effective_date_lte = effective_date_lte.as_deref();
-            let composite_ticker = composite_ticker.as_deref();
-            let composite_ticker_any_of = composite_ticker_any_of.as_deref();
-            let composite_ticker_gt = composite_ticker_gt.as_deref();
-            let composite_ticker_gte = composite_ticker_gte.as_deref();
-            let composite_ticker_lt = composite_ticker_lt.as_deref();
-            let composite_ticker_lte = composite_ticker_lte.as_deref();
-            let sort = sort.as_deref();
-            let options = options.as_ref();
             let path = "/etf-global/v1/taxonomies".to_string();
-            let mut query: Vec<(&str, String)> = Vec::new();
-            push_param(&mut query, "processed_date", processed_date);
-            push_param(&mut query, "processed_date.gt", processed_date_gt);
-            push_param(&mut query, "processed_date.gte", processed_date_gte);
-            push_param(&mut query, "processed_date.lt", processed_date_lt);
-            push_param(&mut query, "processed_date.lte", processed_date_lte);
-            push_param(&mut query, "effective_date", effective_date);
-            push_param(&mut query, "effective_date.gt", effective_date_gt);
-            push_param(&mut query, "effective_date.gte", effective_date_gte);
-            push_param(&mut query, "effective_date.lt", effective_date_lt);
-            push_param(&mut query, "effective_date.lte", effective_date_lte);
-            push_param(&mut query, "composite_ticker", composite_ticker);
-            push_param(
-                &mut query,
-                "composite_ticker.any_of",
-                composite_ticker_any_of,
-            );
-            push_param(&mut query, "composite_ticker.gt", composite_ticker_gt);
-            push_param(&mut query, "composite_ticker.gte", composite_ticker_gte);
-            push_param(&mut query, "composite_ticker.lt", composite_ticker_lt);
-            push_param(&mut query, "composite_ticker.lte", composite_ticker_lte);
-            push_param(&mut query, "limit", limit);
-            push_param(&mut query, "sort", sort);
-            self.list::<EtfGlobalTaxonomy>(&path, Some(&query), options)
+            let query = encode_query(&params);
+            self.list::<EtfGlobalTaxonomy>(&path, &query, params.options.as_ref())
         })
     }
 }
@@ -1326,147 +691,403 @@ impl EtfGlobalApi for Client {
 // --- Params structs (additive builder API) ---
 
 /// Optional arguments for [`EtfGlobalApi::get_etf_global_analytics`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct GetEtfGlobalAnalyticsParams {
     /// The `composite_ticker` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub composite_ticker: Option<String>,
     /// The `composite_ticker_any_of` argument.
+    #[serde(
+        rename = "composite_ticker.any_of",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub composite_ticker_any_of: Option<String>,
     /// The `composite_ticker_gt` argument.
+    #[serde(
+        rename = "composite_ticker.gt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub composite_ticker_gt: Option<String>,
     /// The `composite_ticker_gte` argument.
+    #[serde(
+        rename = "composite_ticker.gte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub composite_ticker_gte: Option<String>,
     /// The `composite_ticker_lt` argument.
+    #[serde(
+        rename = "composite_ticker.lt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub composite_ticker_lt: Option<String>,
     /// The `composite_ticker_lte` argument.
+    #[serde(
+        rename = "composite_ticker.lte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub composite_ticker_lte: Option<String>,
     /// The `processed_date` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub processed_date: Option<String>,
     /// The `processed_date_gt` argument.
+    #[serde(rename = "processed_date.gt", skip_serializing_if = "Option::is_none")]
     pub processed_date_gt: Option<String>,
     /// The `processed_date_gte` argument.
+    #[serde(rename = "processed_date.gte", skip_serializing_if = "Option::is_none")]
     pub processed_date_gte: Option<String>,
     /// The `processed_date_lt` argument.
+    #[serde(rename = "processed_date.lt", skip_serializing_if = "Option::is_none")]
     pub processed_date_lt: Option<String>,
     /// The `processed_date_lte` argument.
+    #[serde(rename = "processed_date.lte", skip_serializing_if = "Option::is_none")]
     pub processed_date_lte: Option<String>,
     /// The `effective_date` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub effective_date: Option<String>,
     /// The `effective_date_gt` argument.
+    #[serde(rename = "effective_date.gt", skip_serializing_if = "Option::is_none")]
     pub effective_date_gt: Option<String>,
     /// The `effective_date_gte` argument.
+    #[serde(rename = "effective_date.gte", skip_serializing_if = "Option::is_none")]
     pub effective_date_gte: Option<String>,
     /// The `effective_date_lt` argument.
+    #[serde(rename = "effective_date.lt", skip_serializing_if = "Option::is_none")]
     pub effective_date_lt: Option<String>,
     /// The `effective_date_lte` argument.
+    #[serde(rename = "effective_date.lte", skip_serializing_if = "Option::is_none")]
     pub effective_date_lte: Option<String>,
     /// The `risk_total_score` argument.
+    #[serde(
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub risk_total_score: Option<f64>,
     /// The `risk_total_score_gt` argument.
+    #[serde(
+        rename = "risk_total_score.gt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub risk_total_score_gt: Option<f64>,
     /// The `risk_total_score_gte` argument.
+    #[serde(
+        rename = "risk_total_score.gte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub risk_total_score_gte: Option<f64>,
     /// The `risk_total_score_lt` argument.
+    #[serde(
+        rename = "risk_total_score.lt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub risk_total_score_lt: Option<f64>,
     /// The `risk_total_score_lte` argument.
+    #[serde(
+        rename = "risk_total_score.lte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub risk_total_score_lte: Option<f64>,
     /// The `reward_score` argument.
+    #[serde(
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub reward_score: Option<f64>,
     /// The `reward_score_gt` argument.
+    #[serde(
+        rename = "reward_score.gt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub reward_score_gt: Option<f64>,
     /// The `reward_score_gte` argument.
+    #[serde(
+        rename = "reward_score.gte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub reward_score_gte: Option<f64>,
     /// The `reward_score_lt` argument.
+    #[serde(
+        rename = "reward_score.lt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub reward_score_lt: Option<f64>,
     /// The `reward_score_lte` argument.
+    #[serde(
+        rename = "reward_score.lte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub reward_score_lte: Option<f64>,
     /// The `quant_total_score` argument.
+    #[serde(
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub quant_total_score: Option<f64>,
     /// The `quant_total_score_gt` argument.
+    #[serde(
+        rename = "quant_total_score.gt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub quant_total_score_gt: Option<f64>,
     /// The `quant_total_score_gte` argument.
+    #[serde(
+        rename = "quant_total_score.gte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub quant_total_score_gte: Option<f64>,
     /// The `quant_total_score_lt` argument.
+    #[serde(
+        rename = "quant_total_score.lt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub quant_total_score_lt: Option<f64>,
     /// The `quant_total_score_lte` argument.
+    #[serde(
+        rename = "quant_total_score.lte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub quant_total_score_lte: Option<f64>,
     /// The `quant_grade` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub quant_grade: Option<String>,
     /// The `quant_grade_any_of` argument.
+    #[serde(rename = "quant_grade.any_of", skip_serializing_if = "Option::is_none")]
     pub quant_grade_any_of: Option<String>,
     /// The `quant_grade_gt` argument.
+    #[serde(rename = "quant_grade.gt", skip_serializing_if = "Option::is_none")]
     pub quant_grade_gt: Option<String>,
     /// The `quant_grade_gte` argument.
+    #[serde(rename = "quant_grade.gte", skip_serializing_if = "Option::is_none")]
     pub quant_grade_gte: Option<String>,
     /// The `quant_grade_lt` argument.
+    #[serde(rename = "quant_grade.lt", skip_serializing_if = "Option::is_none")]
     pub quant_grade_lt: Option<String>,
     /// The `quant_grade_lte` argument.
+    #[serde(rename = "quant_grade.lte", skip_serializing_if = "Option::is_none")]
     pub quant_grade_lte: Option<String>,
     /// The `quant_composite_technical` argument.
+    #[serde(
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub quant_composite_technical: Option<f64>,
     /// The `quant_composite_technical_gt` argument.
+    #[serde(
+        rename = "quant_composite_technical.gt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub quant_composite_technical_gt: Option<f64>,
     /// The `quant_composite_technical_gte` argument.
+    #[serde(
+        rename = "quant_composite_technical.gte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub quant_composite_technical_gte: Option<f64>,
     /// The `quant_composite_technical_lt` argument.
+    #[serde(
+        rename = "quant_composite_technical.lt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub quant_composite_technical_lt: Option<f64>,
     /// The `quant_composite_technical_lte` argument.
+    #[serde(
+        rename = "quant_composite_technical.lte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub quant_composite_technical_lte: Option<f64>,
     /// The `quant_composite_sentiment` argument.
+    #[serde(
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub quant_composite_sentiment: Option<f64>,
     /// The `quant_composite_sentiment_gt` argument.
+    #[serde(
+        rename = "quant_composite_sentiment.gt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub quant_composite_sentiment_gt: Option<f64>,
     /// The `quant_composite_sentiment_gte` argument.
+    #[serde(
+        rename = "quant_composite_sentiment.gte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub quant_composite_sentiment_gte: Option<f64>,
     /// The `quant_composite_sentiment_lt` argument.
+    #[serde(
+        rename = "quant_composite_sentiment.lt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub quant_composite_sentiment_lt: Option<f64>,
     /// The `quant_composite_sentiment_lte` argument.
+    #[serde(
+        rename = "quant_composite_sentiment.lte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub quant_composite_sentiment_lte: Option<f64>,
     /// The `quant_composite_behavioral` argument.
+    #[serde(
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub quant_composite_behavioral: Option<f64>,
     /// The `quant_composite_behavioral_gt` argument.
+    #[serde(
+        rename = "quant_composite_behavioral.gt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub quant_composite_behavioral_gt: Option<f64>,
     /// The `quant_composite_behavioral_gte` argument.
+    #[serde(
+        rename = "quant_composite_behavioral.gte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub quant_composite_behavioral_gte: Option<f64>,
     /// The `quant_composite_behavioral_lt` argument.
+    #[serde(
+        rename = "quant_composite_behavioral.lt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub quant_composite_behavioral_lt: Option<f64>,
     /// The `quant_composite_behavioral_lte` argument.
+    #[serde(
+        rename = "quant_composite_behavioral.lte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub quant_composite_behavioral_lte: Option<f64>,
     /// The `quant_composite_fundamental` argument.
+    #[serde(
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub quant_composite_fundamental: Option<f64>,
     /// The `quant_composite_fundamental_gt` argument.
+    #[serde(
+        rename = "quant_composite_fundamental.gt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub quant_composite_fundamental_gt: Option<f64>,
     /// The `quant_composite_fundamental_gte` argument.
+    #[serde(
+        rename = "quant_composite_fundamental.gte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub quant_composite_fundamental_gte: Option<f64>,
     /// The `quant_composite_fundamental_lt` argument.
+    #[serde(
+        rename = "quant_composite_fundamental.lt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub quant_composite_fundamental_lt: Option<f64>,
     /// The `quant_composite_fundamental_lte` argument.
+    #[serde(
+        rename = "quant_composite_fundamental.lte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub quant_composite_fundamental_lte: Option<f64>,
     /// The `quant_composite_global` argument.
+    #[serde(
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub quant_composite_global: Option<f64>,
     /// The `quant_composite_global_gt` argument.
+    #[serde(
+        rename = "quant_composite_global.gt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub quant_composite_global_gt: Option<f64>,
     /// The `quant_composite_global_gte` argument.
+    #[serde(
+        rename = "quant_composite_global.gte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub quant_composite_global_gte: Option<f64>,
     /// The `quant_composite_global_lt` argument.
+    #[serde(
+        rename = "quant_composite_global.lt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub quant_composite_global_lt: Option<f64>,
     /// The `quant_composite_global_lte` argument.
+    #[serde(
+        rename = "quant_composite_global.lte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub quant_composite_global_lte: Option<f64>,
     /// The `quant_composite_quality` argument.
+    #[serde(
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub quant_composite_quality: Option<f64>,
     /// The `quant_composite_quality_gt` argument.
+    #[serde(
+        rename = "quant_composite_quality.gt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub quant_composite_quality_gt: Option<f64>,
     /// The `quant_composite_quality_gte` argument.
+    #[serde(
+        rename = "quant_composite_quality.gte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub quant_composite_quality_gte: Option<f64>,
     /// The `quant_composite_quality_lt` argument.
+    #[serde(
+        rename = "quant_composite_quality.lt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub quant_composite_quality_lt: Option<f64>,
     /// The `quant_composite_quality_lte` argument.
+    #[serde(
+        rename = "quant_composite_quality.lte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub quant_composite_quality_lte: Option<f64>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `sort` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sort: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -1898,105 +1519,184 @@ impl GetEtfGlobalAnalyticsParams {
 }
 
 /// Optional arguments for [`EtfGlobalApi::get_etf_global_constituents`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct GetEtfGlobalConstituentsParams {
     /// The `composite_ticker` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub composite_ticker: Option<String>,
     /// The `composite_ticker_any_of` argument.
+    #[serde(
+        rename = "composite_ticker.any_of",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub composite_ticker_any_of: Option<String>,
     /// The `composite_ticker_gt` argument.
+    #[serde(
+        rename = "composite_ticker.gt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub composite_ticker_gt: Option<String>,
     /// The `composite_ticker_gte` argument.
+    #[serde(
+        rename = "composite_ticker.gte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub composite_ticker_gte: Option<String>,
     /// The `composite_ticker_lt` argument.
+    #[serde(
+        rename = "composite_ticker.lt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub composite_ticker_lt: Option<String>,
     /// The `composite_ticker_lte` argument.
+    #[serde(
+        rename = "composite_ticker.lte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub composite_ticker_lte: Option<String>,
     /// The `constituent_ticker` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub constituent_ticker: Option<String>,
     /// The `constituent_ticker_any_of` argument.
+    #[serde(
+        rename = "constituent_ticker.any_of",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub constituent_ticker_any_of: Option<String>,
     /// The `constituent_ticker_gt` argument.
+    #[serde(
+        rename = "constituent_ticker.gt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub constituent_ticker_gt: Option<String>,
     /// The `constituent_ticker_gte` argument.
+    #[serde(
+        rename = "constituent_ticker.gte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub constituent_ticker_gte: Option<String>,
     /// The `constituent_ticker_lt` argument.
+    #[serde(
+        rename = "constituent_ticker.lt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub constituent_ticker_lt: Option<String>,
     /// The `constituent_ticker_lte` argument.
+    #[serde(
+        rename = "constituent_ticker.lte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub constituent_ticker_lte: Option<String>,
     /// The `effective_date` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub effective_date: Option<String>,
     /// The `effective_date_gt` argument.
+    #[serde(rename = "effective_date.gt", skip_serializing_if = "Option::is_none")]
     pub effective_date_gt: Option<String>,
     /// The `effective_date_gte` argument.
+    #[serde(rename = "effective_date.gte", skip_serializing_if = "Option::is_none")]
     pub effective_date_gte: Option<String>,
     /// The `effective_date_lt` argument.
+    #[serde(rename = "effective_date.lt", skip_serializing_if = "Option::is_none")]
     pub effective_date_lt: Option<String>,
     /// The `effective_date_lte` argument.
+    #[serde(rename = "effective_date.lte", skip_serializing_if = "Option::is_none")]
     pub effective_date_lte: Option<String>,
     /// The `processed_date` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub processed_date: Option<String>,
     /// The `processed_date_gt` argument.
+    #[serde(rename = "processed_date.gt", skip_serializing_if = "Option::is_none")]
     pub processed_date_gt: Option<String>,
     /// The `processed_date_gte` argument.
+    #[serde(rename = "processed_date.gte", skip_serializing_if = "Option::is_none")]
     pub processed_date_gte: Option<String>,
     /// The `processed_date_lt` argument.
+    #[serde(rename = "processed_date.lt", skip_serializing_if = "Option::is_none")]
     pub processed_date_lt: Option<String>,
     /// The `processed_date_lte` argument.
+    #[serde(rename = "processed_date.lte", skip_serializing_if = "Option::is_none")]
     pub processed_date_lte: Option<String>,
     /// The `us_code` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub us_code: Option<String>,
     /// The `us_code_any_of` argument.
+    #[serde(rename = "us_code.any_of", skip_serializing_if = "Option::is_none")]
     pub us_code_any_of: Option<String>,
     /// The `us_code_gt` argument.
+    #[serde(rename = "us_code.gt", skip_serializing_if = "Option::is_none")]
     pub us_code_gt: Option<String>,
     /// The `us_code_gte` argument.
+    #[serde(rename = "us_code.gte", skip_serializing_if = "Option::is_none")]
     pub us_code_gte: Option<String>,
     /// The `us_code_lt` argument.
+    #[serde(rename = "us_code.lt", skip_serializing_if = "Option::is_none")]
     pub us_code_lt: Option<String>,
     /// The `us_code_lte` argument.
+    #[serde(rename = "us_code.lte", skip_serializing_if = "Option::is_none")]
     pub us_code_lte: Option<String>,
     /// The `isin` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub isin: Option<String>,
     /// The `isin_any_of` argument.
+    #[serde(rename = "isin.any_of", skip_serializing_if = "Option::is_none")]
     pub isin_any_of: Option<String>,
     /// The `isin_gt` argument.
+    #[serde(rename = "isin.gt", skip_serializing_if = "Option::is_none")]
     pub isin_gt: Option<String>,
     /// The `isin_gte` argument.
+    #[serde(rename = "isin.gte", skip_serializing_if = "Option::is_none")]
     pub isin_gte: Option<String>,
     /// The `isin_lt` argument.
+    #[serde(rename = "isin.lt", skip_serializing_if = "Option::is_none")]
     pub isin_lt: Option<String>,
     /// The `isin_lte` argument.
+    #[serde(rename = "isin.lte", skip_serializing_if = "Option::is_none")]
     pub isin_lte: Option<String>,
     /// The `figi` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub figi: Option<String>,
     /// The `figi_any_of` argument.
+    #[serde(rename = "figi.any_of", skip_serializing_if = "Option::is_none")]
     pub figi_any_of: Option<String>,
     /// The `figi_gt` argument.
+    #[serde(rename = "figi.gt", skip_serializing_if = "Option::is_none")]
     pub figi_gt: Option<String>,
     /// The `figi_gte` argument.
+    #[serde(rename = "figi.gte", skip_serializing_if = "Option::is_none")]
     pub figi_gte: Option<String>,
     /// The `figi_lt` argument.
+    #[serde(rename = "figi.lt", skip_serializing_if = "Option::is_none")]
     pub figi_lt: Option<String>,
     /// The `figi_lte` argument.
+    #[serde(rename = "figi.lte", skip_serializing_if = "Option::is_none")]
     pub figi_lte: Option<String>,
     /// The `sedol` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sedol: Option<String>,
     /// The `sedol_any_of` argument.
+    #[serde(rename = "sedol.any_of", skip_serializing_if = "Option::is_none")]
     pub sedol_any_of: Option<String>,
     /// The `sedol_gt` argument.
+    #[serde(rename = "sedol.gt", skip_serializing_if = "Option::is_none")]
     pub sedol_gt: Option<String>,
     /// The `sedol_gte` argument.
+    #[serde(rename = "sedol.gte", skip_serializing_if = "Option::is_none")]
     pub sedol_gte: Option<String>,
     /// The `sedol_lt` argument.
+    #[serde(rename = "sedol.lt", skip_serializing_if = "Option::is_none")]
     pub sedol_lt: Option<String>,
     /// The `sedol_lte` argument.
+    #[serde(rename = "sedol.lte", skip_serializing_if = "Option::is_none")]
     pub sedol_lte: Option<String>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `sort` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sort: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -2305,45 +2005,79 @@ impl GetEtfGlobalConstituentsParams {
 }
 
 /// Optional arguments for [`EtfGlobalApi::get_etf_global_fund_flows`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct GetEtfGlobalFundFlowsParams {
     /// The `processed_date` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub processed_date: Option<String>,
     /// The `processed_date_gt` argument.
+    #[serde(rename = "processed_date.gt", skip_serializing_if = "Option::is_none")]
     pub processed_date_gt: Option<String>,
     /// The `processed_date_gte` argument.
+    #[serde(rename = "processed_date.gte", skip_serializing_if = "Option::is_none")]
     pub processed_date_gte: Option<String>,
     /// The `processed_date_lt` argument.
+    #[serde(rename = "processed_date.lt", skip_serializing_if = "Option::is_none")]
     pub processed_date_lt: Option<String>,
     /// The `processed_date_lte` argument.
+    #[serde(rename = "processed_date.lte", skip_serializing_if = "Option::is_none")]
     pub processed_date_lte: Option<String>,
     /// The `effective_date` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub effective_date: Option<String>,
     /// The `effective_date_gt` argument.
+    #[serde(rename = "effective_date.gt", skip_serializing_if = "Option::is_none")]
     pub effective_date_gt: Option<String>,
     /// The `effective_date_gte` argument.
+    #[serde(rename = "effective_date.gte", skip_serializing_if = "Option::is_none")]
     pub effective_date_gte: Option<String>,
     /// The `effective_date_lt` argument.
+    #[serde(rename = "effective_date.lt", skip_serializing_if = "Option::is_none")]
     pub effective_date_lt: Option<String>,
     /// The `effective_date_lte` argument.
+    #[serde(rename = "effective_date.lte", skip_serializing_if = "Option::is_none")]
     pub effective_date_lte: Option<String>,
     /// The `composite_ticker` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub composite_ticker: Option<String>,
     /// The `composite_ticker_any_of` argument.
+    #[serde(
+        rename = "composite_ticker.any_of",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub composite_ticker_any_of: Option<String>,
     /// The `composite_ticker_gt` argument.
+    #[serde(
+        rename = "composite_ticker.gt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub composite_ticker_gt: Option<String>,
     /// The `composite_ticker_gte` argument.
+    #[serde(
+        rename = "composite_ticker.gte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub composite_ticker_gte: Option<String>,
     /// The `composite_ticker_lt` argument.
+    #[serde(
+        rename = "composite_ticker.lt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub composite_ticker_lt: Option<String>,
     /// The `composite_ticker_lte` argument.
+    #[serde(
+        rename = "composite_ticker.lte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub composite_ticker_lte: Option<String>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `sort` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sort: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -2469,45 +2203,79 @@ impl GetEtfGlobalFundFlowsParams {
 }
 
 /// Optional arguments for [`EtfGlobalApi::get_etf_global_profiles`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct GetEtfGlobalProfilesParams {
     /// The `processed_date` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub processed_date: Option<String>,
     /// The `processed_date_gt` argument.
+    #[serde(rename = "processed_date.gt", skip_serializing_if = "Option::is_none")]
     pub processed_date_gt: Option<String>,
     /// The `processed_date_gte` argument.
+    #[serde(rename = "processed_date.gte", skip_serializing_if = "Option::is_none")]
     pub processed_date_gte: Option<String>,
     /// The `processed_date_lt` argument.
+    #[serde(rename = "processed_date.lt", skip_serializing_if = "Option::is_none")]
     pub processed_date_lt: Option<String>,
     /// The `processed_date_lte` argument.
+    #[serde(rename = "processed_date.lte", skip_serializing_if = "Option::is_none")]
     pub processed_date_lte: Option<String>,
     /// The `effective_date` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub effective_date: Option<String>,
     /// The `effective_date_gt` argument.
+    #[serde(rename = "effective_date.gt", skip_serializing_if = "Option::is_none")]
     pub effective_date_gt: Option<String>,
     /// The `effective_date_gte` argument.
+    #[serde(rename = "effective_date.gte", skip_serializing_if = "Option::is_none")]
     pub effective_date_gte: Option<String>,
     /// The `effective_date_lt` argument.
+    #[serde(rename = "effective_date.lt", skip_serializing_if = "Option::is_none")]
     pub effective_date_lt: Option<String>,
     /// The `effective_date_lte` argument.
+    #[serde(rename = "effective_date.lte", skip_serializing_if = "Option::is_none")]
     pub effective_date_lte: Option<String>,
     /// The `composite_ticker` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub composite_ticker: Option<String>,
     /// The `composite_ticker_any_of` argument.
+    #[serde(
+        rename = "composite_ticker.any_of",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub composite_ticker_any_of: Option<String>,
     /// The `composite_ticker_gt` argument.
+    #[serde(
+        rename = "composite_ticker.gt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub composite_ticker_gt: Option<String>,
     /// The `composite_ticker_gte` argument.
+    #[serde(
+        rename = "composite_ticker.gte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub composite_ticker_gte: Option<String>,
     /// The `composite_ticker_lt` argument.
+    #[serde(
+        rename = "composite_ticker.lt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub composite_ticker_lt: Option<String>,
     /// The `composite_ticker_lte` argument.
+    #[serde(
+        rename = "composite_ticker.lte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub composite_ticker_lte: Option<String>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `sort` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sort: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -2633,45 +2401,79 @@ impl GetEtfGlobalProfilesParams {
 }
 
 /// Optional arguments for [`EtfGlobalApi::get_etf_global_taxonomies`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct GetEtfGlobalTaxonomiesParams {
     /// The `processed_date` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub processed_date: Option<String>,
     /// The `processed_date_gt` argument.
+    #[serde(rename = "processed_date.gt", skip_serializing_if = "Option::is_none")]
     pub processed_date_gt: Option<String>,
     /// The `processed_date_gte` argument.
+    #[serde(rename = "processed_date.gte", skip_serializing_if = "Option::is_none")]
     pub processed_date_gte: Option<String>,
     /// The `processed_date_lt` argument.
+    #[serde(rename = "processed_date.lt", skip_serializing_if = "Option::is_none")]
     pub processed_date_lt: Option<String>,
     /// The `processed_date_lte` argument.
+    #[serde(rename = "processed_date.lte", skip_serializing_if = "Option::is_none")]
     pub processed_date_lte: Option<String>,
     /// The `effective_date` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub effective_date: Option<String>,
     /// The `effective_date_gt` argument.
+    #[serde(rename = "effective_date.gt", skip_serializing_if = "Option::is_none")]
     pub effective_date_gt: Option<String>,
     /// The `effective_date_gte` argument.
+    #[serde(rename = "effective_date.gte", skip_serializing_if = "Option::is_none")]
     pub effective_date_gte: Option<String>,
     /// The `effective_date_lt` argument.
+    #[serde(rename = "effective_date.lt", skip_serializing_if = "Option::is_none")]
     pub effective_date_lt: Option<String>,
     /// The `effective_date_lte` argument.
+    #[serde(rename = "effective_date.lte", skip_serializing_if = "Option::is_none")]
     pub effective_date_lte: Option<String>,
     /// The `composite_ticker` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub composite_ticker: Option<String>,
     /// The `composite_ticker_any_of` argument.
+    #[serde(
+        rename = "composite_ticker.any_of",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub composite_ticker_any_of: Option<String>,
     /// The `composite_ticker_gt` argument.
+    #[serde(
+        rename = "composite_ticker.gt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub composite_ticker_gt: Option<String>,
     /// The `composite_ticker_gte` argument.
+    #[serde(
+        rename = "composite_ticker.gte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub composite_ticker_gte: Option<String>,
     /// The `composite_ticker_lt` argument.
+    #[serde(
+        rename = "composite_ticker.lt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub composite_ticker_lt: Option<String>,
     /// The `composite_ticker_lte` argument.
+    #[serde(
+        rename = "composite_ticker.lte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub composite_ticker_lte: Option<String>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `sort` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sort: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 

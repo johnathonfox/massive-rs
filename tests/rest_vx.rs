@@ -157,3 +157,69 @@ async fn list_ipos_hits_expected_path_and_params() {
     assert_eq!(ipo.final_issue_price, Some(51.0));
     assert_eq!(ipo.shares_outstanding, Some(1025544118));
 }
+
+#[tokio::test]
+async fn list_stock_financials_with_params_serializes_every_field() {
+    let server = MockServer::start().await;
+    Mock::given(method("GET"))
+        .and(path("/vX/reference/financials"))
+        .and(header("Authorization", "Bearer test-key"))
+        .and(query_param("ticker", "AAPL"))
+        .and(query_param("cik", "0000320193"))
+        .and(query_param("company_name", "Apple Inc."))
+        .and(query_param("company_name_search", "Apple"))
+        .and(query_param("sic", "3571"))
+        .and(query_param("filing_date", "2023-11-03"))
+        .and(query_param("filing_date.lt", "2024-01-01"))
+        .and(query_param("filing_date.lte", "2023-12-31"))
+        .and(query_param("filing_date.gt", "2022-12-31"))
+        .and(query_param("filing_date.gte", "2023-01-01"))
+        .and(query_param("period_of_report_date", "2023-09-30"))
+        .and(query_param("period_of_report_date.lt", "2024-01-01"))
+        .and(query_param("period_of_report_date.lte", "2023-12-31"))
+        .and(query_param("period_of_report_date.gt", "2022-12-31"))
+        .and(query_param("period_of_report_date.gte", "2023-01-01"))
+        .and(query_param("timeframe", "quarterly"))
+        .and(query_param("include_sources", "true"))
+        .and(query_param("limit", "10"))
+        .and(query_param("sort", "filing_date"))
+        .and(query_param("order", "desc"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(serde_json::json!({
+            "status": "OK",
+            "count": 0,
+            "results": []
+        })))
+        .expect(1)
+        .mount(&server)
+        .await;
+
+    let client = Client::new("test-key").unwrap().with_base(server.uri());
+    let params = massive::rest::ListStockFinancialsParams::new()
+        .ticker("AAPL")
+        .cik("0000320193")
+        .company_name("Apple Inc.")
+        .company_name_search("Apple")
+        .sic("3571")
+        .filing_date("2023-11-03")
+        .filing_date_lt("2024-01-01")
+        .filing_date_lte("2023-12-31")
+        .filing_date_gt("2022-12-31")
+        .filing_date_gte("2023-01-01")
+        .period_of_report_date("2023-09-30")
+        .period_of_report_date_lt("2024-01-01")
+        .period_of_report_date_lte("2023-12-31")
+        .period_of_report_date_gt("2022-12-31")
+        .period_of_report_date_gte("2023-01-01")
+        .timeframe("quarterly")
+        .include_sources(true)
+        .limit(10)
+        .sort("filing_date")
+        .order("desc");
+    let financials = client
+        .list_stock_financials_with_params(params)
+        .try_collect::<Vec<_>>()
+        .await
+        .unwrap();
+
+    assert_eq!(financials.len(), 0);
+}

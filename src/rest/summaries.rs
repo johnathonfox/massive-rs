@@ -1,4 +1,4 @@
-use super::BoxFuture;
+use super::{encode_query, BoxFuture};
 use crate::client::{Client, RequestOptions};
 use crate::models::SummaryResult;
 
@@ -36,35 +36,37 @@ impl SummariesApi for Client {
         params: GetSummariesParams,
     ) -> BoxFuture<'a, Vec<SummaryResult>> {
         Box::pin(async move {
-            let GetSummariesParams {
-                ticker_any_of,
-                options,
-            } = params;
-            let ticker_any_of = ticker_any_of.as_deref();
-            let options = options.as_ref();
             let path = "/v1/summaries".to_string();
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(t) = ticker_any_of {
-                query.push(("ticker.any_of", t.join(",")));
-            }
+            let query = encode_query(&params);
             #[derive(serde::Deserialize)]
             struct Resp {
                 results: Option<Vec<SummaryResult>>,
             }
-            let resp: Resp = self.get(&path, Some(&query), options).await?;
+            let resp: Resp = self
+                .get(&path, &query, params.options.as_ref())
+                .await?;
             Ok(resp.results.unwrap_or_default())
         })
     }
 }
 
 // --- Params structs (additive builder API) ---
+//
+// Query serialization is derived: field order is wire order, `rename` carries
+// dotted filter operators, unset fields are omitted, and `options` is skipped.
 
 /// Optional arguments for [`SummariesApi::get_summaries`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct GetSummariesParams {
     /// The `ticker_any_of` argument.
+    #[serde(
+        rename = "ticker.any_of",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_comma_join"
+    )]
     pub ticker_any_of: Option<Vec<String>>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 

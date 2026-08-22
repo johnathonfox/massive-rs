@@ -1,4 +1,4 @@
-use super::{BoxFuture, BoxStream};
+use super::{encode_query, BoxFuture, BoxStream};
 use crate::client::{Client, RequestOptions};
 use crate::models::{
     IndicesSnapshot, OptionContractSnapshot, SnapshotTickerFullBook, TickerSnapshot,
@@ -184,57 +184,9 @@ impl SnapshotApi for Client {
         params: ListUniversalSnapshotsParams,
     ) -> BoxStream<'a, UniversalSnapshot> {
         Box::pin({
-            let ListUniversalSnapshotsParams {
-                r#type,
-                ticker_any_of,
-                order,
-                limit,
-                sort,
-                ticker_lt,
-                ticker_lte,
-                ticker_gt,
-                ticker_gte,
-                options,
-            } = params;
-            let r#type = r#type.as_deref();
-            let ticker_any_of = ticker_any_of.as_deref();
-            let order = order.as_deref();
-            let sort = sort.as_deref();
-            let ticker_lt = ticker_lt.as_deref();
-            let ticker_lte = ticker_lte.as_deref();
-            let ticker_gt = ticker_gt.as_deref();
-            let ticker_gte = ticker_gte.as_deref();
-            let options = options.as_ref();
             let path = "/v3/snapshot".to_string();
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(t) = r#type {
-                query.push(("type", t.to_string()));
-            }
-            if let Some(t) = ticker_any_of {
-                query.push(("ticker_any_of", t.to_string()));
-            }
-            if let Some(o) = order {
-                query.push(("order", o.to_string()));
-            }
-            if let Some(l) = limit {
-                query.push(("limit", l.to_string()));
-            }
-            if let Some(s) = sort {
-                query.push(("sort", s.to_string()));
-            }
-            if let Some(t) = ticker_lt {
-                query.push(("ticker.lt", t.to_string()));
-            }
-            if let Some(t) = ticker_lte {
-                query.push(("ticker.lte", t.to_string()));
-            }
-            if let Some(t) = ticker_gt {
-                query.push(("ticker.gt", t.to_string()));
-            }
-            if let Some(t) = ticker_gte {
-                query.push(("ticker.gte", t.to_string()));
-            }
-            self.list::<UniversalSnapshot>(&path, Some(&query), options)
+            let query = encode_query(&params);
+            self.list::<UniversalSnapshot>(&path, &query, params.options.as_ref())
         })
     }
 
@@ -261,30 +213,19 @@ impl SnapshotApi for Client {
         params: GetSnapshotAllParams,
     ) -> BoxFuture<'a, Vec<TickerSnapshot>> {
         Box::pin(async move {
-            let GetSnapshotAllParams {
-                tickers,
-                include_otc,
-                options,
-            } = params;
-            let tickers = tickers.as_deref();
-            let options = options.as_ref();
             let locale = get_locale(market_type);
             let path = format!(
                 "/v2/snapshot/locale/{}/markets/{}/tickers",
                 locale, market_type
             );
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(t) = tickers {
-                query.push(("tickers", t.to_string()));
-            }
-            if let Some(i) = include_otc {
-                query.push(("include_otc", i.to_string()));
-            }
+            let query = encode_query(&params);
             #[derive(serde::Deserialize)]
             struct Resp {
                 tickers: Option<Vec<TickerSnapshot>>,
             }
-            let resp: Resp = self.get(&path, Some(&query), options).await?;
+            let resp: Resp = self
+                .get(&path, &query, params.options.as_ref())
+                .await?;
             Ok(resp.tickers.unwrap_or_default())
         })
     }
@@ -313,25 +254,19 @@ impl SnapshotApi for Client {
         params: GetSnapshotDirectionParams,
     ) -> BoxFuture<'a, Vec<TickerSnapshot>> {
         Box::pin(async move {
-            let GetSnapshotDirectionParams {
-                include_otc,
-                options,
-            } = params;
-            let options = options.as_ref();
             let locale = get_locale(market_type);
             let path = format!(
                 "/v2/snapshot/locale/{}/markets/{}/{}",
                 locale, market_type, direction
             );
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(i) = include_otc {
-                query.push(("include_otc", i.to_string()));
-            }
+            let query = encode_query(&params);
             #[derive(serde::Deserialize)]
             struct Resp {
                 tickers: Option<Vec<TickerSnapshot>>,
             }
-            let resp: Resp = self.get(&path, Some(&query), options).await?;
+            let resp: Resp = self
+                .get(&path, &query, params.options.as_ref())
+                .await?;
             Ok(resp.tickers.unwrap_or_default())
         })
     }
@@ -358,18 +293,19 @@ impl SnapshotApi for Client {
         params: GetSnapshotTickerParams,
     ) -> BoxFuture<'a, TickerSnapshot> {
         Box::pin(async move {
-            let GetSnapshotTickerParams { options } = params;
-            let options = options.as_ref();
             let locale = get_locale(market_type);
             let path = format!(
                 "/v2/snapshot/locale/{}/markets/{}/tickers/{}",
                 locale, market_type, ticker
             );
+            let query = encode_query(&params);
             #[derive(serde::Deserialize)]
             struct Resp {
                 ticker: TickerSnapshot,
             }
-            let resp: Resp = self.get(&path, None, options).await?;
+            let resp: Resp = self
+                .get(&path, &query, params.options.as_ref())
+                .await?;
             Ok(resp.ticker)
         })
     }
@@ -396,17 +332,18 @@ impl SnapshotApi for Client {
         params: GetSnapshotOptionParams,
     ) -> BoxFuture<'a, OptionContractSnapshot> {
         Box::pin(async move {
-            let GetSnapshotOptionParams { options } = params;
-            let options = options.as_ref();
             let path = format!(
                 "/v3/snapshot/options/{}/{}",
                 underlying_asset, option_contract
             );
+            let query = encode_query(&params);
             #[derive(serde::Deserialize)]
             struct Resp {
                 results: OptionContractSnapshot,
             }
-            let resp: Resp = self.get(&path, None, options).await?;
+            let resp: Resp = self
+                .get(&path, &query, params.options.as_ref())
+                .await?;
             Ok(resp.results)
         })
     }
@@ -430,10 +367,9 @@ impl SnapshotApi for Client {
         params: ListSnapshotOptionsChainParams,
     ) -> BoxStream<'a, OptionContractSnapshot> {
         Box::pin({
-            let ListSnapshotOptionsChainParams { options } = params;
-            let options = options.as_ref();
             let path = format!("/v3/snapshot/options/{}", underlying_asset);
-            self.list::<OptionContractSnapshot>(&path, None, options)
+            let query = encode_query(&params);
+            self.list::<OptionContractSnapshot>(&path, &query, params.options.as_ref())
         })
     }
 
@@ -456,17 +392,18 @@ impl SnapshotApi for Client {
         params: GetSnapshotCryptoBookParams,
     ) -> BoxFuture<'a, SnapshotTickerFullBook> {
         Box::pin(async move {
-            let GetSnapshotCryptoBookParams { options } = params;
-            let options = options.as_ref();
             let path = format!(
                 "/v2/snapshot/locale/global/markets/crypto/tickers/{}/book",
                 ticker
             );
+            let query = encode_query(&params);
             #[derive(serde::Deserialize)]
             struct Resp {
                 data: SnapshotTickerFullBook,
             }
-            let resp: Resp = self.get(&path, None, options).await?;
+            let resp: Resp = self
+                .get(&path, &query, params.options.as_ref())
+                .await?;
             Ok(resp.data)
         })
     }
@@ -487,51 +424,57 @@ impl SnapshotApi for Client {
         params: GetSnapshotIndicesParams,
     ) -> BoxFuture<'a, Vec<IndicesSnapshot>> {
         Box::pin(async move {
-            let GetSnapshotIndicesParams {
-                ticker_any_of,
-                options,
-            } = params;
-            let ticker_any_of = ticker_any_of.as_deref();
-            let options = options.as_ref();
             let path = "/v3/snapshot/indices".to_string();
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(t) = ticker_any_of {
-                query.push(("ticker_any_of", t.to_string()));
-            }
+            let query = encode_query(&params);
             #[derive(serde::Deserialize)]
             struct Resp {
                 results: Option<Vec<IndicesSnapshot>>,
             }
-            let resp: Resp = self.get(&path, Some(&query), options).await?;
+            let resp: Resp = self
+                .get(&path, &query, params.options.as_ref())
+                .await?;
             Ok(resp.results.unwrap_or_default())
         })
     }
 }
 
 // --- Params structs (additive builder API) ---
+//
+// Query serialization is derived: field order is wire order, `rename` carries
+// dotted filter operators, unset fields are omitted, and `options` is skipped.
 
 /// Optional arguments for [`SnapshotApi::list_universal_snapshots`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct ListUniversalSnapshotsParams {
     /// The `type` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub r#type: Option<String>,
     /// The `ticker_any_of` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub ticker_any_of: Option<String>,
     /// The `order` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub order: Option<String>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `sort` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sort: Option<String>,
     /// The `ticker_lt` argument.
+    #[serde(rename = "ticker.lt", skip_serializing_if = "Option::is_none")]
     pub ticker_lt: Option<String>,
     /// The `ticker_lte` argument.
+    #[serde(rename = "ticker.lte", skip_serializing_if = "Option::is_none")]
     pub ticker_lte: Option<String>,
     /// The `ticker_gt` argument.
+    #[serde(rename = "ticker.gt", skip_serializing_if = "Option::is_none")]
     pub ticker_gt: Option<String>,
     /// The `ticker_gte` argument.
+    #[serde(rename = "ticker.gte", skip_serializing_if = "Option::is_none")]
     pub ticker_gte: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -603,13 +546,16 @@ impl ListUniversalSnapshotsParams {
 }
 
 /// Optional arguments for [`SnapshotApi::get_snapshot_all`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct GetSnapshotAllParams {
     /// The `tickers` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub tickers: Option<String>,
     /// The `include_otc` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub include_otc: Option<bool>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -639,11 +585,13 @@ impl GetSnapshotAllParams {
 }
 
 /// Optional arguments for [`SnapshotApi::get_snapshot_direction`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct GetSnapshotDirectionParams {
     /// The `include_otc` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub include_otc: Option<bool>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -667,9 +615,10 @@ impl GetSnapshotDirectionParams {
 }
 
 /// Optional arguments for [`SnapshotApi::get_snapshot_ticker`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct GetSnapshotTickerParams {
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -687,9 +636,10 @@ impl GetSnapshotTickerParams {
 }
 
 /// Optional arguments for [`SnapshotApi::get_snapshot_option`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct GetSnapshotOptionParams {
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -707,9 +657,10 @@ impl GetSnapshotOptionParams {
 }
 
 /// Optional arguments for [`SnapshotApi::list_snapshot_options_chain`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct ListSnapshotOptionsChainParams {
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -727,9 +678,10 @@ impl ListSnapshotOptionsChainParams {
 }
 
 /// Optional arguments for [`SnapshotApi::get_snapshot_crypto_book`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct GetSnapshotCryptoBookParams {
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -747,11 +699,13 @@ impl GetSnapshotCryptoBookParams {
 }
 
 /// Optional arguments for [`SnapshotApi::get_snapshot_indices`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct GetSnapshotIndicesParams {
     /// The `ticker_any_of` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub ticker_any_of: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 

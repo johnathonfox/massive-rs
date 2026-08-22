@@ -1,4 +1,4 @@
-use super::{BoxFuture, BoxStream};
+use super::{encode_query, BoxFuture, BoxStream};
 use crate::client::{Client, RequestOptions};
 use crate::models::{LastForexQuote, LastQuote, Quote, RealTimeCurrencyConversion};
 
@@ -115,52 +115,9 @@ impl QuotesApi for Client {
         params: ListQuotesParams,
     ) -> BoxStream<'a, Quote> {
         Box::pin({
-            let ListQuotesParams {
-                timestamp,
-                timestamp_lt,
-                timestamp_lte,
-                timestamp_gt,
-                timestamp_gte,
-                limit,
-                sort,
-                order,
-                options,
-            } = params;
-            let timestamp = timestamp.as_deref();
-            let timestamp_lt = timestamp_lt.as_deref();
-            let timestamp_lte = timestamp_lte.as_deref();
-            let timestamp_gt = timestamp_gt.as_deref();
-            let timestamp_gte = timestamp_gte.as_deref();
-            let sort = sort.as_deref();
-            let order = order.as_deref();
-            let options = options.as_ref();
             let path = format!("/v3/quotes/{}", ticker);
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(t) = timestamp {
-                query.push(("timestamp", t.to_string()));
-            }
-            if let Some(t) = timestamp_lt {
-                query.push(("timestamp.lt", t.to_string()));
-            }
-            if let Some(t) = timestamp_lte {
-                query.push(("timestamp.lte", t.to_string()));
-            }
-            if let Some(t) = timestamp_gt {
-                query.push(("timestamp.gt", t.to_string()));
-            }
-            if let Some(t) = timestamp_gte {
-                query.push(("timestamp.gte", t.to_string()));
-            }
-            if let Some(l) = limit {
-                query.push(("limit", l.to_string()));
-            }
-            if let Some(s) = sort {
-                query.push(("sort", s.to_string()));
-            }
-            if let Some(o) = order {
-                query.push(("order", o.to_string()));
-            }
-            self.list::<Quote>(&path, Some(&query), options)
+            let query = encode_query(&params);
+            self.list::<Quote>(&path, &query, params.options.as_ref())
         })
     }
 
@@ -183,14 +140,15 @@ impl QuotesApi for Client {
         params: GetLastQuoteParams,
     ) -> BoxFuture<'a, LastQuote> {
         Box::pin(async move {
-            let GetLastQuoteParams { options } = params;
-            let options = options.as_ref();
             let path = format!("/v2/last/nbbo/{}", ticker);
+            let query = encode_query(&params);
             #[derive(serde::Deserialize)]
             struct Resp {
                 results: LastQuote,
             }
-            let resp: Resp = self.get(&path, None, options).await?;
+            let resp: Resp = self
+                .get(&path, &query, params.options.as_ref())
+                .await?;
             Ok(resp.results)
         })
     }
@@ -217,10 +175,9 @@ impl QuotesApi for Client {
         params: GetLastForexQuoteParams,
     ) -> BoxFuture<'a, LastForexQuote> {
         Box::pin(async move {
-            let GetLastForexQuoteParams { options } = params;
-            let options = options.as_ref();
             let path = format!("/v1/last_quote/currencies/{}/{}", from, to);
-            self.get(&path, None, options).await
+            let query = encode_query(&params);
+            self.get(&path, &query, params.options.as_ref()).await
         })
     }
 
@@ -250,21 +207,9 @@ impl QuotesApi for Client {
         params: GetRealTimeCurrencyConversionParams,
     ) -> BoxFuture<'a, RealTimeCurrencyConversion> {
         Box::pin(async move {
-            let GetRealTimeCurrencyConversionParams {
-                amount,
-                precision,
-                options,
-            } = params;
-            let options = options.as_ref();
             let path = format!("/v1/conversion/{}/{}", from, to);
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(a) = amount {
-                query.push(("amount", a.to_string()));
-            }
-            if let Some(p) = precision {
-                query.push(("precision", p.to_string()));
-            }
-            self.get(&path, Some(&query), options).await
+            let query = encode_query(&params);
+            self.get(&path, &query, params.options.as_ref()).await
         })
     }
 }
@@ -272,25 +217,34 @@ impl QuotesApi for Client {
 // --- Params structs (additive builder API) ---
 
 /// Optional arguments for [`QuotesApi::list_quotes`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct ListQuotesParams {
     /// The `timestamp` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub timestamp: Option<String>,
     /// The `timestamp_lt` argument.
+    #[serde(rename = "timestamp.lt", skip_serializing_if = "Option::is_none")]
     pub timestamp_lt: Option<String>,
     /// The `timestamp_lte` argument.
+    #[serde(rename = "timestamp.lte", skip_serializing_if = "Option::is_none")]
     pub timestamp_lte: Option<String>,
     /// The `timestamp_gt` argument.
+    #[serde(rename = "timestamp.gt", skip_serializing_if = "Option::is_none")]
     pub timestamp_gt: Option<String>,
     /// The `timestamp_gte` argument.
+    #[serde(rename = "timestamp.gte", skip_serializing_if = "Option::is_none")]
     pub timestamp_gte: Option<String>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `sort` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sort: Option<String>,
     /// The `order` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub order: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -356,9 +310,10 @@ impl ListQuotesParams {
 }
 
 /// Optional arguments for [`QuotesApi::get_last_quote`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct GetLastQuoteParams {
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -376,9 +331,10 @@ impl GetLastQuoteParams {
 }
 
 /// Optional arguments for [`QuotesApi::get_last_forex_quote`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct GetLastForexQuoteParams {
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -396,13 +352,16 @@ impl GetLastForexQuoteParams {
 }
 
 /// Optional arguments for [`QuotesApi::get_real_time_currency_conversion`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct GetRealTimeCurrencyConversionParams {
     /// The `amount` argument.
+    #[serde(skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
     pub amount: Option<f64>,
     /// The `precision` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub precision: Option<i64>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 

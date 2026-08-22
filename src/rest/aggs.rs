@@ -1,4 +1,4 @@
-use super::{BoxFuture, BoxStream};
+use super::{encode_query, BoxFuture, BoxStream};
 use crate::client::{Client, RequestOptions};
 use crate::models::{Agg, DailyOpenCloseAgg, GroupedDailyAgg, PreviousCloseAgg};
 
@@ -149,29 +149,12 @@ impl AggsApi for Client {
         params: ListAggsParams,
     ) -> BoxStream<'a, Agg> {
         Box::pin({
-            let ListAggsParams {
-                adjusted,
-                sort,
-                limit,
-                options,
-            } = params;
-            let sort = sort.as_deref();
-            let options = options.as_ref();
             let path = format!(
                 "/v2/aggs/ticker/{}/range/{}/{}/{}/{}",
                 ticker, multiplier, timespan, from, to
             );
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(a) = adjusted {
-                query.push(("adjusted", a.to_string()));
-            }
-            if let Some(s) = sort {
-                query.push(("sort", s.to_string()));
-            }
-            if let Some(l) = limit {
-                query.push(("limit", l.to_string()));
-            }
-            self.list::<Agg>(&path, Some(&query), options)
+            let query = encode_query(&params);
+            self.list::<Agg>(&path, &query, params.options.as_ref())
         })
     }
 
@@ -212,33 +195,18 @@ impl AggsApi for Client {
         params: GetAggsParams,
     ) -> BoxFuture<'a, Vec<Agg>> {
         Box::pin(async move {
-            let GetAggsParams {
-                adjusted,
-                sort,
-                limit,
-                options,
-            } = params;
-            let sort = sort.as_deref();
-            let options = options.as_ref();
             let path = format!(
                 "/v2/aggs/ticker/{}/range/{}/{}/{}/{}",
                 ticker, multiplier, timespan, from, to
             );
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(a) = adjusted {
-                query.push(("adjusted", a.to_string()));
-            }
-            if let Some(s) = sort {
-                query.push(("sort", s.to_string()));
-            }
-            if let Some(l) = limit {
-                query.push(("limit", l.to_string()));
-            }
+            let query = encode_query(&params);
             #[derive(serde::Deserialize)]
             struct Resp {
                 results: Option<Vec<Agg>>,
             }
-            let resp: Resp = self.get(&path, Some(&query), options).await?;
+            let resp: Resp = self
+                .get(&path, &query, params.options.as_ref())
+                .await?;
             Ok(resp.results.unwrap_or_default())
         })
     }
@@ -270,34 +238,22 @@ impl AggsApi for Client {
         params: GetGroupedDailyAggsParams,
     ) -> BoxFuture<'a, Vec<GroupedDailyAgg>> {
         Box::pin(async move {
-            let GetGroupedDailyAggsParams {
-                adjusted,
-                locale,
-                market_type,
-                include_otc,
-                options,
-            } = params;
-            let locale = locale.as_deref();
-            let market_type = market_type.as_deref();
-            let options = options.as_ref();
-            let locale = locale.unwrap_or("us");
-            let market_type = market_type.unwrap_or("stocks");
+            // locale/market_type are path segments with server-side defaults,
+            // not query params — hence `skip` on the struct fields.
+            let locale = params.locale.as_deref().unwrap_or("us");
+            let market_type = params.market_type.as_deref().unwrap_or("stocks");
             let path = format!(
                 "/v2/aggs/grouped/locale/{}/market/{}/{}",
                 locale, market_type, date
             );
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(a) = adjusted {
-                query.push(("adjusted", a.to_string()));
-            }
-            if let Some(i) = include_otc {
-                query.push(("include_otc", i.to_string()));
-            }
+            let query = encode_query(&params);
             #[derive(serde::Deserialize)]
             struct Resp {
                 results: Option<Vec<GroupedDailyAgg>>,
             }
-            let resp: Resp = self.get(&path, Some(&query), options).await?;
+            let resp: Resp = self
+                .get(&path, &query, params.options.as_ref())
+                .await?;
             Ok(resp.results.unwrap_or_default())
         })
     }
@@ -326,14 +282,9 @@ impl AggsApi for Client {
         params: GetDailyOpenCloseAggParams,
     ) -> BoxFuture<'a, DailyOpenCloseAgg> {
         Box::pin(async move {
-            let GetDailyOpenCloseAggParams { adjusted, options } = params;
-            let options = options.as_ref();
             let path = format!("/v1/open-close/{}/{}", ticker, date);
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(a) = adjusted {
-                query.push(("adjusted", a.to_string()));
-            }
-            self.get(&path, Some(&query), options).await
+            let query = encode_query(&params);
+            self.get(&path, &query, params.options.as_ref()).await
         })
     }
 
@@ -358,35 +309,40 @@ impl AggsApi for Client {
         params: GetPreviousCloseAggParams,
     ) -> BoxFuture<'a, Vec<PreviousCloseAgg>> {
         Box::pin(async move {
-            let GetPreviousCloseAggParams { adjusted, options } = params;
-            let options = options.as_ref();
             let path = format!("/v2/aggs/ticker/{}/prev", ticker);
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(a) = adjusted {
-                query.push(("adjusted", a.to_string()));
-            }
+            let query = encode_query(&params);
             #[derive(serde::Deserialize)]
             struct Resp {
                 results: Option<Vec<PreviousCloseAgg>>,
             }
-            let resp: Resp = self.get(&path, Some(&query), options).await?;
+            let resp: Resp = self
+                .get(&path, &query, params.options.as_ref())
+                .await?;
             Ok(resp.results.unwrap_or_default())
         })
     }
 }
 
 // --- Params structs (additive builder API) ---
+//
+// Query serialization is derived: field order is wire order, `rename` carries
+// dotted filter operators, unset fields are omitted, and fields consumed by
+// the path (plus `options`) are skipped.
 
 /// Optional arguments for [`AggsApi::list_aggs`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct ListAggsParams {
     /// The `adjusted` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub adjusted: Option<bool>,
     /// The `sort` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sort: Option<String>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -422,15 +378,19 @@ impl ListAggsParams {
 }
 
 /// Optional arguments for [`AggsApi::get_aggs`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct GetAggsParams {
     /// The `adjusted` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub adjusted: Option<bool>,
     /// The `sort` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sort: Option<String>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -466,17 +426,22 @@ impl GetAggsParams {
 }
 
 /// Optional arguments for [`AggsApi::get_grouped_daily_aggs`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct GetGroupedDailyAggsParams {
     /// The `adjusted` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub adjusted: Option<bool>,
-    /// The `locale` argument.
+    /// The `locale` argument (path segment, not a query param).
+    #[serde(skip)]
     pub locale: Option<String>,
-    /// The `market_type` argument.
+    /// The `market_type` argument (path segment, not a query param).
+    #[serde(skip)]
     pub market_type: Option<String>,
     /// The `include_otc` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub include_otc: Option<bool>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -518,11 +483,13 @@ impl GetGroupedDailyAggsParams {
 }
 
 /// Optional arguments for [`AggsApi::get_daily_open_close_agg`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct GetDailyOpenCloseAggParams {
     /// The `adjusted` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub adjusted: Option<bool>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -546,11 +513,13 @@ impl GetDailyOpenCloseAggParams {
 }
 
 /// Optional arguments for [`AggsApi::get_previous_close_agg`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct GetPreviousCloseAggParams {
     /// The `adjusted` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub adjusted: Option<bool>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 

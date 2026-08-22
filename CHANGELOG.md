@@ -25,6 +25,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - REST traits are now object-safe: `get_*` methods return `BoxFuture<'a, T>`
   and `list_*` methods return `BoxStream<'a, T>` (aliases in `massive::rest`),
   so `Box<dyn AggsApi>` and friends work for mocking and dependency injection.
+- Query serialization is serde-derived on the params structs (`Serialize`
+  derive with `rename`/`skip_serializing_if` attributes) instead of
+  hand-pushed `Vec<(&str, String)>` pairs; `Client::list` is now the single
+  transport entry point owning the pagination branch. No public signature
+  changes; wire format is unchanged (covered by per-module full-params
+  wiremock tests).
 
 - `CLAUDE.md` with crate conventions and the parity-maintenance workflow.
 - GitHub Actions CI (check, clippy, test, docs).

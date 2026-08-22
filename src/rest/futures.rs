@@ -1,4 +1,4 @@
-use super::BoxStream;
+use super::{encode_query, BoxStream};
 use crate::client::{Client, RequestOptions};
 use crate::models::{
     FuturesAgg, FuturesContract, FuturesExchange, FuturesMarketStatus, FuturesProduct,
@@ -307,52 +307,9 @@ impl FuturesApi for Client {
         params: ListFuturesAggregatesParams,
     ) -> BoxStream<'a, FuturesAgg> {
         Box::pin({
-            let ListFuturesAggregatesParams {
-                resolution,
-                window_start,
-                window_start_lt,
-                window_start_lte,
-                window_start_gt,
-                window_start_gte,
-                limit,
-                sort,
-                options,
-            } = params;
-            let resolution = resolution.as_deref();
-            let window_start = window_start.as_deref();
-            let window_start_lt = window_start_lt.as_deref();
-            let window_start_lte = window_start_lte.as_deref();
-            let window_start_gt = window_start_gt.as_deref();
-            let window_start_gte = window_start_gte.as_deref();
-            let sort = sort.as_deref();
-            let options = options.as_ref();
             let path = format!("/futures/v1/aggs/{}", ticker);
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(r) = resolution {
-                query.push(("resolution", r.to_string()));
-            }
-            if let Some(v) = window_start {
-                query.push(("window_start", v.to_string()));
-            }
-            if let Some(v) = window_start_lt {
-                query.push(("window_start.lt", v.to_string()));
-            }
-            if let Some(v) = window_start_lte {
-                query.push(("window_start.lte", v.to_string()));
-            }
-            if let Some(v) = window_start_gt {
-                query.push(("window_start.gt", v.to_string()));
-            }
-            if let Some(v) = window_start_gte {
-                query.push(("window_start.gte", v.to_string()));
-            }
-            if let Some(l) = limit {
-                query.push(("limit", l.to_string()));
-            }
-            if let Some(s) = sort {
-                query.push(("sort", s.to_string()));
-            }
-            self.list::<FuturesAgg>(&path, Some(&query), options)
+            let query = encode_query(&params);
+            self.list::<FuturesAgg>(&path, &query, params.options.as_ref())
         })
     }
 
@@ -434,171 +391,9 @@ impl FuturesApi for Client {
         params: ListFuturesContractsParams,
     ) -> BoxStream<'a, FuturesContract> {
         Box::pin({
-            let ListFuturesContractsParams {
-                date,
-                date_gt,
-                date_gte,
-                date_lt,
-                date_lte,
-                product_code,
-                product_code_any_of,
-                product_code_gt,
-                product_code_gte,
-                product_code_lt,
-                product_code_lte,
-                ticker,
-                ticker_any_of,
-                ticker_gt,
-                ticker_gte,
-                ticker_lt,
-                ticker_lte,
-                active,
-                type_,
-                type_any_of,
-                first_trade_date,
-                first_trade_date_gt,
-                first_trade_date_gte,
-                first_trade_date_lt,
-                first_trade_date_lte,
-                last_trade_date,
-                last_trade_date_gt,
-                last_trade_date_gte,
-                last_trade_date_lt,
-                last_trade_date_lte,
-                limit,
-                sort,
-                options,
-            } = params;
-            let date = date.as_deref();
-            let date_gt = date_gt.as_deref();
-            let date_gte = date_gte.as_deref();
-            let date_lt = date_lt.as_deref();
-            let date_lte = date_lte.as_deref();
-            let product_code = product_code.as_deref();
-            let product_code_any_of = product_code_any_of.as_deref();
-            let product_code_gt = product_code_gt.as_deref();
-            let product_code_gte = product_code_gte.as_deref();
-            let product_code_lt = product_code_lt.as_deref();
-            let product_code_lte = product_code_lte.as_deref();
-            let ticker = ticker.as_deref();
-            let ticker_any_of = ticker_any_of.as_deref();
-            let ticker_gt = ticker_gt.as_deref();
-            let ticker_gte = ticker_gte.as_deref();
-            let ticker_lt = ticker_lt.as_deref();
-            let ticker_lte = ticker_lte.as_deref();
-            let type_ = type_.as_deref();
-            let type_any_of = type_any_of.as_deref();
-            let first_trade_date = first_trade_date.as_deref();
-            let first_trade_date_gt = first_trade_date_gt.as_deref();
-            let first_trade_date_gte = first_trade_date_gte.as_deref();
-            let first_trade_date_lt = first_trade_date_lt.as_deref();
-            let first_trade_date_lte = first_trade_date_lte.as_deref();
-            let last_trade_date = last_trade_date.as_deref();
-            let last_trade_date_gt = last_trade_date_gt.as_deref();
-            let last_trade_date_gte = last_trade_date_gte.as_deref();
-            let last_trade_date_lt = last_trade_date_lt.as_deref();
-            let last_trade_date_lte = last_trade_date_lte.as_deref();
-            let sort = sort.as_deref();
-            let options = options.as_ref();
             let path = "/futures/v1/contracts";
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(v) = date {
-                query.push(("date", v.to_string()));
-            }
-            if let Some(v) = date_gt {
-                query.push(("date.gt", v.to_string()));
-            }
-            if let Some(v) = date_gte {
-                query.push(("date.gte", v.to_string()));
-            }
-            if let Some(v) = date_lt {
-                query.push(("date.lt", v.to_string()));
-            }
-            if let Some(v) = date_lte {
-                query.push(("date.lte", v.to_string()));
-            }
-            if let Some(v) = product_code {
-                query.push(("product_code", v.to_string()));
-            }
-            if let Some(v) = product_code_any_of {
-                query.push(("product_code.any_of", v.to_string()));
-            }
-            if let Some(v) = product_code_gt {
-                query.push(("product_code.gt", v.to_string()));
-            }
-            if let Some(v) = product_code_gte {
-                query.push(("product_code.gte", v.to_string()));
-            }
-            if let Some(v) = product_code_lt {
-                query.push(("product_code.lt", v.to_string()));
-            }
-            if let Some(v) = product_code_lte {
-                query.push(("product_code.lte", v.to_string()));
-            }
-            if let Some(v) = ticker {
-                query.push(("ticker", v.to_string()));
-            }
-            if let Some(v) = ticker_any_of {
-                query.push(("ticker.any_of", v.to_string()));
-            }
-            if let Some(v) = ticker_gt {
-                query.push(("ticker.gt", v.to_string()));
-            }
-            if let Some(v) = ticker_gte {
-                query.push(("ticker.gte", v.to_string()));
-            }
-            if let Some(v) = ticker_lt {
-                query.push(("ticker.lt", v.to_string()));
-            }
-            if let Some(v) = ticker_lte {
-                query.push(("ticker.lte", v.to_string()));
-            }
-            if let Some(a) = active {
-                query.push(("active", a.to_string()));
-            }
-            if let Some(v) = type_ {
-                query.push(("type", v.to_string()));
-            }
-            if let Some(v) = type_any_of {
-                query.push(("type.any_of", v.to_string()));
-            }
-            if let Some(v) = first_trade_date {
-                query.push(("first_trade_date", v.to_string()));
-            }
-            if let Some(v) = first_trade_date_gt {
-                query.push(("first_trade_date.gt", v.to_string()));
-            }
-            if let Some(v) = first_trade_date_gte {
-                query.push(("first_trade_date.gte", v.to_string()));
-            }
-            if let Some(v) = first_trade_date_lt {
-                query.push(("first_trade_date.lt", v.to_string()));
-            }
-            if let Some(v) = first_trade_date_lte {
-                query.push(("first_trade_date.lte", v.to_string()));
-            }
-            if let Some(v) = last_trade_date {
-                query.push(("last_trade_date", v.to_string()));
-            }
-            if let Some(v) = last_trade_date_gt {
-                query.push(("last_trade_date.gt", v.to_string()));
-            }
-            if let Some(v) = last_trade_date_gte {
-                query.push(("last_trade_date.gte", v.to_string()));
-            }
-            if let Some(v) = last_trade_date_lt {
-                query.push(("last_trade_date.lt", v.to_string()));
-            }
-            if let Some(v) = last_trade_date_lte {
-                query.push(("last_trade_date.lte", v.to_string()));
-            }
-            if let Some(l) = limit {
-                query.push(("limit", l.to_string()));
-            }
-            if let Some(s) = sort {
-                query.push(("sort", s.to_string()));
-            }
-            self.list::<FuturesContract>(path, Some(&query), options)
+            let query = encode_query(&params);
+            self.list::<FuturesContract>(path, &query, params.options.as_ref())
         })
     }
 
@@ -686,187 +481,9 @@ impl FuturesApi for Client {
         params: ListFuturesProductsParams,
     ) -> BoxStream<'a, FuturesProduct> {
         Box::pin({
-            let ListFuturesProductsParams {
-                name,
-                name_any_of,
-                name_gt,
-                name_gte,
-                name_lt,
-                name_lte,
-                product_code,
-                product_code_any_of,
-                product_code_gt,
-                product_code_gte,
-                product_code_lt,
-                product_code_lte,
-                date,
-                date_gt,
-                date_gte,
-                date_lt,
-                date_lte,
-                trading_venue,
-                trading_venue_any_of,
-                trading_venue_gt,
-                trading_venue_gte,
-                trading_venue_lt,
-                trading_venue_lte,
-                sector,
-                sector_any_of,
-                sub_sector,
-                sub_sector_any_of,
-                asset_class,
-                asset_class_any_of,
-                asset_sub_class,
-                asset_sub_class_any_of,
-                type_,
-                type_any_of,
-                limit,
-                sort,
-                options,
-            } = params;
-            let name = name.as_deref();
-            let name_any_of = name_any_of.as_deref();
-            let name_gt = name_gt.as_deref();
-            let name_gte = name_gte.as_deref();
-            let name_lt = name_lt.as_deref();
-            let name_lte = name_lte.as_deref();
-            let product_code = product_code.as_deref();
-            let product_code_any_of = product_code_any_of.as_deref();
-            let product_code_gt = product_code_gt.as_deref();
-            let product_code_gte = product_code_gte.as_deref();
-            let product_code_lt = product_code_lt.as_deref();
-            let product_code_lte = product_code_lte.as_deref();
-            let date = date.as_deref();
-            let date_gt = date_gt.as_deref();
-            let date_gte = date_gte.as_deref();
-            let date_lt = date_lt.as_deref();
-            let date_lte = date_lte.as_deref();
-            let trading_venue = trading_venue.as_deref();
-            let trading_venue_any_of = trading_venue_any_of.as_deref();
-            let trading_venue_gt = trading_venue_gt.as_deref();
-            let trading_venue_gte = trading_venue_gte.as_deref();
-            let trading_venue_lt = trading_venue_lt.as_deref();
-            let trading_venue_lte = trading_venue_lte.as_deref();
-            let sector = sector.as_deref();
-            let sector_any_of = sector_any_of.as_deref();
-            let sub_sector = sub_sector.as_deref();
-            let sub_sector_any_of = sub_sector_any_of.as_deref();
-            let asset_class = asset_class.as_deref();
-            let asset_class_any_of = asset_class_any_of.as_deref();
-            let asset_sub_class = asset_sub_class.as_deref();
-            let asset_sub_class_any_of = asset_sub_class_any_of.as_deref();
-            let type_ = type_.as_deref();
-            let type_any_of = type_any_of.as_deref();
-            let sort = sort.as_deref();
-            let options = options.as_ref();
             let path = "/futures/v1/products";
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(v) = name {
-                query.push(("name", v.to_string()));
-            }
-            if let Some(v) = name_any_of {
-                query.push(("name.any_of", v.to_string()));
-            }
-            if let Some(v) = name_gt {
-                query.push(("name.gt", v.to_string()));
-            }
-            if let Some(v) = name_gte {
-                query.push(("name.gte", v.to_string()));
-            }
-            if let Some(v) = name_lt {
-                query.push(("name.lt", v.to_string()));
-            }
-            if let Some(v) = name_lte {
-                query.push(("name.lte", v.to_string()));
-            }
-            if let Some(v) = product_code {
-                query.push(("product_code", v.to_string()));
-            }
-            if let Some(v) = product_code_any_of {
-                query.push(("product_code.any_of", v.to_string()));
-            }
-            if let Some(v) = product_code_gt {
-                query.push(("product_code.gt", v.to_string()));
-            }
-            if let Some(v) = product_code_gte {
-                query.push(("product_code.gte", v.to_string()));
-            }
-            if let Some(v) = product_code_lt {
-                query.push(("product_code.lt", v.to_string()));
-            }
-            if let Some(v) = product_code_lte {
-                query.push(("product_code.lte", v.to_string()));
-            }
-            if let Some(v) = date {
-                query.push(("date", v.to_string()));
-            }
-            if let Some(v) = date_gt {
-                query.push(("date.gt", v.to_string()));
-            }
-            if let Some(v) = date_gte {
-                query.push(("date.gte", v.to_string()));
-            }
-            if let Some(v) = date_lt {
-                query.push(("date.lt", v.to_string()));
-            }
-            if let Some(v) = date_lte {
-                query.push(("date.lte", v.to_string()));
-            }
-            if let Some(v) = trading_venue {
-                query.push(("trading_venue", v.to_string()));
-            }
-            if let Some(v) = trading_venue_any_of {
-                query.push(("trading_venue.any_of", v.to_string()));
-            }
-            if let Some(v) = trading_venue_gt {
-                query.push(("trading_venue.gt", v.to_string()));
-            }
-            if let Some(v) = trading_venue_gte {
-                query.push(("trading_venue.gte", v.to_string()));
-            }
-            if let Some(v) = trading_venue_lt {
-                query.push(("trading_venue.lt", v.to_string()));
-            }
-            if let Some(v) = trading_venue_lte {
-                query.push(("trading_venue.lte", v.to_string()));
-            }
-            if let Some(v) = sector {
-                query.push(("sector", v.to_string()));
-            }
-            if let Some(v) = sector_any_of {
-                query.push(("sector.any_of", v.to_string()));
-            }
-            if let Some(v) = sub_sector {
-                query.push(("sub_sector", v.to_string()));
-            }
-            if let Some(v) = sub_sector_any_of {
-                query.push(("sub_sector.any_of", v.to_string()));
-            }
-            if let Some(v) = asset_class {
-                query.push(("asset_class", v.to_string()));
-            }
-            if let Some(v) = asset_class_any_of {
-                query.push(("asset_class.any_of", v.to_string()));
-            }
-            if let Some(v) = asset_sub_class {
-                query.push(("asset_sub_class", v.to_string()));
-            }
-            if let Some(v) = asset_sub_class_any_of {
-                query.push(("asset_sub_class.any_of", v.to_string()));
-            }
-            if let Some(v) = type_ {
-                query.push(("type", v.to_string()));
-            }
-            if let Some(v) = type_any_of {
-                query.push(("type.any_of", v.to_string()));
-            }
-            if let Some(l) = limit {
-                query.push(("limit", l.to_string()));
-            }
-            if let Some(s) = sort {
-                query.push(("sort", s.to_string()));
-            }
-            self.list::<FuturesProduct>(path, Some(&query), options)
+            let query = encode_query(&params);
+            self.list::<FuturesProduct>(path, &query, params.options.as_ref())
         })
     }
 
@@ -913,72 +530,9 @@ impl FuturesApi for Client {
         params: ListFuturesQuotesParams,
     ) -> BoxStream<'a, FuturesQuote> {
         Box::pin({
-            let ListFuturesQuotesParams {
-                timestamp,
-                timestamp_lt,
-                timestamp_lte,
-                timestamp_gt,
-                timestamp_gte,
-                session_end_date,
-                session_end_date_lt,
-                session_end_date_lte,
-                session_end_date_gt,
-                session_end_date_gte,
-                limit,
-                sort,
-                options,
-            } = params;
-            let timestamp = timestamp.as_deref();
-            let timestamp_lt = timestamp_lt.as_deref();
-            let timestamp_lte = timestamp_lte.as_deref();
-            let timestamp_gt = timestamp_gt.as_deref();
-            let timestamp_gte = timestamp_gte.as_deref();
-            let session_end_date = session_end_date.as_deref();
-            let session_end_date_lt = session_end_date_lt.as_deref();
-            let session_end_date_lte = session_end_date_lte.as_deref();
-            let session_end_date_gt = session_end_date_gt.as_deref();
-            let session_end_date_gte = session_end_date_gte.as_deref();
-            let sort = sort.as_deref();
-            let options = options.as_ref();
             let path = format!("/futures/v1/quotes/{}", ticker);
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(v) = timestamp {
-                query.push(("timestamp", v.to_string()));
-            }
-            if let Some(v) = timestamp_lt {
-                query.push(("timestamp.lt", v.to_string()));
-            }
-            if let Some(v) = timestamp_lte {
-                query.push(("timestamp.lte", v.to_string()));
-            }
-            if let Some(v) = timestamp_gt {
-                query.push(("timestamp.gt", v.to_string()));
-            }
-            if let Some(v) = timestamp_gte {
-                query.push(("timestamp.gte", v.to_string()));
-            }
-            if let Some(v) = session_end_date {
-                query.push(("session_end_date", v.to_string()));
-            }
-            if let Some(v) = session_end_date_lt {
-                query.push(("session_end_date.lt", v.to_string()));
-            }
-            if let Some(v) = session_end_date_lte {
-                query.push(("session_end_date.lte", v.to_string()));
-            }
-            if let Some(v) = session_end_date_gt {
-                query.push(("session_end_date.gt", v.to_string()));
-            }
-            if let Some(v) = session_end_date_gte {
-                query.push(("session_end_date.gte", v.to_string()));
-            }
-            if let Some(l) = limit {
-                query.push(("limit", l.to_string()));
-            }
-            if let Some(s) = sort {
-                query.push(("sort", s.to_string()));
-            }
-            self.list::<FuturesQuote>(&path, Some(&query), options)
+            let query = encode_query(&params);
+            self.list::<FuturesQuote>(&path, &query, params.options.as_ref())
         })
     }
 
@@ -1025,72 +579,9 @@ impl FuturesApi for Client {
         params: ListFuturesTradesParams,
     ) -> BoxStream<'a, FuturesTrade> {
         Box::pin({
-            let ListFuturesTradesParams {
-                timestamp,
-                timestamp_lt,
-                timestamp_lte,
-                timestamp_gt,
-                timestamp_gte,
-                session_end_date,
-                session_end_date_lt,
-                session_end_date_lte,
-                session_end_date_gt,
-                session_end_date_gte,
-                limit,
-                sort,
-                options,
-            } = params;
-            let timestamp = timestamp.as_deref();
-            let timestamp_lt = timestamp_lt.as_deref();
-            let timestamp_lte = timestamp_lte.as_deref();
-            let timestamp_gt = timestamp_gt.as_deref();
-            let timestamp_gte = timestamp_gte.as_deref();
-            let session_end_date = session_end_date.as_deref();
-            let session_end_date_lt = session_end_date_lt.as_deref();
-            let session_end_date_lte = session_end_date_lte.as_deref();
-            let session_end_date_gt = session_end_date_gt.as_deref();
-            let session_end_date_gte = session_end_date_gte.as_deref();
-            let sort = sort.as_deref();
-            let options = options.as_ref();
             let path = format!("/futures/v1/trades/{}", ticker);
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(v) = timestamp {
-                query.push(("timestamp", v.to_string()));
-            }
-            if let Some(v) = timestamp_lt {
-                query.push(("timestamp.lt", v.to_string()));
-            }
-            if let Some(v) = timestamp_lte {
-                query.push(("timestamp.lte", v.to_string()));
-            }
-            if let Some(v) = timestamp_gt {
-                query.push(("timestamp.gt", v.to_string()));
-            }
-            if let Some(v) = timestamp_gte {
-                query.push(("timestamp.gte", v.to_string()));
-            }
-            if let Some(v) = session_end_date {
-                query.push(("session_end_date", v.to_string()));
-            }
-            if let Some(v) = session_end_date_lt {
-                query.push(("session_end_date.lt", v.to_string()));
-            }
-            if let Some(v) = session_end_date_lte {
-                query.push(("session_end_date.lte", v.to_string()));
-            }
-            if let Some(v) = session_end_date_gt {
-                query.push(("session_end_date.gt", v.to_string()));
-            }
-            if let Some(v) = session_end_date_gte {
-                query.push(("session_end_date.gte", v.to_string()));
-            }
-            if let Some(l) = limit {
-                query.push(("limit", l.to_string()));
-            }
-            if let Some(s) = sort {
-                query.push(("sort", s.to_string()));
-            }
-            self.list::<FuturesTrade>(&path, Some(&query), options)
+            let query = encode_query(&params);
+            self.list::<FuturesTrade>(&path, &query, params.options.as_ref())
         })
     }
 
@@ -1146,107 +637,9 @@ impl FuturesApi for Client {
         params: ListFuturesSchedulesParams,
     ) -> BoxStream<'a, FuturesSchedule> {
         Box::pin({
-            let ListFuturesSchedulesParams {
-                product_code,
-                product_code_any_of,
-                product_code_gt,
-                product_code_gte,
-                product_code_lt,
-                product_code_lte,
-                session_end_date,
-                session_end_date_gt,
-                session_end_date_gte,
-                session_end_date_lt,
-                session_end_date_lte,
-                trading_venue,
-                trading_venue_any_of,
-                trading_venue_gt,
-                trading_venue_gte,
-                trading_venue_lt,
-                trading_venue_lte,
-                limit,
-                sort,
-                options,
-            } = params;
-            let product_code = product_code.as_deref();
-            let product_code_any_of = product_code_any_of.as_deref();
-            let product_code_gt = product_code_gt.as_deref();
-            let product_code_gte = product_code_gte.as_deref();
-            let product_code_lt = product_code_lt.as_deref();
-            let product_code_lte = product_code_lte.as_deref();
-            let session_end_date = session_end_date.as_deref();
-            let session_end_date_gt = session_end_date_gt.as_deref();
-            let session_end_date_gte = session_end_date_gte.as_deref();
-            let session_end_date_lt = session_end_date_lt.as_deref();
-            let session_end_date_lte = session_end_date_lte.as_deref();
-            let trading_venue = trading_venue.as_deref();
-            let trading_venue_any_of = trading_venue_any_of.as_deref();
-            let trading_venue_gt = trading_venue_gt.as_deref();
-            let trading_venue_gte = trading_venue_gte.as_deref();
-            let trading_venue_lt = trading_venue_lt.as_deref();
-            let trading_venue_lte = trading_venue_lte.as_deref();
-            let sort = sort.as_deref();
-            let options = options.as_ref();
             let path = "/futures/v1/schedules";
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(v) = product_code {
-                query.push(("product_code", v.to_string()));
-            }
-            if let Some(v) = product_code_any_of {
-                query.push(("product_code.any_of", v.to_string()));
-            }
-            if let Some(v) = product_code_gt {
-                query.push(("product_code.gt", v.to_string()));
-            }
-            if let Some(v) = product_code_gte {
-                query.push(("product_code.gte", v.to_string()));
-            }
-            if let Some(v) = product_code_lt {
-                query.push(("product_code.lt", v.to_string()));
-            }
-            if let Some(v) = product_code_lte {
-                query.push(("product_code.lte", v.to_string()));
-            }
-            if let Some(v) = session_end_date {
-                query.push(("session_end_date", v.to_string()));
-            }
-            if let Some(v) = session_end_date_gt {
-                query.push(("session_end_date.gt", v.to_string()));
-            }
-            if let Some(v) = session_end_date_gte {
-                query.push(("session_end_date.gte", v.to_string()));
-            }
-            if let Some(v) = session_end_date_lt {
-                query.push(("session_end_date.lt", v.to_string()));
-            }
-            if let Some(v) = session_end_date_lte {
-                query.push(("session_end_date.lte", v.to_string()));
-            }
-            if let Some(v) = trading_venue {
-                query.push(("trading_venue", v.to_string()));
-            }
-            if let Some(v) = trading_venue_any_of {
-                query.push(("trading_venue.any_of", v.to_string()));
-            }
-            if let Some(v) = trading_venue_gt {
-                query.push(("trading_venue.gt", v.to_string()));
-            }
-            if let Some(v) = trading_venue_gte {
-                query.push(("trading_venue.gte", v.to_string()));
-            }
-            if let Some(v) = trading_venue_lt {
-                query.push(("trading_venue.lt", v.to_string()));
-            }
-            if let Some(v) = trading_venue_lte {
-                query.push(("trading_venue.lte", v.to_string()));
-            }
-            if let Some(l) = limit {
-                query.push(("limit", l.to_string()));
-            }
-            if let Some(s) = sort {
-                query.push(("sort", s.to_string()));
-            }
-            self.list::<FuturesSchedule>(path, Some(&query), options)
+            let query = encode_query(&params);
+            self.list::<FuturesSchedule>(path, &query, params.options.as_ref())
         })
     }
 
@@ -1278,47 +671,9 @@ impl FuturesApi for Client {
         params: ListFuturesMarketStatusesParams,
     ) -> BoxStream<'a, FuturesMarketStatus> {
         Box::pin({
-            let ListFuturesMarketStatusesParams {
-                product_code,
-                product_code_any_of,
-                product_code_gt,
-                product_code_gte,
-                product_code_lt,
-                product_code_lte,
-                limit,
-                options,
-            } = params;
-            let product_code = product_code.as_deref();
-            let product_code_any_of = product_code_any_of.as_deref();
-            let product_code_gt = product_code_gt.as_deref();
-            let product_code_gte = product_code_gte.as_deref();
-            let product_code_lt = product_code_lt.as_deref();
-            let product_code_lte = product_code_lte.as_deref();
-            let options = options.as_ref();
             let path = "/futures/v1/market-status";
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(v) = product_code {
-                query.push(("product_code", v.to_string()));
-            }
-            if let Some(v) = product_code_any_of {
-                query.push(("product_code.any_of", v.to_string()));
-            }
-            if let Some(v) = product_code_gt {
-                query.push(("product_code.gt", v.to_string()));
-            }
-            if let Some(v) = product_code_gte {
-                query.push(("product_code.gte", v.to_string()));
-            }
-            if let Some(v) = product_code_lt {
-                query.push(("product_code.lt", v.to_string()));
-            }
-            if let Some(v) = product_code_lte {
-                query.push(("product_code.lte", v.to_string()));
-            }
-            if let Some(l) = limit {
-                query.push(("limit", l.to_string()));
-            }
-            self.list::<FuturesMarketStatus>(path, Some(&query), options)
+            let query = encode_query(&params);
+            self.list::<FuturesMarketStatus>(path, &query, params.options.as_ref())
         })
     }
 
@@ -1364,82 +719,9 @@ impl FuturesApi for Client {
         params: GetFuturesSnapshotParams,
     ) -> BoxStream<'a, FuturesSnapshot> {
         Box::pin({
-            let GetFuturesSnapshotParams {
-                ticker,
-                ticker_any_of,
-                ticker_gt,
-                ticker_gte,
-                ticker_lt,
-                ticker_lte,
-                product_code,
-                product_code_any_of,
-                product_code_gt,
-                product_code_gte,
-                product_code_lt,
-                product_code_lte,
-                limit,
-                sort,
-                options,
-            } = params;
-            let ticker = ticker.as_deref();
-            let ticker_any_of = ticker_any_of.as_deref();
-            let ticker_gt = ticker_gt.as_deref();
-            let ticker_gte = ticker_gte.as_deref();
-            let ticker_lt = ticker_lt.as_deref();
-            let ticker_lte = ticker_lte.as_deref();
-            let product_code = product_code.as_deref();
-            let product_code_any_of = product_code_any_of.as_deref();
-            let product_code_gt = product_code_gt.as_deref();
-            let product_code_gte = product_code_gte.as_deref();
-            let product_code_lt = product_code_lt.as_deref();
-            let product_code_lte = product_code_lte.as_deref();
-            let sort = sort.as_deref();
-            let options = options.as_ref();
             let path = "/futures/v1/snapshot";
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(v) = ticker {
-                query.push(("ticker", v.to_string()));
-            }
-            if let Some(v) = ticker_any_of {
-                query.push(("ticker.any_of", v.to_string()));
-            }
-            if let Some(v) = ticker_gt {
-                query.push(("ticker.gt", v.to_string()));
-            }
-            if let Some(v) = ticker_gte {
-                query.push(("ticker.gte", v.to_string()));
-            }
-            if let Some(v) = ticker_lt {
-                query.push(("ticker.lt", v.to_string()));
-            }
-            if let Some(v) = ticker_lte {
-                query.push(("ticker.lte", v.to_string()));
-            }
-            if let Some(v) = product_code {
-                query.push(("product_code", v.to_string()));
-            }
-            if let Some(v) = product_code_any_of {
-                query.push(("product_code.any_of", v.to_string()));
-            }
-            if let Some(v) = product_code_gt {
-                query.push(("product_code.gt", v.to_string()));
-            }
-            if let Some(v) = product_code_gte {
-                query.push(("product_code.gte", v.to_string()));
-            }
-            if let Some(v) = product_code_lt {
-                query.push(("product_code.lt", v.to_string()));
-            }
-            if let Some(v) = product_code_lte {
-                query.push(("product_code.lte", v.to_string()));
-            }
-            if let Some(l) = limit {
-                query.push(("limit", l.to_string()));
-            }
-            if let Some(s) = sort {
-                query.push(("sort", s.to_string()));
-            }
-            self.list::<FuturesSnapshot>(path, Some(&query), options)
+            let query = encode_query(&params);
+            self.list::<FuturesSnapshot>(path, &query, params.options.as_ref())
         })
     }
 
@@ -1459,40 +741,47 @@ impl FuturesApi for Client {
         params: ListFuturesExchangesParams,
     ) -> BoxStream<'a, FuturesExchange> {
         Box::pin({
-            let ListFuturesExchangesParams { limit, options } = params;
-            let options = options.as_ref();
             let path = "/futures/v1/exchanges";
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(l) = limit {
-                query.push(("limit", l.to_string()));
-            }
-            self.list::<FuturesExchange>(path, Some(&query), options)
+            let query = encode_query(&params);
+            self.list::<FuturesExchange>(path, &query, params.options.as_ref())
         })
     }
 }
 
 // --- Params structs (additive builder API) ---
+//
+// Query serialization is derived: field order is wire order, `rename` carries
+// dotted filter operators, unset fields are omitted, and `options` is skipped.
 
 /// Optional arguments for [`FuturesApi::list_futures_aggregates`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct ListFuturesAggregatesParams {
     /// The `resolution` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub resolution: Option<String>,
     /// The `window_start` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub window_start: Option<String>,
     /// The `window_start_lt` argument.
+    #[serde(rename = "window_start.lt", skip_serializing_if = "Option::is_none")]
     pub window_start_lt: Option<String>,
     /// The `window_start_lte` argument.
+    #[serde(rename = "window_start.lte", skip_serializing_if = "Option::is_none")]
     pub window_start_lte: Option<String>,
     /// The `window_start_gt` argument.
+    #[serde(rename = "window_start.gt", skip_serializing_if = "Option::is_none")]
     pub window_start_gt: Option<String>,
     /// The `window_start_gte` argument.
+    #[serde(rename = "window_start.gte", skip_serializing_if = "Option::is_none")]
     pub window_start_gte: Option<String>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `sort` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sort: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -1558,73 +847,106 @@ impl ListFuturesAggregatesParams {
 }
 
 /// Optional arguments for [`FuturesApi::list_futures_contracts`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct ListFuturesContractsParams {
     /// The `date` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub date: Option<String>,
     /// The `date_gt` argument.
+    #[serde(rename = "date.gt", skip_serializing_if = "Option::is_none")]
     pub date_gt: Option<String>,
     /// The `date_gte` argument.
+    #[serde(rename = "date.gte", skip_serializing_if = "Option::is_none")]
     pub date_gte: Option<String>,
     /// The `date_lt` argument.
+    #[serde(rename = "date.lt", skip_serializing_if = "Option::is_none")]
     pub date_lt: Option<String>,
     /// The `date_lte` argument.
+    #[serde(rename = "date.lte", skip_serializing_if = "Option::is_none")]
     pub date_lte: Option<String>,
     /// The `product_code` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub product_code: Option<String>,
     /// The `product_code_any_of` argument.
+    #[serde(rename = "product_code.any_of", skip_serializing_if = "Option::is_none")]
     pub product_code_any_of: Option<String>,
     /// The `product_code_gt` argument.
+    #[serde(rename = "product_code.gt", skip_serializing_if = "Option::is_none")]
     pub product_code_gt: Option<String>,
     /// The `product_code_gte` argument.
+    #[serde(rename = "product_code.gte", skip_serializing_if = "Option::is_none")]
     pub product_code_gte: Option<String>,
     /// The `product_code_lt` argument.
+    #[serde(rename = "product_code.lt", skip_serializing_if = "Option::is_none")]
     pub product_code_lt: Option<String>,
     /// The `product_code_lte` argument.
+    #[serde(rename = "product_code.lte", skip_serializing_if = "Option::is_none")]
     pub product_code_lte: Option<String>,
     /// The `ticker` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub ticker: Option<String>,
     /// The `ticker_any_of` argument.
+    #[serde(rename = "ticker.any_of", skip_serializing_if = "Option::is_none")]
     pub ticker_any_of: Option<String>,
     /// The `ticker_gt` argument.
+    #[serde(rename = "ticker.gt", skip_serializing_if = "Option::is_none")]
     pub ticker_gt: Option<String>,
     /// The `ticker_gte` argument.
+    #[serde(rename = "ticker.gte", skip_serializing_if = "Option::is_none")]
     pub ticker_gte: Option<String>,
     /// The `ticker_lt` argument.
+    #[serde(rename = "ticker.lt", skip_serializing_if = "Option::is_none")]
     pub ticker_lt: Option<String>,
     /// The `ticker_lte` argument.
+    #[serde(rename = "ticker.lte", skip_serializing_if = "Option::is_none")]
     pub ticker_lte: Option<String>,
     /// The `active` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub active: Option<bool>,
     /// The `type_` argument.
+    #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
     pub type_: Option<String>,
     /// The `type_any_of` argument.
+    #[serde(rename = "type.any_of", skip_serializing_if = "Option::is_none")]
     pub type_any_of: Option<String>,
     /// The `first_trade_date` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub first_trade_date: Option<String>,
     /// The `first_trade_date_gt` argument.
+    #[serde(rename = "first_trade_date.gt", skip_serializing_if = "Option::is_none")]
     pub first_trade_date_gt: Option<String>,
     /// The `first_trade_date_gte` argument.
+    #[serde(rename = "first_trade_date.gte", skip_serializing_if = "Option::is_none")]
     pub first_trade_date_gte: Option<String>,
     /// The `first_trade_date_lt` argument.
+    #[serde(rename = "first_trade_date.lt", skip_serializing_if = "Option::is_none")]
     pub first_trade_date_lt: Option<String>,
     /// The `first_trade_date_lte` argument.
+    #[serde(rename = "first_trade_date.lte", skip_serializing_if = "Option::is_none")]
     pub first_trade_date_lte: Option<String>,
     /// The `last_trade_date` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub last_trade_date: Option<String>,
     /// The `last_trade_date_gt` argument.
+    #[serde(rename = "last_trade_date.gt", skip_serializing_if = "Option::is_none")]
     pub last_trade_date_gt: Option<String>,
     /// The `last_trade_date_gte` argument.
+    #[serde(rename = "last_trade_date.gte", skip_serializing_if = "Option::is_none")]
     pub last_trade_date_gte: Option<String>,
     /// The `last_trade_date_lt` argument.
+    #[serde(rename = "last_trade_date.lt", skip_serializing_if = "Option::is_none")]
     pub last_trade_date_lt: Option<String>,
     /// The `last_trade_date_lte` argument.
+    #[serde(rename = "last_trade_date.lte", skip_serializing_if = "Option::is_none")]
     pub last_trade_date_lte: Option<String>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `sort` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sort: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -1834,79 +1156,115 @@ impl ListFuturesContractsParams {
 }
 
 /// Optional arguments for [`FuturesApi::list_futures_products`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct ListFuturesProductsParams {
     /// The `name` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
     /// The `name_any_of` argument.
+    #[serde(rename = "name.any_of", skip_serializing_if = "Option::is_none")]
     pub name_any_of: Option<String>,
     /// The `name_gt` argument.
+    #[serde(rename = "name.gt", skip_serializing_if = "Option::is_none")]
     pub name_gt: Option<String>,
     /// The `name_gte` argument.
+    #[serde(rename = "name.gte", skip_serializing_if = "Option::is_none")]
     pub name_gte: Option<String>,
     /// The `name_lt` argument.
+    #[serde(rename = "name.lt", skip_serializing_if = "Option::is_none")]
     pub name_lt: Option<String>,
     /// The `name_lte` argument.
+    #[serde(rename = "name.lte", skip_serializing_if = "Option::is_none")]
     pub name_lte: Option<String>,
     /// The `product_code` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub product_code: Option<String>,
     /// The `product_code_any_of` argument.
+    #[serde(rename = "product_code.any_of", skip_serializing_if = "Option::is_none")]
     pub product_code_any_of: Option<String>,
     /// The `product_code_gt` argument.
+    #[serde(rename = "product_code.gt", skip_serializing_if = "Option::is_none")]
     pub product_code_gt: Option<String>,
     /// The `product_code_gte` argument.
+    #[serde(rename = "product_code.gte", skip_serializing_if = "Option::is_none")]
     pub product_code_gte: Option<String>,
     /// The `product_code_lt` argument.
+    #[serde(rename = "product_code.lt", skip_serializing_if = "Option::is_none")]
     pub product_code_lt: Option<String>,
     /// The `product_code_lte` argument.
+    #[serde(rename = "product_code.lte", skip_serializing_if = "Option::is_none")]
     pub product_code_lte: Option<String>,
     /// The `date` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub date: Option<String>,
     /// The `date_gt` argument.
+    #[serde(rename = "date.gt", skip_serializing_if = "Option::is_none")]
     pub date_gt: Option<String>,
     /// The `date_gte` argument.
+    #[serde(rename = "date.gte", skip_serializing_if = "Option::is_none")]
     pub date_gte: Option<String>,
     /// The `date_lt` argument.
+    #[serde(rename = "date.lt", skip_serializing_if = "Option::is_none")]
     pub date_lt: Option<String>,
     /// The `date_lte` argument.
+    #[serde(rename = "date.lte", skip_serializing_if = "Option::is_none")]
     pub date_lte: Option<String>,
     /// The `trading_venue` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub trading_venue: Option<String>,
     /// The `trading_venue_any_of` argument.
+    #[serde(rename = "trading_venue.any_of", skip_serializing_if = "Option::is_none")]
     pub trading_venue_any_of: Option<String>,
     /// The `trading_venue_gt` argument.
+    #[serde(rename = "trading_venue.gt", skip_serializing_if = "Option::is_none")]
     pub trading_venue_gt: Option<String>,
     /// The `trading_venue_gte` argument.
+    #[serde(rename = "trading_venue.gte", skip_serializing_if = "Option::is_none")]
     pub trading_venue_gte: Option<String>,
     /// The `trading_venue_lt` argument.
+    #[serde(rename = "trading_venue.lt", skip_serializing_if = "Option::is_none")]
     pub trading_venue_lt: Option<String>,
     /// The `trading_venue_lte` argument.
+    #[serde(rename = "trading_venue.lte", skip_serializing_if = "Option::is_none")]
     pub trading_venue_lte: Option<String>,
     /// The `sector` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sector: Option<String>,
     /// The `sector_any_of` argument.
+    #[serde(rename = "sector.any_of", skip_serializing_if = "Option::is_none")]
     pub sector_any_of: Option<String>,
     /// The `sub_sector` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sub_sector: Option<String>,
     /// The `sub_sector_any_of` argument.
+    #[serde(rename = "sub_sector.any_of", skip_serializing_if = "Option::is_none")]
     pub sub_sector_any_of: Option<String>,
     /// The `asset_class` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub asset_class: Option<String>,
     /// The `asset_class_any_of` argument.
+    #[serde(rename = "asset_class.any_of", skip_serializing_if = "Option::is_none")]
     pub asset_class_any_of: Option<String>,
     /// The `asset_sub_class` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub asset_sub_class: Option<String>,
     /// The `asset_sub_class_any_of` argument.
+    #[serde(rename = "asset_sub_class.any_of", skip_serializing_if = "Option::is_none")]
     pub asset_sub_class_any_of: Option<String>,
     /// The `type_` argument.
+    #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
     pub type_: Option<String>,
     /// The `type_any_of` argument.
+    #[serde(rename = "type.any_of", skip_serializing_if = "Option::is_none")]
     pub type_any_of: Option<String>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `sort` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sort: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -2134,33 +1492,46 @@ impl ListFuturesProductsParams {
 }
 
 /// Optional arguments for [`FuturesApi::list_futures_quotes`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct ListFuturesQuotesParams {
     /// The `timestamp` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub timestamp: Option<String>,
     /// The `timestamp_lt` argument.
+    #[serde(rename = "timestamp.lt", skip_serializing_if = "Option::is_none")]
     pub timestamp_lt: Option<String>,
     /// The `timestamp_lte` argument.
+    #[serde(rename = "timestamp.lte", skip_serializing_if = "Option::is_none")]
     pub timestamp_lte: Option<String>,
     /// The `timestamp_gt` argument.
+    #[serde(rename = "timestamp.gt", skip_serializing_if = "Option::is_none")]
     pub timestamp_gt: Option<String>,
     /// The `timestamp_gte` argument.
+    #[serde(rename = "timestamp.gte", skip_serializing_if = "Option::is_none")]
     pub timestamp_gte: Option<String>,
     /// The `session_end_date` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub session_end_date: Option<String>,
     /// The `session_end_date_lt` argument.
+    #[serde(rename = "session_end_date.lt", skip_serializing_if = "Option::is_none")]
     pub session_end_date_lt: Option<String>,
     /// The `session_end_date_lte` argument.
+    #[serde(rename = "session_end_date.lte", skip_serializing_if = "Option::is_none")]
     pub session_end_date_lte: Option<String>,
     /// The `session_end_date_gt` argument.
+    #[serde(rename = "session_end_date.gt", skip_serializing_if = "Option::is_none")]
     pub session_end_date_gt: Option<String>,
     /// The `session_end_date_gte` argument.
+    #[serde(rename = "session_end_date.gte", skip_serializing_if = "Option::is_none")]
     pub session_end_date_gte: Option<String>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `sort` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sort: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -2250,33 +1621,46 @@ impl ListFuturesQuotesParams {
 }
 
 /// Optional arguments for [`FuturesApi::list_futures_trades`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct ListFuturesTradesParams {
     /// The `timestamp` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub timestamp: Option<String>,
     /// The `timestamp_lt` argument.
+    #[serde(rename = "timestamp.lt", skip_serializing_if = "Option::is_none")]
     pub timestamp_lt: Option<String>,
     /// The `timestamp_lte` argument.
+    #[serde(rename = "timestamp.lte", skip_serializing_if = "Option::is_none")]
     pub timestamp_lte: Option<String>,
     /// The `timestamp_gt` argument.
+    #[serde(rename = "timestamp.gt", skip_serializing_if = "Option::is_none")]
     pub timestamp_gt: Option<String>,
     /// The `timestamp_gte` argument.
+    #[serde(rename = "timestamp.gte", skip_serializing_if = "Option::is_none")]
     pub timestamp_gte: Option<String>,
     /// The `session_end_date` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub session_end_date: Option<String>,
     /// The `session_end_date_lt` argument.
+    #[serde(rename = "session_end_date.lt", skip_serializing_if = "Option::is_none")]
     pub session_end_date_lt: Option<String>,
     /// The `session_end_date_lte` argument.
+    #[serde(rename = "session_end_date.lte", skip_serializing_if = "Option::is_none")]
     pub session_end_date_lte: Option<String>,
     /// The `session_end_date_gt` argument.
+    #[serde(rename = "session_end_date.gt", skip_serializing_if = "Option::is_none")]
     pub session_end_date_gt: Option<String>,
     /// The `session_end_date_gte` argument.
+    #[serde(rename = "session_end_date.gte", skip_serializing_if = "Option::is_none")]
     pub session_end_date_gte: Option<String>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `sort` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sort: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -2366,47 +1750,67 @@ impl ListFuturesTradesParams {
 }
 
 /// Optional arguments for [`FuturesApi::list_futures_schedules`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct ListFuturesSchedulesParams {
     /// The `product_code` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub product_code: Option<String>,
     /// The `product_code_any_of` argument.
+    #[serde(rename = "product_code.any_of", skip_serializing_if = "Option::is_none")]
     pub product_code_any_of: Option<String>,
     /// The `product_code_gt` argument.
+    #[serde(rename = "product_code.gt", skip_serializing_if = "Option::is_none")]
     pub product_code_gt: Option<String>,
     /// The `product_code_gte` argument.
+    #[serde(rename = "product_code.gte", skip_serializing_if = "Option::is_none")]
     pub product_code_gte: Option<String>,
     /// The `product_code_lt` argument.
+    #[serde(rename = "product_code.lt", skip_serializing_if = "Option::is_none")]
     pub product_code_lt: Option<String>,
     /// The `product_code_lte` argument.
+    #[serde(rename = "product_code.lte", skip_serializing_if = "Option::is_none")]
     pub product_code_lte: Option<String>,
     /// The `session_end_date` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub session_end_date: Option<String>,
     /// The `session_end_date_gt` argument.
+    #[serde(rename = "session_end_date.gt", skip_serializing_if = "Option::is_none")]
     pub session_end_date_gt: Option<String>,
     /// The `session_end_date_gte` argument.
+    #[serde(rename = "session_end_date.gte", skip_serializing_if = "Option::is_none")]
     pub session_end_date_gte: Option<String>,
     /// The `session_end_date_lt` argument.
+    #[serde(rename = "session_end_date.lt", skip_serializing_if = "Option::is_none")]
     pub session_end_date_lt: Option<String>,
     /// The `session_end_date_lte` argument.
+    #[serde(rename = "session_end_date.lte", skip_serializing_if = "Option::is_none")]
     pub session_end_date_lte: Option<String>,
     /// The `trading_venue` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub trading_venue: Option<String>,
     /// The `trading_venue_any_of` argument.
+    #[serde(rename = "trading_venue.any_of", skip_serializing_if = "Option::is_none")]
     pub trading_venue_any_of: Option<String>,
     /// The `trading_venue_gt` argument.
+    #[serde(rename = "trading_venue.gt", skip_serializing_if = "Option::is_none")]
     pub trading_venue_gt: Option<String>,
     /// The `trading_venue_gte` argument.
+    #[serde(rename = "trading_venue.gte", skip_serializing_if = "Option::is_none")]
     pub trading_venue_gte: Option<String>,
     /// The `trading_venue_lt` argument.
+    #[serde(rename = "trading_venue.lt", skip_serializing_if = "Option::is_none")]
     pub trading_venue_lt: Option<String>,
     /// The `trading_venue_lte` argument.
+    #[serde(rename = "trading_venue.lte", skip_serializing_if = "Option::is_none")]
     pub trading_venue_lte: Option<String>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `sort` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sort: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -2538,23 +1942,31 @@ impl ListFuturesSchedulesParams {
 }
 
 /// Optional arguments for [`FuturesApi::list_futures_market_statuses`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct ListFuturesMarketStatusesParams {
     /// The `product_code` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub product_code: Option<String>,
     /// The `product_code_any_of` argument.
+    #[serde(rename = "product_code.any_of", skip_serializing_if = "Option::is_none")]
     pub product_code_any_of: Option<String>,
     /// The `product_code_gt` argument.
+    #[serde(rename = "product_code.gt", skip_serializing_if = "Option::is_none")]
     pub product_code_gt: Option<String>,
     /// The `product_code_gte` argument.
+    #[serde(rename = "product_code.gte", skip_serializing_if = "Option::is_none")]
     pub product_code_gte: Option<String>,
     /// The `product_code_lt` argument.
+    #[serde(rename = "product_code.lt", skip_serializing_if = "Option::is_none")]
     pub product_code_lt: Option<String>,
     /// The `product_code_lte` argument.
+    #[serde(rename = "product_code.lte", skip_serializing_if = "Option::is_none")]
     pub product_code_lte: Option<String>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -2614,37 +2026,52 @@ impl ListFuturesMarketStatusesParams {
 }
 
 /// Optional arguments for [`FuturesApi::get_futures_snapshot`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct GetFuturesSnapshotParams {
     /// The `ticker` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub ticker: Option<String>,
     /// The `ticker_any_of` argument.
+    #[serde(rename = "ticker.any_of", skip_serializing_if = "Option::is_none")]
     pub ticker_any_of: Option<String>,
     /// The `ticker_gt` argument.
+    #[serde(rename = "ticker.gt", skip_serializing_if = "Option::is_none")]
     pub ticker_gt: Option<String>,
     /// The `ticker_gte` argument.
+    #[serde(rename = "ticker.gte", skip_serializing_if = "Option::is_none")]
     pub ticker_gte: Option<String>,
     /// The `ticker_lt` argument.
+    #[serde(rename = "ticker.lt", skip_serializing_if = "Option::is_none")]
     pub ticker_lt: Option<String>,
     /// The `ticker_lte` argument.
+    #[serde(rename = "ticker.lte", skip_serializing_if = "Option::is_none")]
     pub ticker_lte: Option<String>,
     /// The `product_code` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub product_code: Option<String>,
     /// The `product_code_any_of` argument.
+    #[serde(rename = "product_code.any_of", skip_serializing_if = "Option::is_none")]
     pub product_code_any_of: Option<String>,
     /// The `product_code_gt` argument.
+    #[serde(rename = "product_code.gt", skip_serializing_if = "Option::is_none")]
     pub product_code_gt: Option<String>,
     /// The `product_code_gte` argument.
+    #[serde(rename = "product_code.gte", skip_serializing_if = "Option::is_none")]
     pub product_code_gte: Option<String>,
     /// The `product_code_lt` argument.
+    #[serde(rename = "product_code.lt", skip_serializing_if = "Option::is_none")]
     pub product_code_lt: Option<String>,
     /// The `product_code_lte` argument.
+    #[serde(rename = "product_code.lte", skip_serializing_if = "Option::is_none")]
     pub product_code_lte: Option<String>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `sort` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sort: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -2746,11 +2173,13 @@ impl GetFuturesSnapshotParams {
 }
 
 /// Optional arguments for [`FuturesApi::list_futures_exchanges`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct ListFuturesExchangesParams {
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 

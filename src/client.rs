@@ -102,14 +102,35 @@ impl Client {
         headers
     }
 
-    /// Internal GET request.
+    /// Build the merged header set for a request (default + per-request options).
+    fn request_headers(&self, options: Option<&RequestOptions>) -> HeaderMap {
+        let mut headers = self.default_headers();
+        if let Some(opts) = options {
+            for (k, v) in &opts.headers {
+                headers.insert(k, v.clone());
+            }
+        }
+        headers
+    }
+
+    /// Append a pre-encoded query string (from `rest::encode_query`) to a path.
+    fn build_url(&self, path: &str, query: &str) -> String {
+        let mut url = format!("{}{}", self.base, path);
+        if !query.is_empty() {
+            url.push('?');
+            url.push_str(query);
+        }
+        url
+    }
+
+    /// Internal GET request taking a pre-encoded query string.
     pub(crate) async fn get<T: serde::de::DeserializeOwned>(
         &self,
         path: &str,
-        params: Option<&[(&str, String)]>,
+        query: &str,
         options: Option<&RequestOptions>,
     ) -> Result<T> {
-        let url = self.build_url(path, params);
+        let url = self.build_url(path, query);
         let headers = self.request_headers(options);
 
         if self.trace {
@@ -132,41 +153,19 @@ impl Client {
         Ok(data)
     }
 
-    /// Build the merged header set for a request (default + per-request options).
-    fn request_headers(&self, options: Option<&RequestOptions>) -> HeaderMap {
-        let mut headers = self.default_headers();
-        if let Some(opts) = options {
-            for (k, v) in &opts.headers {
-                headers.insert(k, v.clone());
-            }
-        }
-        headers
-    }
-
-    fn build_url(&self, path: &str, params: Option<&[(&str, String)]>) -> String {
-        let mut url = format!("{}{}", self.base, path);
-        if let Some(p) = params {
-            let query = serde_urlencoded::to_string(p).unwrap_or_default();
-            if !query.is_empty() {
-                url.push('?');
-                url.push_str(&query);
-            }
-        }
-        url
-    }
-
     /// Start a stream of results, following `next_url` pages when pagination
     /// is enabled (the default) or returning a single page when it is not.
     ///
     /// This is the only transport entry point for `list_*` methods: the
-    /// pagination branch lives here, not at the call sites.
+    /// pagination branch lives here, not at the call sites. Takes a
+    /// pre-encoded query string from `rest::encode_query`.
     pub(crate) fn list<T: serde::de::DeserializeOwned + Send + 'static>(
         &self,
         path: &str,
-        params: Option<&[(&str, String)]>,
+        query: &str,
         options: Option<&RequestOptions>,
     ) -> PaginatedStream<T> {
-        let url = self.build_url(path, params);
+        let url = self.build_url(path, query);
         let headers = self.request_headers(options);
         if self.pagination {
             PaginatedStream::new(self.http.clone(), headers, url, self.max_retries)

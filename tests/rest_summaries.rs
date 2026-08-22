@@ -90,3 +90,24 @@ async fn get_summaries_without_tickers_sends_no_filter() {
         Some(155.0)
     );
 }
+
+#[tokio::test]
+async fn get_summaries_with_params_all_fields() {
+    let server = MockServer::start().await;
+    Mock::given(method("GET"))
+        .and(path("/v1/summaries"))
+        .and(query_param("ticker.any_of", "AAPL,MSFT,NVDA"))
+        .and(header("Authorization", "Bearer test-key"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(serde_json::json!({
+            "status": "OK",
+            "results": []
+        })))
+        .expect(1)
+        .mount(&server)
+        .await;
+    let client = Client::new("test-key").unwrap().with_base(server.uri());
+    let params = massive::rest::GetSummariesParams::new()
+        .ticker_any_of(&["AAPL", "MSFT", "NVDA"]);
+    let summaries = client.get_summaries_with_params(params).await.unwrap();
+    assert!(summaries.is_empty());
+}

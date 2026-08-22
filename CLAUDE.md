@@ -50,8 +50,16 @@ Feature-parity target: the official Python client
   (owned fields, chainable setters, `options` included). The flat positional
   method is the Python-parity surface and simply delegates to the `_with_params`
   variant — keep them in lockstep when porting Python changes.
-- Query params: `Vec<(&str, String)>`, pushed only when `Some`. No client-side
-  defaults — `None` means the param is omitted (server defaults apply).
+- Query params are serde-derived on the `{CamelName}Params` structs, not pushed by
+  hand: every field carries `#[serde(skip_serializing_if = "Option::is_none")]`,
+  dotted wire keys are `#[serde(rename = "ticker.gte")]`, `options` and
+  path-consumed fields are `#[serde(skip)]`, `Option<f64>` fields add
+  `serialize_with = "super::ser_opt_f64"` (keeps `"5"`, not ryu's `"5.0"`), and
+  comma-joined lists use `super::ser_comma_join`. Method bodies call
+  `encode_query(&params)` (in `src/rest/mod.rs`) and pass the encoded string to
+  `self.get`/`self.list`. No client-side defaults — unset fields are omitted
+  (server defaults apply). Field declaration order is wire order; keep it
+  matching Python's parameter order.
 - Models: all fields `Option<...>` unless Python declares them required; serde
   renames taken from each Python class's `from_dict` wire keys exactly (some are
   short keys like `"sym"`, some camelCase, some snake_case — check each).

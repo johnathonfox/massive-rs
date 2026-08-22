@@ -1,5 +1,5 @@
 use futures::TryStreamExt;
-use massive::rest::FuturesApi;
+use massive::rest::{FuturesApi, ListFuturesProductsParams};
 use massive::Client;
 use wiremock::matchers::{header, method, path, query_param};
 use wiremock::{Mock, MockServer, ResponseTemplate};
@@ -579,4 +579,114 @@ async fn list_futures_exchanges_hits_expected_path() {
     assert_eq!(exchanges[0].mic.as_deref(), Some("XCME"));
     assert_eq!(exchanges[0].name.as_deref(), Some("Chicago Mercantile Exchange"));
     assert_eq!(exchanges[0].acronym.as_deref(), Some("CME"));
+}
+
+#[tokio::test]
+async fn list_futures_products_with_params_serializes_all_query_params() {
+    let server = MockServer::start().await;
+    Mock::given(method("GET"))
+        .and(path("/futures/v1/products"))
+        .and(header("Authorization", "Bearer test-key"))
+        .and(query_param("name", "E-mini S&P 500 Futures"))
+        .and(query_param("name.any_of", "E-mini S&P 500 Futures,Micro E-mini"))
+        .and(query_param("name.gt", "A"))
+        .and(query_param("name.gte", "B"))
+        .and(query_param("name.lt", "Z"))
+        .and(query_param("name.lte", "Y"))
+        .and(query_param("product_code", "ES"))
+        .and(query_param("product_code.any_of", "ES,MES"))
+        .and(query_param("product_code.gt", "A"))
+        .and(query_param("product_code.gte", "B"))
+        .and(query_param("product_code.lt", "Z"))
+        .and(query_param("product_code.lte", "Y"))
+        .and(query_param("date", "2024-01-02"))
+        .and(query_param("date.gt", "2024-01-01"))
+        .and(query_param("date.gte", "2024-01-01"))
+        .and(query_param("date.lt", "2024-12-31"))
+        .and(query_param("date.lte", "2024-12-31"))
+        .and(query_param("trading_venue", "XCME"))
+        .and(query_param("trading_venue.any_of", "XCME,XCBT"))
+        .and(query_param("trading_venue.gt", "A"))
+        .and(query_param("trading_venue.gte", "B"))
+        .and(query_param("trading_venue.lt", "Z"))
+        .and(query_param("trading_venue.lte", "Y"))
+        .and(query_param("sector", "index"))
+        .and(query_param("sector.any_of", "index,energy"))
+        .and(query_param("sub_sector", "equity-index"))
+        .and(query_param("sub_sector.any_of", "equity-index,crude"))
+        .and(query_param("asset_class", "equity"))
+        .and(query_param("asset_class.any_of", "equity,commodity"))
+        .and(query_param("asset_sub_class", "stock-index"))
+        .and(query_param("asset_sub_class.any_of", "stock-index,energy"))
+        .and(query_param("type", "future"))
+        .and(query_param("type.any_of", "future,combo"))
+        .and(query_param("limit", "25"))
+        .and(query_param("sort", "product_code.asc"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(serde_json::json!({
+            "status": "OK",
+            "count": 1,
+            "results": [
+                {
+                    "product_code": "ES",
+                    "name": "E-mini S&P 500 Futures",
+                    "date": "2024-01-02",
+                    "trading_venue": "XCME",
+                    "asset_class": "equity",
+                    "sector": "index",
+                    "type": "future",
+                    "settlement_currency_code": "USD",
+                    "unit_of_measure": "index points",
+                    "unit_of_measure_qty": 50.0
+                }
+            ]
+        })))
+        .expect(1)
+        .mount(&server)
+        .await;
+
+    let client = Client::new("test-key").unwrap().with_base(server.uri());
+    let params = ListFuturesProductsParams::new()
+        .name("E-mini S&P 500 Futures")
+        .name_any_of("E-mini S&P 500 Futures,Micro E-mini")
+        .name_gt("A")
+        .name_gte("B")
+        .name_lt("Z")
+        .name_lte("Y")
+        .product_code("ES")
+        .product_code_any_of("ES,MES")
+        .product_code_gt("A")
+        .product_code_gte("B")
+        .product_code_lt("Z")
+        .product_code_lte("Y")
+        .date("2024-01-02")
+        .date_gt("2024-01-01")
+        .date_gte("2024-01-01")
+        .date_lt("2024-12-31")
+        .date_lte("2024-12-31")
+        .trading_venue("XCME")
+        .trading_venue_any_of("XCME,XCBT")
+        .trading_venue_gt("A")
+        .trading_venue_gte("B")
+        .trading_venue_lt("Z")
+        .trading_venue_lte("Y")
+        .sector("index")
+        .sector_any_of("index,energy")
+        .sub_sector("equity-index")
+        .sub_sector_any_of("equity-index,crude")
+        .asset_class("equity")
+        .asset_class_any_of("equity,commodity")
+        .asset_sub_class("stock-index")
+        .asset_sub_class_any_of("stock-index,energy")
+        .type_("future")
+        .type_any_of("future,combo")
+        .limit(25)
+        .sort("product_code.asc");
+    let products = client
+        .list_futures_products_with_params(params)
+        .try_collect::<Vec<_>>()
+        .await
+        .unwrap();
+
+    assert_eq!(products.len(), 1);
+    assert_eq!(products[0].product_code.as_deref(), Some("ES"));
 }

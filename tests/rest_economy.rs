@@ -313,3 +313,87 @@ async fn list_eu_merchant_hierarchy_hits_expected_path() {
     assert_eq!(rows[0].ticker.as_deref(), Some("TSCO.L"));
     assert_eq!(rows[0].sector.as_deref(), Some("Consumer Staples"));
 }
+
+#[tokio::test]
+async fn list_eu_merchant_hierarchy_with_params_sends_all_query_params() {
+    let server = MockServer::start().await;
+    Mock::given(method("GET"))
+        .and(path("/consumer-spending/eu/v1/merchant-hierarchy"))
+        .and(header("Authorization", "Bearer test-key"))
+        .and(query_param("lookup_name", "Tesco"))
+        .and(query_param("lookup_name.any_of", "Tesco,Lidl"))
+        .and(query_param("lookup_name.gt", "A"))
+        .and(query_param("lookup_name.gte", "B"))
+        .and(query_param("lookup_name.lt", "Z"))
+        .and(query_param("lookup_name.lte", "Y"))
+        .and(query_param("ticker", "TSCO.L"))
+        .and(query_param("ticker.any_of", "TSCO.L,SBRY.L"))
+        .and(query_param("ticker.gt", "A"))
+        .and(query_param("ticker.gte", "B"))
+        .and(query_param("ticker.lt", "Z"))
+        .and(query_param("ticker.lte", "Y"))
+        .and(query_param("listing_status", "listed"))
+        .and(query_param("listing_status.any_of", "listed,delisted"))
+        .and(query_param("active_from", "2020-01-01"))
+        .and(query_param("active_from.gt", "2019-01-01"))
+        .and(query_param("active_from.gte", "2019-06-01"))
+        .and(query_param("active_from.lt", "2021-01-01"))
+        .and(query_param("active_from.lte", "2020-12-31"))
+        .and(query_param("active_to", "2024-01-01"))
+        .and(query_param("active_to.gt", "2023-01-01"))
+        .and(query_param("active_to.gte", "2023-06-01"))
+        .and(query_param("active_to.lt", "2025-01-01"))
+        .and(query_param("active_to.lte", "2024-12-31"))
+        .and(query_param("limit", "10"))
+        .and(query_param("sort", "lookup_name"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(serde_json::json!({
+            "status": "OK",
+            "count": 1,
+            "results": [
+                {
+                    "lookup_name": "Tesco",
+                    "ticker": "TSCO.L",
+                    "listing_status": "listed",
+                    "active_from": "2020-01-01"
+                }
+            ]
+        })))
+        .expect(1)
+        .mount(&server)
+        .await;
+    let client = Client::new("test-key").unwrap().with_base(server.uri());
+    let params = massive::rest::ListEuMerchantHierarchyParams::new()
+        .lookup_name("Tesco")
+        .lookup_name_any_of("Tesco,Lidl")
+        .lookup_name_gt("A")
+        .lookup_name_gte("B")
+        .lookup_name_lt("Z")
+        .lookup_name_lte("Y")
+        .ticker("TSCO.L")
+        .ticker_any_of("TSCO.L,SBRY.L")
+        .ticker_gt("A")
+        .ticker_gte("B")
+        .ticker_lt("Z")
+        .ticker_lte("Y")
+        .listing_status("listed")
+        .listing_status_any_of("listed,delisted")
+        .active_from("2020-01-01")
+        .active_from_gt("2019-01-01")
+        .active_from_gte("2019-06-01")
+        .active_from_lt("2021-01-01")
+        .active_from_lte("2020-12-31")
+        .active_to("2024-01-01")
+        .active_to_gt("2023-01-01")
+        .active_to_gte("2023-06-01")
+        .active_to_lt("2025-01-01")
+        .active_to_lte("2024-12-31")
+        .limit(10)
+        .sort("lookup_name");
+    let rows: Vec<_> = client
+        .list_eu_merchant_hierarchy_with_params(params)
+        .try_collect()
+        .await
+        .unwrap();
+    assert_eq!(rows.len(), 1);
+    assert_eq!(rows[0].lookup_name.as_deref(), Some("Tesco"));
+}

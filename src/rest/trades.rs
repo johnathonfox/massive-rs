@@ -1,4 +1,4 @@
-use super::{BoxFuture, BoxStream};
+use super::{encode_query, BoxFuture, BoxStream};
 use crate::client::{Client, RequestOptions};
 use crate::models::{CryptoTrade, LastTrade, Trade};
 
@@ -96,52 +96,9 @@ impl TradesApi for Client {
         params: ListTradesParams,
     ) -> BoxStream<'a, Trade> {
         Box::pin({
-            let ListTradesParams {
-                timestamp,
-                timestamp_lt,
-                timestamp_lte,
-                timestamp_gt,
-                timestamp_gte,
-                limit,
-                sort,
-                order,
-                options,
-            } = params;
-            let timestamp = timestamp.as_deref();
-            let timestamp_lt = timestamp_lt.as_deref();
-            let timestamp_lte = timestamp_lte.as_deref();
-            let timestamp_gt = timestamp_gt.as_deref();
-            let timestamp_gte = timestamp_gte.as_deref();
-            let sort = sort.as_deref();
-            let order = order.as_deref();
-            let options = options.as_ref();
             let path = format!("/v3/trades/{}", ticker);
-            let mut query: Vec<(&str, String)> = Vec::new();
-            if let Some(t) = timestamp {
-                query.push(("timestamp", t.to_string()));
-            }
-            if let Some(t) = timestamp_lt {
-                query.push(("timestamp.lt", t.to_string()));
-            }
-            if let Some(t) = timestamp_lte {
-                query.push(("timestamp.lte", t.to_string()));
-            }
-            if let Some(t) = timestamp_gt {
-                query.push(("timestamp.gt", t.to_string()));
-            }
-            if let Some(t) = timestamp_gte {
-                query.push(("timestamp.gte", t.to_string()));
-            }
-            if let Some(l) = limit {
-                query.push(("limit", l.to_string()));
-            }
-            if let Some(s) = sort {
-                query.push(("sort", s.to_string()));
-            }
-            if let Some(o) = order {
-                query.push(("order", o.to_string()));
-            }
-            self.list::<Trade>(&path, Some(&query), options)
+            let query = encode_query(&params);
+            self.list::<Trade>(&path, &query, params.options.as_ref())
         })
     }
 
@@ -164,14 +121,15 @@ impl TradesApi for Client {
         params: GetLastTradeParams,
     ) -> BoxFuture<'a, LastTrade> {
         Box::pin(async move {
-            let GetLastTradeParams { options } = params;
-            let options = options.as_ref();
             let path = format!("/v2/last/trade/{}", ticker);
+            let query = encode_query(&params);
             #[derive(serde::Deserialize)]
             struct Resp {
                 results: LastTrade,
             }
-            let resp: Resp = self.get(&path, None, options).await?;
+            let resp: Resp = self
+                .get(&path, &query, params.options.as_ref())
+                .await?;
             Ok(resp.results)
         })
     }
@@ -198,41 +156,54 @@ impl TradesApi for Client {
         params: GetLastCryptoTradeParams,
     ) -> BoxFuture<'a, CryptoTrade> {
         Box::pin(async move {
-            let GetLastCryptoTradeParams { options } = params;
-            let options = options.as_ref();
             let path = format!("/v1/last/crypto/{}/{}", from, to);
+            let query = encode_query(&params);
             #[derive(serde::Deserialize)]
             struct Resp {
                 last: CryptoTrade,
             }
-            let resp: Resp = self.get(&path, None, options).await?;
+            let resp: Resp = self
+                .get(&path, &query, params.options.as_ref())
+                .await?;
             Ok(resp.last)
         })
     }
 }
 
 // --- Params structs (additive builder API) ---
+//
+// Query serialization is derived: field order is wire order, `rename` carries
+// dotted filter operators, unset fields are omitted, and `options` is skipped.
 
 /// Optional arguments for [`TradesApi::list_trades`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct ListTradesParams {
     /// The `timestamp` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub timestamp: Option<String>,
     /// The `timestamp_lt` argument.
+    #[serde(rename = "timestamp.lt", skip_serializing_if = "Option::is_none")]
     pub timestamp_lt: Option<String>,
     /// The `timestamp_lte` argument.
+    #[serde(rename = "timestamp.lte", skip_serializing_if = "Option::is_none")]
     pub timestamp_lte: Option<String>,
     /// The `timestamp_gt` argument.
+    #[serde(rename = "timestamp.gt", skip_serializing_if = "Option::is_none")]
     pub timestamp_gt: Option<String>,
     /// The `timestamp_gte` argument.
+    #[serde(rename = "timestamp.gte", skip_serializing_if = "Option::is_none")]
     pub timestamp_gte: Option<String>,
     /// The `limit` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
     /// The `sort` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sort: Option<String>,
     /// The `order` argument.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub order: Option<String>,
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -298,9 +269,10 @@ impl ListTradesParams {
 }
 
 /// Optional arguments for [`TradesApi::get_last_trade`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct GetLastTradeParams {
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 
@@ -318,9 +290,10 @@ impl GetLastTradeParams {
 }
 
 /// Optional arguments for [`TradesApi::get_last_crypto_trade`].
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct GetLastCryptoTradeParams {
     /// The `options` argument.
+    #[serde(skip)]
     pub options: Option<RequestOptions>,
 }
 

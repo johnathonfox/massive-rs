@@ -1,4 +1,4 @@
-use massive::rest::IndicatorsApi;
+use massive::rest::{GetMacdParams, IndicatorsApi};
 use massive::Client;
 use wiremock::matchers::{header, method, path, query_param};
 use wiremock::{Mock, MockServer, ResponseTemplate};
@@ -210,4 +210,51 @@ async fn get_macd_hits_expected_path_and_unwraps_results() {
     assert_eq!(values[0].histogram, Some(0.233));
     let underlying = results.underlying.as_ref().unwrap();
     assert!(underlying.url.as_ref().unwrap().contains("/v2/aggs/ticker/MSFT"));
+}
+
+#[tokio::test]
+async fn get_macd_with_params_sends_every_query_param() {
+    let server = MockServer::start().await;
+    Mock::given(method("GET"))
+        .and(path("/v1/indicators/macd/AAPL"))
+        .and(header("Authorization", "Bearer test-key"))
+        .and(query_param("timestamp", "2023-05-03"))
+        .and(query_param("timestamp.lt", "2023-06-01"))
+        .and(query_param("timestamp.lte", "2023-05-31"))
+        .and(query_param("timestamp.gt", "2023-04-01"))
+        .and(query_param("timestamp.gte", "2023-05-01"))
+        .and(query_param("timespan", "day"))
+        .and(query_param("short_window", "12"))
+        .and(query_param("long_window", "26"))
+        .and(query_param("signal_window", "9"))
+        .and(query_param("adjusted", "true"))
+        .and(query_param("expand_underlying", "false"))
+        .and(query_param("order", "desc"))
+        .and(query_param("limit", "100"))
+        .and(query_param("series_type", "close"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(macd_body()))
+        .expect(1)
+        .mount(&server)
+        .await;
+
+    let client = Client::new("test-key").unwrap().with_base(server.uri());
+    let params = GetMacdParams::new()
+        .timestamp("2023-05-03")
+        .timestamp_lt("2023-06-01")
+        .timestamp_lte("2023-05-31")
+        .timestamp_gt("2023-04-01")
+        .timestamp_gte("2023-05-01")
+        .timespan("day")
+        .short_window(12)
+        .long_window(26)
+        .signal_window(9)
+        .adjusted(true)
+        .expand_underlying(false)
+        .order("desc")
+        .limit(100)
+        .series_type("close");
+    let results = client.get_macd_with_params("AAPL", params).await.unwrap();
+
+    let values = results.values.as_ref().unwrap();
+    assert_eq!(values.len(), 2);
 }
