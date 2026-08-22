@@ -956,11 +956,7 @@ impl ReferenceApi for Client {
             if let Some(v) = order {
                 query.push(("order", v.to_string()));
             }
-            if self.pagination {
-                self.paginate::<Ticker>(&path, Some(&query), options)
-            } else {
-                self.single_page::<Ticker>(&path, Some(&query), options)
-            }
+            self.list::<Ticker>(&path, Some(&query), options)
         })
     }
 
@@ -1150,11 +1146,7 @@ impl ReferenceApi for Client {
             if let Some(v) = order {
                 query.push(("order", v.to_string()));
             }
-            if self.pagination {
-                self.paginate::<TickerNews>(&path, Some(&query), options)
-            } else {
-                self.single_page::<TickerNews>(&path, Some(&query), options)
-            }
+            self.list::<TickerNews>(&path, Some(&query), options)
         })
     }
 
@@ -1345,11 +1337,7 @@ impl ReferenceApi for Client {
             if let Some(v) = order {
                 query.push(("order", v.to_string()));
             }
-            if self.pagination {
-                self.paginate::<Split>(&path, Some(&query), options)
-            } else {
-                self.single_page::<Split>(&path, Some(&query), options)
-            }
+            self.list::<Split>(&path, Some(&query), options)
         })
     }
 
@@ -1611,11 +1599,7 @@ impl ReferenceApi for Client {
             if let Some(v) = order {
                 query.push(("order", v.to_string()));
             }
-            if self.pagination {
-                self.paginate::<Dividend>(&path, Some(&query), options)
-            } else {
-                self.single_page::<Dividend>(&path, Some(&query), options)
-            }
+            self.list::<Dividend>(&path, Some(&query), options)
         })
     }
 
@@ -1686,11 +1670,7 @@ impl ReferenceApi for Client {
             if let Some(v) = order {
                 query.push(("order", v.to_string()));
             }
-            if self.pagination {
-                self.paginate::<Condition>(&path, Some(&query), options)
-            } else {
-                self.single_page::<Condition>(&path, Some(&query), options)
-            }
+            self.list::<Condition>(&path, Some(&query), options)
         })
     }
 
@@ -1935,11 +1915,7 @@ impl ReferenceApi for Client {
             if let Some(v) = order {
                 query.push(("order", v.to_string()));
             }
-            if self.pagination {
-                self.paginate::<OptionsContract>(&path, Some(&query), options)
-            } else {
-                self.single_page::<OptionsContract>(&path, Some(&query), options)
-            }
+            self.list::<OptionsContract>(&path, Some(&query), options)
         })
     }
 
@@ -2095,11 +2071,7 @@ impl ReferenceApi for Client {
             if let Some(v) = order {
                 query.push(("order", v.to_string()));
             }
-            if self.pagination {
-                self.paginate::<ShortInterest>(&path, Some(&query), options)
-            } else {
-                self.single_page::<ShortInterest>(&path, Some(&query), options)
-            }
+            self.list::<ShortInterest>(&path, Some(&query), options)
         })
     }
 
@@ -2255,11 +2227,7 @@ impl ReferenceApi for Client {
             if let Some(v) = order {
                 query.push(("order", v.to_string()));
             }
-            if self.pagination {
-                self.paginate::<ShortVolume>(&path, Some(&query), options)
-            } else {
-                self.single_page::<ShortVolume>(&path, Some(&query), options)
-            }
+            self.list::<ShortVolume>(&path, Some(&query), options)
         })
     }
 
@@ -2387,11 +2355,7 @@ impl ReferenceApi for Client {
             if let Some(v) = sort {
                 query.push(("sort", v.to_string()));
             }
-            if self.pagination {
-                self.paginate::<StockSplit>(&path, Some(&query), options)
-            } else {
-                self.single_page::<StockSplit>(&path, Some(&query), options)
-            }
+            self.list::<StockSplit>(&path, Some(&query), options)
         })
     }
 
@@ -2549,11 +2513,7 @@ impl ReferenceApi for Client {
             if let Some(v) = sort {
                 query.push(("sort", v.to_string()));
             }
-            if self.pagination {
-                self.paginate::<StockDividend>(&path, Some(&query), options)
-            } else {
-                self.single_page::<StockDividend>(&path, Some(&query), options)
-            }
+            self.list::<StockDividend>(&path, Some(&query), options)
         })
     }
 
@@ -2716,11 +2676,7 @@ impl ReferenceApi for Client {
             if let Some(v) = sort {
                 query.push(("sort", v.to_string()));
             }
-            if self.pagination {
-                self.paginate::<RiskFactor>(&path, Some(&query), options)
-            } else {
-                self.single_page::<RiskFactor>(&path, Some(&query), options)
-            }
+            self.list::<RiskFactor>(&path, Some(&query), options)
         })
     }
 
@@ -2915,11 +2871,7 @@ impl ReferenceApi for Client {
             if let Some(v) = sort {
                 query.push(("sort", v.to_string()));
             }
-            if self.pagination {
-                self.paginate::<RiskFactorTaxonomy>(&path, Some(&query), options)
-            } else {
-                self.single_page::<RiskFactorTaxonomy>(&path, Some(&query), options)
-            }
+            self.list::<RiskFactorTaxonomy>(&path, Some(&query), options)
         })
     }
 
@@ -3040,11 +2992,7 @@ impl ReferenceApi for Client {
             if let Some(v) = sort {
                 query.push(("sort", v.to_string()));
             }
-            if self.pagination {
-                self.paginate::<Disclosure>(&path, Some(&query), options)
-            } else {
-                self.single_page::<Disclosure>(&path, Some(&query), options)
-            }
+            self.list::<Disclosure>(&path, Some(&query), options)
         })
     }
 
@@ -3249,11 +3197,7 @@ impl ReferenceApi for Client {
             if let Some(v) = sort {
                 query.push(("sort", v.to_string()));
             }
-            if self.pagination {
-                self.paginate::<DisclosureTaxonomy>(&path, Some(&query), options)
-            } else {
-                self.single_page::<DisclosureTaxonomy>(&path, Some(&query), options)
-            }
+            self.list::<DisclosureTaxonomy>(&path, Some(&query), options)
         })
     }
 
@@ -3458,11 +3402,7 @@ impl ReferenceApi for Client {
             if let Some(v) = sort {
                 query.push(("sort", v.to_string()));
             }
-            if self.pagination {
-                self.paginate::<FilingSection>(&path, Some(&query), options)
-            } else {
-                self.single_page::<FilingSection>(&path, Some(&query), options)
-            }
+            self.list::<FilingSection>(&path, Some(&query), options)
         })
     }
 
@@ -3660,11 +3600,7 @@ impl ReferenceApi for Client {
             if let Some(v) = sort {
                 query.push(("sort", v.to_string()));
             }
-            if self.pagination {
-                self.paginate::<Filing8K>(&path, Some(&query), options)
-            } else {
-                self.single_page::<Filing8K>(&path, Some(&query), options)
-            }
+            self.list::<Filing8K>(&path, Some(&query), options)
         })
     }
 
@@ -3862,11 +3798,7 @@ impl ReferenceApi for Client {
             if let Some(v) = sort {
                 query.push(("sort", v.to_string()));
             }
-            if self.pagination {
-                self.paginate::<FilingIndex>(&path, Some(&query), options)
-            } else {
-                self.single_page::<FilingIndex>(&path, Some(&query), options)
-            }
+            self.list::<FilingIndex>(&path, Some(&query), options)
         })
     }
 
@@ -3952,11 +3884,7 @@ impl ReferenceApi for Client {
             if let Some(v) = sort {
                 query.push(("sort", v.to_string()));
             }
-            if self.pagination {
-                self.paginate::<Filing13F>(&path, Some(&query), options)
-            } else {
-                self.single_page::<Filing13F>(&path, Some(&query), options)
-            }
+            self.list::<Filing13F>(&path, Some(&query), options)
         })
     }
 
@@ -4168,11 +4096,7 @@ impl ReferenceApi for Client {
             if let Some(v) = sort {
                 query.push(("sort", v.to_string()));
             }
-            if self.pagination {
-                self.paginate::<FilingForm3>(&path, Some(&query), options)
-            } else {
-                self.single_page::<FilingForm3>(&path, Some(&query), options)
-            }
+            self.list::<FilingForm3>(&path, Some(&query), options)
         })
     }
 
@@ -4391,11 +4315,7 @@ impl ReferenceApi for Client {
             if let Some(v) = sort {
                 query.push(("sort", v.to_string()));
             }
-            if self.pagination {
-                self.paginate::<FilingForm4>(&path, Some(&query), options)
-            } else {
-                self.single_page::<FilingForm4>(&path, Some(&query), options)
-            }
+            self.list::<FilingForm4>(&path, Some(&query), options)
         })
     }
 }

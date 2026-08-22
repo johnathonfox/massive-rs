@@ -18,7 +18,7 @@ Feature-parity target: the official Python client
 
 - `src/client.rs` — `Client` (alias `RESTClient`): base URL, auth headers, pagination
   toggle, trace, opt-in retries (`with_max_retries`). Crate-internal helpers:
-  `get`, `paginate`, `single_page`.
+  `get`, `list` (owns the `self.pagination` branch).
 - `src/paginate.rs` — `PaginatedStream` follows `next_url`; every page request carries
   the auth/edge headers; `send_with_retry` (429/5xx, exponential backoff) is shared
   by `get` and the stream.
@@ -39,7 +39,7 @@ Feature-parity target: the official Python client
 - Filter operators are separate args serialized with dotted keys:
   `ticker_gte` → `"ticker.gte"`, `tickers_any_of` → `"tickers.any_of"`.
 - `list_*` → `BoxStream<'a, T>` (= `Pin<Box<dyn Stream<Item = Result<T>> + Send + 'a>>`)
-  via `self.paginate`/`self.single_page` (branch on `self.pagination`).
+  via `self.list`, which owns the `self.pagination` branch.
   `get_*` → `BoxFuture<'a, T>` (= `Pin<Box<dyn Future<Output = Result<T>> + Send + 'a>>`)
   via `self.get`, unwrapping the Python `result_key` with a local `Resp` struct.
   Both aliases live in `src/rest/mod.rs`; all trait methods take a single named

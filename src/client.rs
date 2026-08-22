@@ -155,25 +155,23 @@ impl Client {
         url
     }
 
-    /// Start a paginated stream.
-    pub(crate) fn paginate<T: serde::de::DeserializeOwned + Send + 'static>(
+    /// Start a stream of results, following `next_url` pages when pagination
+    /// is enabled (the default) or returning a single page when it is not.
+    ///
+    /// This is the only transport entry point for `list_*` methods: the
+    /// pagination branch lives here, not at the call sites.
+    pub(crate) fn list<T: serde::de::DeserializeOwned + Send + 'static>(
         &self,
         path: &str,
         params: Option<&[(&str, String)]>,
         options: Option<&RequestOptions>,
     ) -> PaginatedStream<T> {
         let url = self.build_url(path, params);
-        PaginatedStream::new(self.http.clone(), self.request_headers(options), url, self.max_retries)
-    }
-
-    /// Single page request (no pagination follow).
-    pub(crate) fn single_page<T: serde::de::DeserializeOwned + Send + 'static>(
-        &self,
-        path: &str,
-        params: Option<&[(&str, String)]>,
-        options: Option<&RequestOptions>,
-    ) -> PaginatedStream<T> {
-        let url = self.build_url(path, params);
-        PaginatedStream::single_page(self.http.clone(), self.request_headers(options), url, self.max_retries)
+        let headers = self.request_headers(options);
+        if self.pagination {
+            PaginatedStream::new(self.http.clone(), headers, url, self.max_retries)
+        } else {
+            PaginatedStream::single_page(self.http.clone(), headers, url, self.max_retries)
+        }
     }
 }

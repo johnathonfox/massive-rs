@@ -789,11 +789,7 @@ impl BenzingaApi for Client {
             if let Some(v) = sort {
                 query.push(("sort", v.to_string()));
             }
-            if self.pagination {
-                self.paginate::<BenzingaAnalystInsight>(path, Some(&query), options)
-            } else {
-                self.single_page::<BenzingaAnalystInsight>(path, Some(&query), options)
-            }
+            self.list::<BenzingaAnalystInsight>(path, Some(&query), options)
         })
     }
 
@@ -998,11 +994,7 @@ impl BenzingaApi for Client {
             if let Some(v) = sort {
                 query.push(("sort", v.to_string()));
             }
-            if self.pagination {
-                self.paginate::<BenzingaAnalyst>(path, Some(&query), options)
-            } else {
-                self.single_page::<BenzingaAnalyst>(path, Some(&query), options)
-            }
+            self.list::<BenzingaAnalyst>(path, Some(&query), options)
         })
     }
 
@@ -1072,11 +1064,7 @@ impl BenzingaApi for Client {
             if let Some(v) = limit {
                 query.push(("limit", v.to_string()));
             }
-            if self.pagination {
-                self.paginate::<BenzingaConsensusRating>(&path, Some(&query), options)
-            } else {
-                self.single_page::<BenzingaConsensusRating>(&path, Some(&query), options)
-            }
+            self.list::<BenzingaConsensusRating>(&path, Some(&query), options)
         })
     }
 
@@ -1471,11 +1459,7 @@ impl BenzingaApi for Client {
             if let Some(v) = sort {
                 query.push(("sort", v.to_string()));
             }
-            if self.pagination {
-                self.paginate::<BenzingaEarning>(path, Some(&query), options)
-            } else {
-                self.single_page::<BenzingaEarning>(path, Some(&query), options)
-            }
+            self.list::<BenzingaEarning>(path, Some(&query), options)
         })
     }
 
@@ -1554,11 +1538,7 @@ impl BenzingaApi for Client {
             if let Some(v) = sort {
                 query.push(("sort", v.to_string()));
             }
-            if self.pagination {
-                self.paginate::<BenzingaFirm>(path, Some(&query), options)
-            } else {
-                self.single_page::<BenzingaFirm>(path, Some(&query), options)
-            }
+            self.list::<BenzingaFirm>(path, Some(&query), options)
         })
     }
 
@@ -1879,11 +1859,7 @@ impl BenzingaApi for Client {
             if let Some(v) = sort {
                 query.push(("sort", v.to_string()));
             }
-            if self.pagination {
-                self.paginate::<BenzingaGuidance>(path, Some(&query), options)
-            } else {
-                self.single_page::<BenzingaGuidance>(path, Some(&query), options)
-            }
+            self.list::<BenzingaGuidance>(path, Some(&query), options)
         })
     }
 
@@ -2109,11 +2085,7 @@ impl BenzingaApi for Client {
             if let Some(v) = sort {
                 query.push(("sort", v.to_string()));
             }
-            if self.pagination {
-                self.paginate::<BenzingaNews>(path, Some(&query), options)
-            } else {
-                self.single_page::<BenzingaNews>(path, Some(&query), options)
-            }
+            self.list::<BenzingaNews>(path, Some(&query), options)
         })
     }
 
@@ -2311,11 +2283,7 @@ impl BenzingaApi for Client {
             if let Some(v) = sort {
                 query.push(("sort", v.to_string()));
             }
-            if self.pagination {
-                self.paginate::<BenzingaNews>(path, Some(&query), options)
-            } else {
-                self.single_page::<BenzingaNews>(path, Some(&query), options)
-            }
+            self.list::<BenzingaNews>(path, Some(&query), options)
         })
     }
 
@@ -2725,11 +2693,7 @@ impl BenzingaApi for Client {
             if let Some(v) = sort {
                 query.push(("sort", v.to_string()));
             }
-            if self.pagination {
-                self.paginate::<BenzingaRating>(path, Some(&query), options)
-            } else {
-                self.single_page::<BenzingaRating>(path, Some(&query), options)
-            }
+            self.list::<BenzingaRating>(path, Some(&query), options)
         })
     }
 
@@ -2885,11 +2849,7 @@ impl BenzingaApi for Client {
             if let Some(v) = sort {
                 query.push(("sort", v.to_string()));
             }
-            if self.pagination {
-                self.paginate::<BenzingaBullsBearsSay>(path, Some(&query), options)
-            } else {
-                self.single_page::<BenzingaBullsBearsSay>(path, Some(&query), options)
-            }
+            self.list::<BenzingaBullsBearsSay>(path, Some(&query), options)
         })
     }
 }

@@ -253,11 +253,7 @@ impl EconomyApi for Client {
             if let Some(v) = order {
                 query.push(("order", v.to_string()));
             }
-            if self.pagination {
-                self.paginate::<TreasuryYield>(&path, Some(&query), options)
-            } else {
-                self.single_page::<TreasuryYield>(&path, Some(&query), options)
-            }
+            self.list::<TreasuryYield>(&path, Some(&query), options)
         })
     }
 
@@ -336,11 +332,7 @@ impl EconomyApi for Client {
             if let Some(v) = sort {
                 query.push(("sort", v.to_string()));
             }
-            if self.pagination {
-                self.paginate::<FedInflation>(&path, Some(&query), options)
-            } else {
-                self.single_page::<FedInflation>(&path, Some(&query), options)
-            }
+            self.list::<FedInflation>(&path, Some(&query), options)
         })
     }
 
@@ -419,11 +411,7 @@ impl EconomyApi for Client {
             if let Some(v) = sort {
                 query.push(("sort", v.to_string()));
             }
-            if self.pagination {
-                self.paginate::<FedInflationExpectations>(&path, Some(&query), options)
-            } else {
-                self.single_page::<FedInflationExpectations>(&path, Some(&query), options)
-            }
+            self.list::<FedInflationExpectations>(&path, Some(&query), options)
         })
     }
 
@@ -502,11 +490,7 @@ impl EconomyApi for Client {
             if let Some(v) = sort {
                 query.push(("sort", v.to_string()));
             }
-            if self.pagination {
-                self.paginate::<FedLaborMarket>(&path, Some(&query), options)
-            } else {
-                self.single_page::<FedLaborMarket>(&path, Some(&query), options)
-            }
+            self.list::<FedLaborMarket>(&path, Some(&query), options)
         })
     }
 
@@ -704,11 +688,7 @@ impl EconomyApi for Client {
             if let Some(v) = sort {
                 query.push(("sort", v.to_string()));
             }
-            if self.pagination {
-                self.paginate::<EUMerchantAggregate>(&path, Some(&query), options)
-            } else {
-                self.single_page::<EUMerchantAggregate>(&path, Some(&query), options)
-            }
+            self.list::<EUMerchantAggregate>(&path, Some(&query), options)
         })
     }
 
@@ -913,11 +893,7 @@ impl EconomyApi for Client {
             if let Some(v) = sort {
                 query.push(("sort", v.to_string()));
             }
-            if self.pagination {
-                self.paginate::<EUMerchantHierarchy>(&path, Some(&query), options)
-            } else {
-                self.single_page::<EUMerchantHierarchy>(&path, Some(&query), options)
-            }
+            self.list::<EUMerchantHierarchy>(&path, Some(&query), options)
         })
     }
 }

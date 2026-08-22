@@ -352,11 +352,7 @@ impl FuturesApi for Client {
             if let Some(s) = sort {
                 query.push(("sort", s.to_string()));
             }
-            if self.pagination {
-                self.paginate::<FuturesAgg>(&path, Some(&query), options)
-            } else {
-                self.single_page::<FuturesAgg>(&path, Some(&query), options)
-            }
+            self.list::<FuturesAgg>(&path, Some(&query), options)
         })
     }
 
@@ -602,11 +598,7 @@ impl FuturesApi for Client {
             if let Some(s) = sort {
                 query.push(("sort", s.to_string()));
             }
-            if self.pagination {
-                self.paginate::<FuturesContract>(path, Some(&query), options)
-            } else {
-                self.single_page::<FuturesContract>(path, Some(&query), options)
-            }
+            self.list::<FuturesContract>(path, Some(&query), options)
         })
     }
 
@@ -874,11 +866,7 @@ impl FuturesApi for Client {
             if let Some(s) = sort {
                 query.push(("sort", s.to_string()));
             }
-            if self.pagination {
-                self.paginate::<FuturesProduct>(path, Some(&query), options)
-            } else {
-                self.single_page::<FuturesProduct>(path, Some(&query), options)
-            }
+            self.list::<FuturesProduct>(path, Some(&query), options)
         })
     }
 
@@ -990,11 +978,7 @@ impl FuturesApi for Client {
             if let Some(s) = sort {
                 query.push(("sort", s.to_string()));
             }
-            if self.pagination {
-                self.paginate::<FuturesQuote>(&path, Some(&query), options)
-            } else {
-                self.single_page::<FuturesQuote>(&path, Some(&query), options)
-            }
+            self.list::<FuturesQuote>(&path, Some(&query), options)
         })
     }
 
@@ -1106,11 +1090,7 @@ impl FuturesApi for Client {
             if let Some(s) = sort {
                 query.push(("sort", s.to_string()));
             }
-            if self.pagination {
-                self.paginate::<FuturesTrade>(&path, Some(&query), options)
-            } else {
-                self.single_page::<FuturesTrade>(&path, Some(&query), options)
-            }
+            self.list::<FuturesTrade>(&path, Some(&query), options)
         })
     }
 
@@ -1266,11 +1246,7 @@ impl FuturesApi for Client {
             if let Some(s) = sort {
                 query.push(("sort", s.to_string()));
             }
-            if self.pagination {
-                self.paginate::<FuturesSchedule>(path, Some(&query), options)
-            } else {
-                self.single_page::<FuturesSchedule>(path, Some(&query), options)
-            }
+            self.list::<FuturesSchedule>(path, Some(&query), options)
         })
     }
 
@@ -1342,11 +1318,7 @@ impl FuturesApi for Client {
             if let Some(l) = limit {
                 query.push(("limit", l.to_string()));
             }
-            if self.pagination {
-                self.paginate::<FuturesMarketStatus>(path, Some(&query), options)
-            } else {
-                self.single_page::<FuturesMarketStatus>(path, Some(&query), options)
-            }
+            self.list::<FuturesMarketStatus>(path, Some(&query), options)
         })
     }
 
@@ -1467,11 +1439,7 @@ impl FuturesApi for Client {
             if let Some(s) = sort {
                 query.push(("sort", s.to_string()));
             }
-            if self.pagination {
-                self.paginate::<FuturesSnapshot>(path, Some(&query), options)
-            } else {
-                self.single_page::<FuturesSnapshot>(path, Some(&query), options)
-            }
+            self.list::<FuturesSnapshot>(path, Some(&query), options)
         })
     }
 
@@ -1498,11 +1466,7 @@ impl FuturesApi for Client {
             if let Some(l) = limit {
                 query.push(("limit", l.to_string()));
             }
-            if self.pagination {
-                self.paginate::<FuturesExchange>(path, Some(&query), options)
-            } else {
-                self.single_page::<FuturesExchange>(path, Some(&query), options)
-            }
+            self.list::<FuturesExchange>(path, Some(&query), options)
         })
     }
 }

@@ -219,11 +219,7 @@ impl VxApi for Client {
             if let Some(o) = order {
                 query.push(("order", o.to_string()));
             }
-            if self.pagination {
-                self.paginate::<StockFinancial>(&path, Some(&query), options)
-            } else {
-                self.single_page::<StockFinancial>(&path, Some(&query), options)
-            }
+            self.list::<StockFinancial>(&path, Some(&query), options)
         })
     }
 
@@ -327,11 +323,7 @@ impl VxApi for Client {
             if let Some(o) = order {
                 query.push(("order", o.to_string()));
             }
-            if self.pagination {
-                self.paginate::<IPOListing>(&path, Some(&query), options)
-            } else {
-                self.single_page::<IPOListing>(&path, Some(&query), options)
-            }
+            self.list::<IPOListing>(&path, Some(&query), options)
         })
     }
 }

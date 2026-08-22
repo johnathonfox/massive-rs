@@ -347,11 +347,7 @@ impl TmxApi for Client {
             push_param(&mut query, "tmx_record_id.lte", tmx_record_id_lte);
             push_param(&mut query, "limit", limit);
             push_param(&mut query, "sort", sort);
-            if self.pagination {
-                self.paginate::<TmxCorporateEvent>(&path, Some(&query), options)
-            } else {
-                self.single_page::<TmxCorporateEvent>(&path, Some(&query), options)
-            }
+            self.list::<TmxCorporateEvent>(&path, Some(&query), options)
         })
     }
 }

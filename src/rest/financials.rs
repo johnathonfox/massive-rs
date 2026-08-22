@@ -584,11 +584,7 @@ impl FinancialsApi for Client {
             if let Some(v) = sort {
                 query.push(("sort", v.to_string()));
             }
-            if self.pagination {
-                self.paginate::<FinancialBalanceSheet>(&path, Some(&query), options)
-            } else {
-                self.single_page::<FinancialBalanceSheet>(&path, Some(&query), options)
-            }
+            self.list::<FinancialBalanceSheet>(&path, Some(&query), options)
         })
     }
 
@@ -862,11 +858,7 @@ impl FinancialsApi for Client {
             if let Some(v) = sort {
                 query.push(("sort", v.to_string()));
             }
-            if self.pagination {
-                self.paginate::<FinancialCashFlowStatement>(&path, Some(&query), options)
-            } else {
-                self.single_page::<FinancialCashFlowStatement>(&path, Some(&query), options)
-            }
+            self.list::<FinancialCashFlowStatement>(&path, Some(&query), options)
         })
     }
 
@@ -1138,11 +1130,7 @@ impl FinancialsApi for Client {
             if let Some(v) = sort {
                 query.push(("sort", v.to_string()));
             }
-            if self.pagination {
-                self.paginate::<FinancialIncomeStatement>(&path, Some(&query), options)
-            } else {
-                self.single_page::<FinancialIncomeStatement>(&path, Some(&query), options)
-            }
+            self.list::<FinancialIncomeStatement>(&path, Some(&query), options)
         })
     }
 
@@ -1863,11 +1851,7 @@ impl FinancialsApi for Client {
             if let Some(v) = sort {
                 query.push(("sort", v.to_string()));
             }
-            if self.pagination {
-                self.paginate::<FinancialRatio>(&path, Some(&query), options)
-            } else {
-                self.single_page::<FinancialRatio>(&path, Some(&query), options)
-            }
+            self.list::<FinancialRatio>(&path, Some(&query), options)
         })
     }
 
@@ -1976,11 +1960,7 @@ impl FinancialsApi for Client {
             if let Some(v) = sort {
                 query.push(("sort", v.to_string()));
             }
-            if self.pagination {
-                self.paginate::<FinancialFloat>(&path, Some(&query), options)
-            } else {
-                self.single_page::<FinancialFloat>(&path, Some(&query), options)
-            }
+            self.list::<FinancialFloat>(&path, Some(&query), options)
         })
     }
 }

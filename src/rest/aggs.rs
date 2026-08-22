@@ -171,11 +171,7 @@ impl AggsApi for Client {
             if let Some(l) = limit {
                 query.push(("limit", l.to_string()));
             }
-            if self.pagination {
-                self.paginate::<Agg>(&path, Some(&query), options)
-            } else {
-                self.single_page::<Agg>(&path, Some(&query), options)
-            }
+            self.list::<Agg>(&path, Some(&query), options)
         })
     }
 

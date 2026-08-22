@@ -234,11 +234,7 @@ impl SnapshotApi for Client {
             if let Some(t) = ticker_gte {
                 query.push(("ticker.gte", t.to_string()));
             }
-            if self.pagination {
-                self.paginate::<UniversalSnapshot>(&path, Some(&query), options)
-            } else {
-                self.single_page::<UniversalSnapshot>(&path, Some(&query), options)
-            }
+            self.list::<UniversalSnapshot>(&path, Some(&query), options)
         })
     }
 
@@ -437,11 +433,7 @@ impl SnapshotApi for Client {
             let ListSnapshotOptionsChainParams { options } = params;
             let options = options.as_ref();
             let path = format!("/v3/snapshot/options/{}", underlying_asset);
-            if self.pagination {
-                self.paginate::<OptionContractSnapshot>(&path, None, options)
-            } else {
-                self.single_page::<OptionContractSnapshot>(&path, None, options)
-            }
+            self.list::<OptionContractSnapshot>(&path, None, options)
         })
     }
 

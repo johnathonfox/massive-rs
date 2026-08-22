@@ -696,11 +696,7 @@ impl EtfGlobalApi for Client {
             );
             push_param(&mut query, "limit", limit);
             push_param(&mut query, "sort", sort);
-            if self.pagination {
-                self.paginate::<EtfGlobalAnalytics>(&path, Some(&query), options)
-            } else {
-                self.single_page::<EtfGlobalAnalytics>(&path, Some(&query), options)
-            }
+            self.list::<EtfGlobalAnalytics>(&path, Some(&query), options)
         })
     }
 
@@ -971,11 +967,7 @@ impl EtfGlobalApi for Client {
             push_param(&mut query, "sedol.lte", sedol_lte);
             push_param(&mut query, "limit", limit);
             push_param(&mut query, "sort", sort);
-            if self.pagination {
-                self.paginate::<EtfGlobalConstituent>(&path, Some(&query), options)
-            } else {
-                self.single_page::<EtfGlobalConstituent>(&path, Some(&query), options)
-            }
+            self.list::<EtfGlobalConstituent>(&path, Some(&query), options)
         })
     }
 
@@ -1092,11 +1084,7 @@ impl EtfGlobalApi for Client {
             push_param(&mut query, "composite_ticker.lte", composite_ticker_lte);
             push_param(&mut query, "limit", limit);
             push_param(&mut query, "sort", sort);
-            if self.pagination {
-                self.paginate::<EtfGlobalFundFlow>(&path, Some(&query), options)
-            } else {
-                self.single_page::<EtfGlobalFundFlow>(&path, Some(&query), options)
-            }
+            self.list::<EtfGlobalFundFlow>(&path, Some(&query), options)
         })
     }
 
@@ -1213,11 +1201,7 @@ impl EtfGlobalApi for Client {
             push_param(&mut query, "composite_ticker.lte", composite_ticker_lte);
             push_param(&mut query, "limit", limit);
             push_param(&mut query, "sort", sort);
-            if self.pagination {
-                self.paginate::<EtfGlobalProfile>(&path, Some(&query), options)
-            } else {
-                self.single_page::<EtfGlobalProfile>(&path, Some(&query), options)
-            }
+            self.list::<EtfGlobalProfile>(&path, Some(&query), options)
         })
     }
 
@@ -1334,11 +1318,7 @@ impl EtfGlobalApi for Client {
             push_param(&mut query, "composite_ticker.lte", composite_ticker_lte);
             push_param(&mut query, "limit", limit);
             push_param(&mut query, "sort", sort);
-            if self.pagination {
-                self.paginate::<EtfGlobalTaxonomy>(&path, Some(&query), options)
-            } else {
-                self.single_page::<EtfGlobalTaxonomy>(&path, Some(&query), options)
-            }
+            self.list::<EtfGlobalTaxonomy>(&path, Some(&query), options)
         })
     }
 }

@@ -160,11 +160,7 @@ impl QuotesApi for Client {
             if let Some(o) = order {
                 query.push(("order", o.to_string()));
             }
-            if self.pagination {
-                self.paginate::<Quote>(&path, Some(&query), options)
-            } else {
-                self.single_page::<Quote>(&path, Some(&query), options)
-            }
+            self.list::<Quote>(&path, Some(&query), options)
         })
     }
 

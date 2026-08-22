@@ -141,11 +141,7 @@ impl TradesApi for Client {
             if let Some(o) = order {
                 query.push(("order", o.to_string()));
             }
-            if self.pagination {
-                self.paginate::<Trade>(&path, Some(&query), options)
-            } else {
-                self.single_page::<Trade>(&path, Some(&query), options)
-            }
+            self.list::<Trade>(&path, Some(&query), options)
         })
     }
 
