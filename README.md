@@ -22,7 +22,7 @@ Add to `Cargo.toml`:
 
 ```toml
 [dependencies]
-massive-rs = "0.1"
+massive-rs = "0.2"
 tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
 futures = "0.3"
 ```

@@ -1,6 +1,6 @@
 [package]
 name = "massive-rs"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 authors = ["Johnathon Fox <johnathon.fox@gmail.com>"]
 description = "Async Rust client for the Massive.com (formerly Polygon.io) REST and WebSocket API"

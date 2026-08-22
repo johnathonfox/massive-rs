@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-08-22
+
 ### Added
 
 - Additive `{method}_with_params` variants for every REST method with optional
@@ -15,10 +17,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `WebSocketControl` handle (`WebSocketClient::control()`) for live
   subscribe/unsubscribe/unsubscribe-all while `connect` is running, and
   `WebSocketClient::with_host` for testing against alternate endpoints.
+- Opt-in retry on HTTP 429/5xx with exponential backoff via
+  `Client::with_max_retries` (default 0, preserving Python-client behavior).
 - Examples: `financials`, `indicators`, `reference`.
 - Integration tests for the params builders (`tests/rest_params.rs`) and for the
   WebSocket auth handshake, live reconcile, and reconnect/resubscribe against a
   local server (`tests/websocket.rs`).
+- Env-gated live tests (`tests/live.rs`, run with `--ignored` and `MASSIVE_API_KEY`).
+- `CLAUDE.md` with crate conventions and the parity-maintenance workflow.
+- GitHub Actions CI (check, clippy, test, docs).
 
 ### Changed
 
@@ -31,12 +38,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   transport entry point owning the pagination branch. No public signature
   changes; wire format is unchanged (covered by per-module full-params
   wiremock tests).
-
-- `CLAUDE.md` with crate conventions and the parity-maintenance workflow.
-- GitHub Actions CI (check, clippy, test, docs).
-- Env-gated live tests (`tests/live.rs`, run with `--ignored` and `MASSIVE_API_KEY`).
-- Opt-in retry on HTTP 429/5xx with exponential backoff via
-  `Client::with_max_retries` (default 0, preserving Python-client behavior).
 
 ## [0.1.0] - 2026-08-03
 
