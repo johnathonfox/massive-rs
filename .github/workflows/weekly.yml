@@ -20,7 +20,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: dtolnay/rust-toolchain@stable
         with:
-          components: clippy, rustdoc
+          components: clippy
       - uses: Swatinem/rust-cache@v2
       - name: Update dependencies to latest compatible versions
         run: cargo update
