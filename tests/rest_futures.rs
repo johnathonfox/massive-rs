@@ -1,6 +1,7 @@
 use futures::TryStreamExt;
 use massive::rest::{FuturesApi, ListFuturesProductsParams};
 use massive::Client;
+use rust_decimal_macros::dec;
 use wiremock::matchers::{header, method, path, query_param};
 use wiremock::{Mock, MockServer, ResponseTemplate};
 
@@ -65,7 +66,7 @@ async fn list_futures_aggregates_hits_expected_path() {
 
     assert_eq!(aggs.len(), 2);
     assert_eq!(aggs[0].ticker.as_deref(), Some("ESZ4"));
-    assert_eq!(aggs[0].close, Some(5210.75));
+    assert_eq!(aggs[0].close, Some(dec!(5210.75)));
     assert_eq!(aggs[0].window_start, Some(1704067200000));
 }
 
@@ -282,8 +283,8 @@ async fn list_futures_quotes_hits_expected_path() {
 
     assert_eq!(quotes.len(), 1);
     assert_eq!(quotes[0].ticker.as_deref(), Some("ESZ4"));
-    assert_eq!(quotes[0].bid_price, Some(5210.75));
-    assert_eq!(quotes[0].ask_price, Some(5211.0));
+    assert_eq!(quotes[0].bid_price, Some(dec!(5210.75)));
+    assert_eq!(quotes[0].ask_price, Some(dec!(5211.0)));
 }
 
 #[tokio::test]
@@ -346,8 +347,8 @@ async fn list_futures_trades_hits_expected_path() {
 
     assert_eq!(trades.len(), 2);
     assert_eq!(trades[0].ticker.as_deref(), Some("CLZ4"));
-    assert_eq!(trades[0].price, Some(71.25));
-    assert_eq!(trades[1].size, Some(1.0));
+    assert_eq!(trades[0].price, Some(dec!(71.25)));
+    assert_eq!(trades[1].size, Some(dec!(1.0)));
 }
 
 #[tokio::test]
@@ -408,7 +409,10 @@ async fn list_futures_schedules_hits_expected_path() {
     assert_eq!(schedules.len(), 1);
     assert_eq!(schedules[0].event.as_deref(), Some("open"));
     assert_eq!(schedules[0].product_code.as_deref(), Some("ES"));
-    assert_eq!(schedules[0].timestamp.as_deref(), Some("2024-01-01T18:00:00Z"));
+    assert_eq!(
+        schedules[0].timestamp.as_deref(),
+        Some("2024-01-01T18:00:00Z")
+    );
 }
 
 #[tokio::test]
@@ -438,16 +442,7 @@ async fn list_futures_market_statuses_hits_expected_path() {
 
     let client = Client::new("test-key").unwrap().with_base(server.uri());
     let statuses = client
-        .list_futures_market_statuses(
-            Some("ES"),
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-        )
+        .list_futures_market_statuses(Some("ES"), None, None, None, None, None, None, None)
         .try_collect::<Vec<_>>()
         .await
         .unwrap();
@@ -536,9 +531,9 @@ async fn get_futures_snapshot_hits_expected_path() {
     assert_eq!(snap.ticker.as_deref(), Some("ESZ4"));
     assert_eq!(snap.product_code.as_deref(), Some("ES"));
     let trade = snap.last_trade.as_ref().unwrap();
-    assert_eq!(trade.price, Some(5210.75));
+    assert_eq!(trade.price, Some(dec!(5210.75)));
     let session = snap.session.as_ref().unwrap();
-    assert_eq!(session.change, Some(5.25));
+    assert_eq!(session.change, Some(dec!(5.25)));
 }
 
 #[tokio::test]
@@ -577,7 +572,10 @@ async fn list_futures_exchanges_hits_expected_path() {
 
     assert_eq!(exchanges.len(), 1);
     assert_eq!(exchanges[0].mic.as_deref(), Some("XCME"));
-    assert_eq!(exchanges[0].name.as_deref(), Some("Chicago Mercantile Exchange"));
+    assert_eq!(
+        exchanges[0].name.as_deref(),
+        Some("Chicago Mercantile Exchange")
+    );
     assert_eq!(exchanges[0].acronym.as_deref(), Some("CME"));
 }
 
@@ -588,7 +586,10 @@ async fn list_futures_products_with_params_serializes_all_query_params() {
         .and(path("/futures/v1/products"))
         .and(header("Authorization", "Bearer test-key"))
         .and(query_param("name", "E-mini S&P 500 Futures"))
-        .and(query_param("name.any_of", "E-mini S&P 500 Futures,Micro E-mini"))
+        .and(query_param(
+            "name.any_of",
+            "E-mini S&P 500 Futures,Micro E-mini",
+        ))
         .and(query_param("name.gt", "A"))
         .and(query_param("name.gte", "B"))
         .and(query_param("name.lt", "Z"))

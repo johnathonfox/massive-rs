@@ -3,6 +3,7 @@ use massive::{
     rest::{BenzingaApi, ListBenzingaEarningsParams},
     Client,
 };
+use rust_decimal_macros::dec;
 use wiremock::matchers::{header, method, path, query_param};
 use wiremock::{Mock, MockServer, ResponseTemplate};
 
@@ -88,7 +89,7 @@ async fn list_benzinga_analyst_insights_hits_expected_path() {
     assert_eq!(insights.len(), 1);
     assert_eq!(insights[0].ticker.as_deref(), Some("AAPL"));
     assert_eq!(insights[0].rating.as_deref(), Some("Overweight"));
-    assert_eq!(insights[0].price_target, Some(220.5));
+    assert_eq!(insights[0].price_target, Some(dec!(220.5)));
 }
 
 #[tokio::test]
@@ -151,7 +152,7 @@ async fn list_benzinga_analysts_hits_expected_path() {
 
     assert_eq!(analysts.len(), 1);
     assert_eq!(analysts[0].full_name.as_deref(), Some("Jane Doe"));
-    assert_eq!(analysts[0].smart_score, Some(8.7));
+    assert_eq!(analysts[0].smart_score, Some(dec!(8.7)));
 }
 
 #[tokio::test]
@@ -291,7 +292,7 @@ async fn list_benzinga_earnings_hits_expected_path() {
 
     assert_eq!(earnings.len(), 1);
     assert_eq!(earnings[0].ticker.as_deref(), Some("AAPL"));
-    assert_eq!(earnings[0].actual_eps, Some(2.18));
+    assert_eq!(earnings[0].actual_eps, Some(dec!(2.18)));
     assert_eq!(earnings[0].fiscal_year, Some(2024));
 }
 
@@ -419,7 +420,7 @@ async fn list_benzinga_guidance_hits_expected_path() {
     assert_eq!(guidance.len(), 1);
     assert_eq!(guidance[0].ticker.as_deref(), Some("MSFT"));
     assert_eq!(guidance[0].positioning.as_deref(), Some("positive"));
-    assert_eq!(guidance[0].estimated_eps_guidance, Some(2.95));
+    assert_eq!(guidance[0].estimated_eps_guidance, Some(dec!(2.95)));
 }
 
 #[tokio::test]
@@ -651,7 +652,7 @@ async fn list_benzinga_ratings_hits_expected_path() {
     assert_eq!(ratings.len(), 1);
     assert_eq!(ratings[0].rating.as_deref(), Some("Buy"));
     assert_eq!(ratings[0].rating_action.as_deref(), Some("upgrades"));
-    assert_eq!(ratings[0].price_target, Some(225.0));
+    assert_eq!(ratings[0].price_target, Some(dec!(225.0)));
 }
 
 #[tokio::test]

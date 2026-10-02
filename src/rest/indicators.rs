@@ -165,9 +165,7 @@ impl IndicatorsApi for Client {
             struct Resp {
                 results: SingleIndicatorResults,
             }
-            let resp: Resp = self
-                .get(&path, &query, params.options.as_ref())
-                .await?;
+            let resp: Resp = self.get(&path, &query, params.options.as_ref()).await?;
             Ok(resp.results)
         })
     }
@@ -221,9 +219,7 @@ impl IndicatorsApi for Client {
             struct Resp {
                 results: SingleIndicatorResults,
             }
-            let resp: Resp = self
-                .get(&path, &query, params.options.as_ref())
-                .await?;
+            let resp: Resp = self.get(&path, &query, params.options.as_ref()).await?;
             Ok(resp.results)
         })
     }
@@ -277,9 +273,7 @@ impl IndicatorsApi for Client {
             struct Resp {
                 results: SingleIndicatorResults,
             }
-            let resp: Resp = self
-                .get(&path, &query, params.options.as_ref())
-                .await?;
+            let resp: Resp = self.get(&path, &query, params.options.as_ref()).await?;
             Ok(resp.results)
         })
     }
@@ -337,9 +331,7 @@ impl IndicatorsApi for Client {
             struct Resp {
                 results: MacdIndicatorResults,
             }
-            let resp: Resp = self
-                .get(&path, &query, params.options.as_ref())
-                .await?;
+            let resp: Resp = self.get(&path, &query, params.options.as_ref()).await?;
             Ok(resp.results)
         })
     }

@@ -1,6 +1,6 @@
 [package]
 name = "massive-rs"
-version = "0.2.0"
+version = "0.3.0"
 edition = "2021"
 authors = ["Johnathon Fox <johnathon.fox@gmail.com>"]
 description = "Async Rust client for the Massive.com (formerly Polygon.io) REST and WebSocket API"
@@ -20,7 +20,8 @@ name = "massive"
 [dependencies]
 reqwest = { version = "0.12", features = ["json", "gzip", "rustls-tls"], default-features = false }
 serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0"
+serde_json = { version = "1.0", features = ["raw_value"] }
+rust_decimal = { version = "1", features = ["serde"] }
 serde_urlencoded = "0.7"
 thiserror = "2.0"
 tokio = { version = "1", features = ["rt-multi-thread", "macros", "time"] }
@@ -32,6 +33,7 @@ chrono = { version = "0.4", features = ["serde"] }
 url = "2.5"
 
 [dev-dependencies]
+rust_decimal_macros = "1"
 tokio-test = "0.4"
 wiremock = "0.6"
 

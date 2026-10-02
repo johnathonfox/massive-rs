@@ -1,25 +1,33 @@
-use serde::{Deserialize, Serialize};
 use super::aggs::Agg;
 use super::quotes::LastQuote;
 use super::trades::LastTrade;
+use rust_decimal::Decimal;
+use serde::{Deserialize, Serialize};
 
 /// Most recent minute bar.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct MinuteSnapshot {
     #[serde(rename = "av")]
-    pub accumulated_volume: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub accumulated_volume: Option<Decimal>,
     #[serde(rename = "o")]
-    pub open: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub open: Option<Decimal>,
     #[serde(rename = "h")]
-    pub high: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub high: Option<Decimal>,
     #[serde(rename = "l")]
-    pub low: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub low: Option<Decimal>,
     #[serde(rename = "c")]
-    pub close: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub close: Option<Decimal>,
     #[serde(rename = "v")]
-    pub volume: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub volume: Option<Decimal>,
     #[serde(rename = "vw")]
-    pub vwap: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub vwap: Option<Decimal>,
     pub otc: Option<bool>,
     #[serde(rename = "t")]
     pub timestamp: Option<i64>,
@@ -34,20 +42,28 @@ pub struct MinuteSnapshot {
 /// Data for the most recent daily bar in an index snapshot.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct IndicesSession {
-    pub change: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub change: Option<Decimal>,
     #[serde(rename = "change_percent")]
-    pub change_percent: Option<f64>,
-    pub close: Option<f64>,
-    pub high: Option<f64>,
-    pub low: Option<f64>,
-    pub open: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub change_percent: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub close: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub high: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub low: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub open: Option<Decimal>,
     #[serde(rename = "previous_close")]
-    pub previous_close: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub previous_close: Option<Decimal>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct IndicesSnapshot {
-    pub value: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub value: Option<Decimal>,
     pub name: Option<String>,
     #[serde(rename = "type")]
     pub type_: Option<String>,
@@ -73,30 +89,42 @@ pub struct TickerSnapshot {
     pub prev_day: Option<Agg>,
     pub ticker: Option<String>,
     #[serde(rename = "todaysChange")]
-    pub todays_change: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub todays_change: Option<Decimal>,
     #[serde(rename = "todaysChangePerc")]
-    pub todays_change_percent: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub todays_change_percent: Option<Decimal>,
     pub updated: Option<i64>,
     #[serde(rename = "fmv")]
-    pub fair_market_value: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub fair_market_value: Option<Decimal>,
 }
 
 /// Data for the most recent daily bar in an options contract.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct DayOptionContractSnapshot {
-    pub change: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub change: Option<Decimal>,
     #[serde(rename = "change_percent")]
-    pub change_percent: Option<f64>,
-    pub close: Option<f64>,
-    pub high: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub change_percent: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub close: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub high: Option<Decimal>,
     #[serde(rename = "last_updated")]
     pub last_updated: Option<i64>,
-    pub low: Option<f64>,
-    pub open: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub low: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub open: Option<Decimal>,
     #[serde(rename = "previous_close")]
-    pub previous_close: Option<f64>,
-    pub volume: Option<f64>,
-    pub vwap: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub previous_close: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub volume: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub vwap: Option<Decimal>,
 }
 
 /// Details for an options contract.
@@ -109,31 +137,39 @@ pub struct OptionDetails {
     #[serde(rename = "expiration_date")]
     pub expiration_date: Option<String>,
     #[serde(rename = "shares_per_contract")]
-    pub shares_per_contract: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub shares_per_contract: Option<Decimal>,
     #[serde(rename = "strike_price")]
-    pub strike_price: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub strike_price: Option<Decimal>,
     pub ticker: Option<String>,
 }
 
 /// Data for the most recent quote in an options contract.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct LastQuoteOptionContractSnapshot {
-    pub ask: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub ask: Option<Decimal>,
     #[serde(rename = "ask_size")]
-    pub ask_size: Option<f64>,
-    pub bid: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub ask_size: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub bid: Option<Decimal>,
     #[serde(rename = "bid_size")]
-    pub bid_size: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub bid_size: Option<Decimal>,
     #[serde(rename = "last_updated")]
     pub last_updated: Option<i64>,
-    pub midpoint: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub midpoint: Option<Decimal>,
     pub timeframe: Option<String>,
 }
 
 /// Data for the most recent trade for an options contract.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct LastTradeOptionContractSnapshot {
-    pub price: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub price: Option<Decimal>,
     #[serde(rename = "sip_timestamp")]
     pub sip_timestamp: Option<i64>,
     pub size: Option<i64>,
@@ -145,21 +181,28 @@ pub struct LastTradeOptionContractSnapshot {
 /// Greeks data for an options contract.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct Greeks {
-    pub delta: Option<f64>,
-    pub gamma: Option<f64>,
-    pub theta: Option<f64>,
-    pub vega: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub delta: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub gamma: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub theta: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub vega: Option<Decimal>,
 }
 
 /// Data for the underlying stock in an options contract.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct UnderlyingAsset {
     #[serde(rename = "change_to_break_even")]
-    pub change_to_break_even: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub change_to_break_even: Option<Decimal>,
     #[serde(rename = "last_updated")]
     pub last_updated: Option<i64>,
-    pub price: Option<f64>,
-    pub value: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub price: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub value: Option<Decimal>,
     pub ticker: Option<String>,
     pub timeframe: Option<String>,
 }
@@ -168,31 +211,37 @@ pub struct UnderlyingAsset {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct OptionContractSnapshot {
     #[serde(rename = "break_even_price")]
-    pub break_even_price: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub break_even_price: Option<Decimal>,
     pub day: Option<DayOptionContractSnapshot>,
     pub details: Option<OptionDetails>,
     pub greeks: Option<Greeks>,
     #[serde(rename = "implied_volatility")]
-    pub implied_volatility: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub implied_volatility: Option<Decimal>,
     #[serde(rename = "last_quote")]
     pub last_quote: Option<LastQuoteOptionContractSnapshot>,
     #[serde(rename = "last_trade")]
     pub last_trade: Option<LastTradeOptionContractSnapshot>,
     #[serde(rename = "open_interest")]
-    pub open_interest: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub open_interest: Option<Decimal>,
     #[serde(rename = "underlying_asset")]
     pub underlying_asset: Option<UnderlyingAsset>,
     #[serde(rename = "fmv")]
-    pub fair_market_value: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub fair_market_value: Option<Decimal>,
 }
 
 /// Data for a book bid or ask.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct OrderBookQuote {
     #[serde(rename = "p")]
-    pub price: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub price: Option<Decimal>,
     #[serde(rename = "x")]
-    pub exchange_shares: Option<std::collections::HashMap<String, f64>>,
+    #[serde(default, deserialize_with = "crate::de::decimal_map_opt")]
+    pub exchange_shares: Option<std::collections::HashMap<String, Decimal>>,
 }
 
 /// Current level 2 book of a single ticker, combined from all exchanges.
@@ -202,40 +251,59 @@ pub struct SnapshotTickerFullBook {
     pub bids: Option<Vec<OrderBookQuote>>,
     pub asks: Option<Vec<OrderBookQuote>>,
     #[serde(rename = "bidCount")]
-    pub bid_count: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub bid_count: Option<Decimal>,
     #[serde(rename = "askCount")]
-    pub ask_count: Option<f64>,
-    pub spread: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub ask_count: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub spread: Option<Decimal>,
     pub updated: Option<i64>,
 }
 
 /// Data about the most recent trading session for an asset.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct UniversalSnapshotSession {
-    pub price: Option<f64>,
-    pub change: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub price: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub change: Option<Decimal>,
     #[serde(rename = "change_percent")]
-    pub change_percent: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub change_percent: Option<Decimal>,
     #[serde(rename = "early_trading_change")]
-    pub early_trading_change: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub early_trading_change: Option<Decimal>,
     #[serde(rename = "early_trading_change_percent")]
-    pub early_trading_change_percent: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub early_trading_change_percent: Option<Decimal>,
     #[serde(rename = "regular_trading_change")]
-    pub regular_trading_change: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub regular_trading_change: Option<Decimal>,
     #[serde(rename = "regular_trading_change_percent")]
-    pub regular_trading_change_percent: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub regular_trading_change_percent: Option<Decimal>,
     #[serde(rename = "late_trading_change")]
-    pub late_trading_change: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub late_trading_change: Option<Decimal>,
     #[serde(rename = "late_trading_change_percent")]
-    pub late_trading_change_percent: Option<f64>,
-    pub open: Option<f64>,
-    pub close: Option<f64>,
-    pub high: Option<f64>,
-    pub low: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub late_trading_change_percent: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub open: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub close: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub high: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub low: Option<Decimal>,
     #[serde(rename = "previous_close")]
-    pub previous_close: Option<f64>,
-    pub volume: Option<f64>,
-    pub vwap: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub previous_close: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub volume: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub vwap: Option<Decimal>,
     #[serde(rename = "last_updated")]
     pub last_updated: Option<i64>,
     #[serde(rename = "decimal_volume")]
@@ -245,17 +313,22 @@ pub struct UniversalSnapshotSession {
 /// The most recent quote for an asset.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct UniversalSnapshotLastQuote {
-    pub ask: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub ask: Option<Decimal>,
     #[serde(rename = "ask_size")]
-    pub ask_size: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub ask_size: Option<Decimal>,
     #[serde(rename = "ask_exchange")]
     pub ask_exchange: Option<i64>,
-    pub bid: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub bid: Option<Decimal>,
     #[serde(rename = "bid_size")]
-    pub bid_size: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub bid_size: Option<Decimal>,
     #[serde(rename = "bid_exchange")]
     pub bid_exchange: Option<i64>,
-    pub midpoint: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub midpoint: Option<Decimal>,
     pub exchange: Option<i64>,
     pub timeframe: Option<String>,
     #[serde(rename = "last_updated")]
@@ -266,7 +339,8 @@ pub struct UniversalSnapshotLastQuote {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct UniversalSnapshotLastTrade {
     pub id: Option<i64>,
-    pub price: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub price: Option<Decimal>,
     pub size: Option<i64>,
     pub exchange: Option<i64>,
     pub conditions: Option<Vec<i64>>,
@@ -284,12 +358,18 @@ pub struct UniversalSnapshotLastTrade {
 /// The most recent minute-level aggregate for the asset.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct UniversalSnapshotLastMinute {
-    pub open: Option<f64>,
-    pub close: Option<f64>,
-    pub high: Option<f64>,
-    pub low: Option<f64>,
-    pub volume: Option<f64>,
-    pub vwap: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub open: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub close: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub high: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub low: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub volume: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub vwap: Option<Decimal>,
     pub transactions: Option<i64>,
     #[serde(rename = "last_updated")]
     pub last_updated: Option<i64>,
@@ -301,10 +381,13 @@ pub struct UniversalSnapshotLastMinute {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct UniversalSnapshotUnderlyingAsset {
     pub ticker: Option<String>,
-    pub price: Option<f64>,
-    pub value: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub price: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub value: Option<Decimal>,
     #[serde(rename = "change_to_break_even")]
-    pub change_to_break_even: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub change_to_break_even: Option<Decimal>,
     pub timeframe: Option<String>,
     #[serde(rename = "last_updated")]
     pub last_updated: Option<i64>,
@@ -320,9 +403,11 @@ pub struct UniversalSnapshotDetails {
     #[serde(rename = "expiration_date")]
     pub expiration_date: Option<String>,
     #[serde(rename = "shares_per_contract")]
-    pub shares_per_contract: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub shares_per_contract: Option<Decimal>,
     #[serde(rename = "strike_price")]
-    pub strike_price: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub strike_price: Option<Decimal>,
 }
 
 /// Snapshot data for an asset (stocks, options, indices, fx, crypto).
@@ -343,19 +428,24 @@ pub struct UniversalSnapshot {
     pub underlying_asset: Option<UniversalSnapshotUnderlyingAsset>,
     pub details: Option<UniversalSnapshotDetails>,
     #[serde(rename = "break_even_price")]
-    pub break_even_price: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub break_even_price: Option<Decimal>,
     #[serde(rename = "implied_volatility")]
-    pub implied_volatility: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub implied_volatility: Option<Decimal>,
     #[serde(rename = "open_interest")]
-    pub open_interest: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub open_interest: Option<Decimal>,
     #[serde(rename = "market_status")]
     pub market_status: Option<String>,
     pub name: Option<String>,
     #[serde(rename = "fmv")]
-    pub fair_market_value: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub fair_market_value: Option<Decimal>,
     pub error: Option<String>,
     pub message: Option<String>,
-    pub value: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub value: Option<Decimal>,
     #[serde(rename = "last_updated")]
     pub last_updated: Option<i64>,
     pub timeframe: Option<String>,

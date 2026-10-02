@@ -127,9 +127,7 @@ impl TradesApi for Client {
             struct Resp {
                 results: LastTrade,
             }
-            let resp: Resp = self
-                .get(&path, &query, params.options.as_ref())
-                .await?;
+            let resp: Resp = self.get(&path, &query, params.options.as_ref()).await?;
             Ok(resp.results)
         })
     }
@@ -162,9 +160,7 @@ impl TradesApi for Client {
             struct Resp {
                 last: CryptoTrade,
             }
-            let resp: Resp = self
-                .get(&path, &query, params.options.as_ref())
-                .await?;
+            let resp: Resp = self.get(&path, &query, params.options.as_ref()).await?;
             Ok(resp.last)
         })
     }

@@ -1,20 +1,27 @@
+use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
 /// Aggregate data for a given ticker symbol over a date range in a custom time window size.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct Agg {
     #[serde(rename = "o")]
-    pub open: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub open: Option<Decimal>,
     #[serde(rename = "h")]
-    pub high: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub high: Option<Decimal>,
     #[serde(rename = "l")]
-    pub low: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub low: Option<Decimal>,
     #[serde(rename = "c")]
-    pub close: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub close: Option<Decimal>,
     #[serde(rename = "v")]
-    pub volume: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub volume: Option<Decimal>,
     #[serde(rename = "vw")]
-    pub vwap: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub vwap: Option<Decimal>,
     #[serde(rename = "t")]
     pub timestamp: Option<i64>,
     #[serde(rename = "n")]
@@ -29,17 +36,23 @@ pub struct GroupedDailyAgg {
     #[serde(rename = "T")]
     pub ticker: Option<String>,
     #[serde(rename = "o")]
-    pub open: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub open: Option<Decimal>,
     #[serde(rename = "h")]
-    pub high: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub high: Option<Decimal>,
     #[serde(rename = "l")]
-    pub low: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub low: Option<Decimal>,
     #[serde(rename = "c")]
-    pub close: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub close: Option<Decimal>,
     #[serde(rename = "v")]
-    pub volume: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub volume: Option<Decimal>,
     #[serde(rename = "vw")]
-    pub vwap: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub vwap: Option<Decimal>,
     #[serde(rename = "t")]
     pub timestamp: Option<i64>,
     #[serde(rename = "n")]
@@ -52,18 +65,25 @@ pub struct GroupedDailyAgg {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct DailyOpenCloseAgg {
     #[serde(rename = "afterHours")]
-    pub after_hours: Option<f64>,
-    pub close: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub after_hours: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub close: Option<Decimal>,
     #[serde(rename = "from")]
     pub from_: Option<String>,
-    pub high: Option<f64>,
-    pub low: Option<f64>,
-    pub open: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub high: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub low: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub open: Option<Decimal>,
     #[serde(rename = "preMarket")]
-    pub pre_market: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub pre_market: Option<Decimal>,
     pub status: Option<String>,
     pub symbol: Option<String>,
-    pub volume: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub volume: Option<Decimal>,
     pub otc: Option<bool>,
 }
 
@@ -73,17 +93,24 @@ pub struct PreviousCloseAgg {
     #[serde(rename = "T")]
     pub ticker: Option<String>,
     #[serde(rename = "c")]
-    pub close: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub close: Option<Decimal>,
     #[serde(rename = "h")]
-    pub high: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub high: Option<Decimal>,
     #[serde(rename = "l")]
-    pub low: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub low: Option<Decimal>,
     #[serde(rename = "o")]
-    pub open: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub open: Option<Decimal>,
     #[serde(rename = "t")]
-    pub timestamp: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub timestamp: Option<Decimal>,
     #[serde(rename = "v")]
-    pub volume: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub volume: Option<Decimal>,
     #[serde(rename = "vw")]
-    pub vwap: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub vwap: Option<Decimal>,
 }

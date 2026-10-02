@@ -31,12 +31,19 @@ pub(crate) async fn send_with_retry(
     loop {
         let resp = client.get(url).headers(headers.clone()).send().await?;
         let status = resp.status();
-        let retryable = status == reqwest::StatusCode::TOO_MANY_REQUESTS || status.is_server_error();
+        let retryable =
+            status == reqwest::StatusCode::TOO_MANY_REQUESTS || status.is_server_error();
         if !retryable || attempt >= max_retries {
             return Ok(resp);
         }
-        let backoff = std::time::Duration::from_millis(200 * 2u64.pow(attempt)).min(std::time::Duration::from_secs(5));
-        tracing::debug!("retrying {} after {} (attempt {})", url, status, attempt + 1);
+        let backoff = std::time::Duration::from_millis(200 * 2u64.pow(attempt))
+            .min(std::time::Duration::from_secs(5));
+        tracing::debug!(
+            "retrying {} after {} (attempt {})",
+            url,
+            status,
+            attempt + 1
+        );
         tokio::time::sleep(backoff).await;
         attempt += 1;
     }
@@ -91,7 +98,12 @@ impl<T: DeserializeOwned + Send + 'static> PaginatedStream<T> {
         }
     }
 
-    fn fetch_page(client: reqwest::Client, headers: HeaderMap, max_retries: u32, url: String) -> PageFuture<T> {
+    fn fetch_page(
+        client: reqwest::Client,
+        headers: HeaderMap,
+        max_retries: u32,
+        url: String,
+    ) -> PageFuture<T> {
         Box::pin(async move {
             let resp = send_with_retry(&client, &url, headers, max_retries).await?;
             let status = resp.status();
@@ -141,7 +153,11 @@ impl<T: DeserializeOwned + Send + 'static> Stream for PaginatedStream<T> {
                     }
                     Poll::Ready(Ok(page)) => {
                         this.pending = None;
-                        this.next_url = if this.follow_pages { page.next_url } else { None };
+                        this.next_url = if this.follow_pages {
+                            page.next_url
+                        } else {
+                            None
+                        };
                         if let Some(results) = page.results {
                             this.buffer = results.into();
                         }

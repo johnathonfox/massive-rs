@@ -1,3 +1,4 @@
+use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
 /// Split contains data for a historical stock split, including the ticker symbol, the execution date, and the factors of the split ratio.
@@ -15,9 +16,12 @@ pub struct Split {
 pub struct StockSplit {
     pub adjustment_type: Option<String>,
     pub execution_date: Option<String>,
-    pub historical_adjustment_factor: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub historical_adjustment_factor: Option<Decimal>,
     pub id: Option<String>,
-    pub split_from: Option<f64>,
-    pub split_to: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub split_from: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub split_to: Option<Decimal>,
     pub ticker: Option<String>,
 }

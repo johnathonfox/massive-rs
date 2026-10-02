@@ -1,3 +1,4 @@
+use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
 /// Trade data for a specified ticker symbol.
@@ -8,10 +9,12 @@ pub struct Trade {
     pub exchange: Option<i64>,
     pub id: Option<String>,
     pub participant_timestamp: Option<i64>,
-    pub price: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub price: Option<Decimal>,
     pub sequence_number: Option<i64>,
     pub sip_timestamp: Option<i64>,
-    pub size: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub size: Option<Decimal>,
     pub tape: Option<i64>,
     pub trf_id: Option<i64>,
     pub trf_timestamp: Option<i64>,
@@ -26,7 +29,8 @@ pub struct LastTrade {
     #[serde(rename = "f")]
     pub trf_timestamp: Option<i64>,
     #[serde(rename = "q")]
-    pub sequence_number: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub sequence_number: Option<Decimal>,
     #[serde(rename = "t")]
     pub sip_timestamp: Option<i64>,
     #[serde(rename = "y")]
@@ -38,11 +42,13 @@ pub struct LastTrade {
     #[serde(rename = "i")]
     pub id: Option<String>,
     #[serde(rename = "p")]
-    pub price: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub price: Option<Decimal>,
     #[serde(rename = "r")]
     pub trf_id: Option<i64>,
     #[serde(rename = "s")]
-    pub size: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub size: Option<Decimal>,
     #[serde(rename = "x")]
     pub exchange: Option<i64>,
     #[serde(rename = "z")]
@@ -56,7 +62,9 @@ pub struct LastTrade {
 pub struct CryptoTrade {
     pub conditions: Option<Vec<i64>>,
     pub exchange: Option<i64>,
-    pub price: Option<f64>,
-    pub size: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub price: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub size: Option<Decimal>,
     pub timestamp: Option<i64>,
 }

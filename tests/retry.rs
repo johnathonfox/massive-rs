@@ -1,5 +1,7 @@
 //! Tests for opt-in 429/5xx retry behavior.
 
+use rust_decimal_macros::dec;
+
 use futures::TryStreamExt;
 use massive::rest::TradesApi;
 use massive::Client;
@@ -32,7 +34,7 @@ async fn get_retries_on_429_then_succeeds() {
         .with_base(server.uri())
         .with_max_retries(3);
     let trade = client.get_last_trade("AAPL", None).await.unwrap();
-    assert_eq!(trade.price, Some(150.5));
+    assert_eq!(trade.price, Some(dec!(150.5)));
 }
 
 #[tokio::test]

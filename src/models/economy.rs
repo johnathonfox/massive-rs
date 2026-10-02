@@ -1,55 +1,84 @@
+use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
 /// Treasury yield data for a specific date.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct TreasuryYield {
     pub date: Option<String>,
-    pub yield_1_month: Option<f64>,
-    pub yield_3_month: Option<f64>,
-    pub yield_6_month: Option<f64>,
-    pub yield_1_year: Option<f64>,
-    pub yield_2_year: Option<f64>,
-    pub yield_3_year: Option<f64>,
-    pub yield_5_year: Option<f64>,
-    pub yield_7_year: Option<f64>,
-    pub yield_10_year: Option<f64>,
-    pub yield_20_year: Option<f64>,
-    pub yield_30_year: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub yield_1_month: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub yield_3_month: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub yield_6_month: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub yield_1_year: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub yield_2_year: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub yield_3_year: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub yield_5_year: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub yield_7_year: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub yield_10_year: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub yield_20_year: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub yield_30_year: Option<Decimal>,
 }
 
 /// Fed inflation data (CPI/PCE) for a specific date.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct FedInflation {
-    pub cpi: Option<f64>,
-    pub cpi_core: Option<f64>,
-    pub cpi_year_over_year: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub cpi: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub cpi_core: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub cpi_year_over_year: Option<Decimal>,
     pub date: Option<String>,
-    pub pce: Option<f64>,
-    pub pce_core: Option<f64>,
-    pub pce_spending: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub pce: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub pce_core: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub pce_spending: Option<Decimal>,
 }
 
 /// Fed inflation expectations for various horizons.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct FedInflationExpectations {
     pub date: Option<String>,
-    pub forward_years_5_to_10: Option<f64>,
-    pub market_10_year: Option<f64>,
-    pub market_5_year: Option<f64>,
-    pub model_10_year: Option<f64>,
-    pub model_1_year: Option<f64>,
-    pub model_30_year: Option<f64>,
-    pub model_5_year: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub forward_years_5_to_10: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub market_10_year: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub market_5_year: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub model_10_year: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub model_1_year: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub model_30_year: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub model_5_year: Option<Decimal>,
 }
 
 /// Fed labor market indicators for a specific date.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct FedLaborMarket {
-    pub avg_hourly_earnings: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub avg_hourly_earnings: Option<Decimal>,
     pub date: Option<String>,
-    pub job_openings: Option<f64>,
-    pub labor_force_participation_rate: Option<f64>,
-    pub unemployment_rate: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub job_openings: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub labor_force_participation_rate: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub unemployment_rate: Option<Decimal>,
 }
 
 /// Aggregated consumer transactions from European credit card panels.
@@ -66,13 +95,16 @@ pub struct EUMerchantAggregate {
     pub parent_name: Option<String>,
     pub published_date: Option<String>,
     pub spend_in_distinct_account_key_count: Option<i64>,
-    pub spend_in_spend: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub spend_in_spend: Option<Decimal>,
     pub spend_in_transaction_count: Option<i64>,
     pub spend_out_distinct_account_key_count: Option<i64>,
-    pub spend_out_spend: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub spend_out_spend: Option<Decimal>,
     pub spend_out_transaction_count: Option<i64>,
     pub total_accounts: Option<i64>,
-    pub total_spend: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub total_spend: Option<Decimal>,
     pub total_transactions: Option<i64>,
     pub transaction_currency: Option<String>,
     pub transaction_date: Option<String>,

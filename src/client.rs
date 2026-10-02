@@ -1,6 +1,6 @@
 use crate::error::{Error, Result};
 use crate::paginate::PaginatedStream;
-use reqwest::header::{HeaderMap, HeaderValue, AUTHORIZATION, ACCEPT_ENCODING, USER_AGENT};
+use reqwest::header::{HeaderMap, HeaderValue, ACCEPT_ENCODING, AUTHORIZATION, USER_AGENT};
 use std::time::Duration;
 use tracing::info;
 
@@ -21,9 +21,15 @@ impl RequestOptions {
     pub fn with_edge_headers(edge_id: &str, edge_ip: &str, edge_user: Option<&str>) -> Self {
         let mut headers = HeaderMap::new();
         headers.insert("X-Massive-Edge-ID", HeaderValue::from_str(edge_id).unwrap());
-        headers.insert("X-Massive-Edge-IP-Address", HeaderValue::from_str(edge_ip).unwrap());
+        headers.insert(
+            "X-Massive-Edge-IP-Address",
+            HeaderValue::from_str(edge_ip).unwrap(),
+        );
         if let Some(u) = edge_user {
-            headers.insert("X-Massive-Edge-User-Agent", HeaderValue::from_str(u).unwrap());
+            headers.insert(
+                "X-Massive-Edge-User-Agent",
+                HeaderValue::from_str(u).unwrap(),
+            );
         }
         Self { headers }
     }
@@ -98,7 +104,10 @@ impl Client {
         let auth = format!("Bearer {}", self.api_key);
         headers.insert(AUTHORIZATION, HeaderValue::from_str(&auth).unwrap());
         headers.insert(ACCEPT_ENCODING, HeaderValue::from_static("gzip"));
-        headers.insert(USER_AGENT, HeaderValue::from_static(concat!("massive-rs/", env!("CARGO_PKG_VERSION"))));
+        headers.insert(
+            USER_AGENT,
+            HeaderValue::from_static(concat!("massive-rs/", env!("CARGO_PKG_VERSION"))),
+        );
         headers
     }
 
@@ -137,7 +146,8 @@ impl Client {
             info!("Request URL: {}", url);
         }
 
-        let resp = crate::paginate::send_with_retry(&self.http, &url, headers, self.max_retries).await?;
+        let resp =
+            crate::paginate::send_with_retry(&self.http, &url, headers, self.max_retries).await?;
         let status = resp.status();
 
         if self.trace {

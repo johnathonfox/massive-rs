@@ -55,8 +55,22 @@ async fn live_list_tickers_stream() {
     let tickers: Vec<_> = client
         .list_tickers(
             Some("AAPL"),
-            None, None, None, None, None, None, None, None, None, None, None, None, Some(1), None,
-            None, None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            Some(1),
+            None,
+            None,
+            None,
         )
         .take(1)
         .try_collect()

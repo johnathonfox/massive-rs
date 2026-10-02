@@ -2,6 +2,8 @@
 //! The params path must produce the exact same wire requests as the flat
 //! positional methods.
 
+use rust_decimal_macros::dec;
+
 use futures::TryStreamExt;
 use massive::rest::{GetSummariesParams, ListTradesParams};
 use massive::{rest::AggsApi, rest::SummariesApi, rest::TradesApi, Client};
@@ -62,7 +64,7 @@ async fn get_last_trade_with_params_sends_no_extra_query() {
         .get_last_trade_with_params("AAPL", massive::rest::GetLastTradeParams::new())
         .await
         .unwrap();
-    assert_eq!(trade.price, Some(150.5));
+    assert_eq!(trade.price, Some(dec!(150.5)));
 }
 
 #[tokio::test]
@@ -94,7 +96,9 @@ async fn aggs_params_serialize_full_query() {
 
     let server = MockServer::start().await;
     Mock::given(method("GET"))
-        .and(path("/v2/aggs/ticker/AAPL/range/1/day/2023-01-01/2023-06-13"))
+        .and(path(
+            "/v2/aggs/ticker/AAPL/range/1/day/2023-01-01/2023-06-13",
+        ))
         .and(query_param("adjusted", "true"))
         .and(query_param("sort", "asc"))
         .and(query_param("limit", "50000"))
@@ -115,7 +119,9 @@ async fn aggs_params_serialize_full_query() {
         .mount(&server)
         .await;
 
-    let client = massive::Client::new("test-key").unwrap().with_base(server.uri());
+    let client = massive::Client::new("test-key")
+        .unwrap()
+        .with_base(server.uri());
     let _: Vec<_> = futures::TryStreamExt::try_collect(
         client.list_aggs_with_params(
             "AAPL",
@@ -123,7 +129,10 @@ async fn aggs_params_serialize_full_query() {
             "day",
             "2023-01-01",
             "2023-06-13",
-            ListAggsParams::new().adjusted(true).sort("asc").limit(50000),
+            ListAggsParams::new()
+                .adjusted(true)
+                .sort("asc")
+                .limit(50000),
         ),
     )
     .await

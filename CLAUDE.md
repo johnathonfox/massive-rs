@@ -60,6 +60,10 @@ Feature-parity target: the official Python client
   `self.get`/`self.list`. No client-side defaults — unset fields are omitted
   (server defaults apply). Field declaration order is wire order; keep it
   matching Python's parameter order.
+- Models: numeric fields are `Option<Decimal>` with
+  `#[serde(default, deserialize_with = "crate::de::decimal_opt")]` (maps of
+  numbers use `decimal_map_opt`), never `f64`: values are read from the raw JSON
+  token so money never passes through a float. Integers stay `i64`.
 - Models: all fields `Option<...>` unless Python declares them required; serde
   renames taken from each Python class's `from_dict` wire keys exactly (some are
   short keys like `"sym"`, some camelCase, some snake_case — check each).

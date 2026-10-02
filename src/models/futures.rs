@@ -1,19 +1,27 @@
+use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
 /// A single aggregate bar for a futures contract in a given time window.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct FuturesAgg {
     pub ticker: Option<String>,
-    pub open: Option<f64>,
-    pub high: Option<f64>,
-    pub low: Option<f64>,
-    pub close: Option<f64>,
-    pub volume: Option<f64>,
-    pub dollar_volume: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub open: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub high: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub low: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub close: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub volume: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub dollar_volume: Option<Decimal>,
     pub transactions: Option<i64>,
     pub window_start: Option<i64>,
     pub session_end_date: Option<String>,
-    pub settlement_price: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub settlement_price: Option<Decimal>,
 }
 
 /// Represents a single futures contract (or a 'combo' contract).
@@ -33,9 +41,12 @@ pub struct FuturesContract {
     pub min_order_quantity: Option<i64>,
     pub max_order_quantity: Option<i64>,
     pub settlement_date: Option<String>,
-    pub settlement_tick_size: Option<f64>,
-    pub spread_tick_size: Option<f64>,
-    pub trade_tick_size: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub settlement_tick_size: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub spread_tick_size: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub trade_tick_size: Option<Decimal>,
     pub group_code: Option<String>,
 }
 
@@ -59,7 +70,8 @@ pub struct FuturesProduct {
     pub settlement_type: Option<String>,
     pub trade_currency_code: Option<String>,
     pub unit_of_measure: Option<String>,
-    pub unit_of_measure_qty: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub unit_of_measure_qty: Option<Decimal>,
 }
 
 /// Represents a futures NBBO quote within a given time range.
@@ -68,11 +80,15 @@ pub struct FuturesQuote {
     pub ticker: Option<String>,
     pub timestamp: Option<i64>,
     pub session_end_date: Option<String>,
-    pub ask_price: Option<f64>,
-    pub ask_size: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub ask_price: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub ask_size: Option<Decimal>,
     pub ask_timestamp: Option<i64>,
-    pub bid_price: Option<f64>,
-    pub bid_size: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub bid_price: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub bid_size: Option<Decimal>,
     pub bid_timestamp: Option<i64>,
     pub channel: Option<i64>,
     pub report_sequence: Option<i64>,
@@ -86,8 +102,10 @@ pub struct FuturesTrade {
     pub timestamp: Option<i64>,
     pub session_end_date: Option<String>,
     pub channel: Option<i64>,
-    pub price: Option<f64>,
-    pub size: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub price: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub size: Option<Decimal>,
     pub report_sequence: Option<i64>,
     pub sequence_number: Option<i64>,
 }
@@ -126,22 +144,29 @@ pub struct FuturesSnapshotDetails {
 /// Last-minute aggregate section of a futures snapshot.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct FuturesSnapshotMinute {
-    pub close: Option<f64>,
-    pub high: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub close: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub high: Option<Decimal>,
     pub last_updated: Option<i64>,
-    pub low: Option<f64>,
-    pub open: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub low: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub open: Option<Decimal>,
     pub timeframe: Option<String>,
-    pub volume: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub volume: Option<Decimal>,
 }
 
 /// Last-quote section of a futures snapshot.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct FuturesSnapshotQuote {
-    pub ask: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub ask: Option<Decimal>,
     pub ask_size: Option<i64>,
     pub ask_timestamp: Option<i64>,
-    pub bid: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub bid: Option<Decimal>,
     pub bid_size: Option<i64>,
     pub bid_timestamp: Option<i64>,
     pub last_updated: Option<i64>,
@@ -152,7 +177,8 @@ pub struct FuturesSnapshotQuote {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct FuturesSnapshotTrade {
     pub last_updated: Option<i64>,
-    pub price: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub price: Option<Decimal>,
     pub size: Option<i64>,
     pub timeframe: Option<String>,
 }
@@ -160,15 +186,24 @@ pub struct FuturesSnapshotTrade {
 /// Session section of a futures snapshot.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct FuturesSnapshotSession {
-    pub change: Option<f64>,
-    pub change_percent: Option<f64>,
-    pub close: Option<f64>,
-    pub high: Option<f64>,
-    pub low: Option<f64>,
-    pub open: Option<f64>,
-    pub previous_settlement: Option<f64>,
-    pub settlement_price: Option<f64>,
-    pub volume: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub change: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub change_percent: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub close: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub high: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub low: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub open: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub previous_settlement: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub settlement_price: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub volume: Option<Decimal>,
 }
 
 /// A futures snapshot combining details, last minute/quote/trade, and session data.

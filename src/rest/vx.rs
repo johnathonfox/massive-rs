@@ -202,16 +202,28 @@ pub struct ListStockFinancialsParams {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub period_of_report_date: Option<String>,
     /// The `period_of_report_date_lt` argument.
-    #[serde(rename = "period_of_report_date.lt", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "period_of_report_date.lt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub period_of_report_date_lt: Option<String>,
     /// The `period_of_report_date_lte` argument.
-    #[serde(rename = "period_of_report_date.lte", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "period_of_report_date.lte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub period_of_report_date_lte: Option<String>,
     /// The `period_of_report_date_gt` argument.
-    #[serde(rename = "period_of_report_date.gt", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "period_of_report_date.gt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub period_of_report_date_gt: Option<String>,
     /// The `period_of_report_date_gte` argument.
-    #[serde(rename = "period_of_report_date.gte", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "period_of_report_date.gte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub period_of_report_date_gte: Option<String>,
     /// The `timeframe` argument.
     #[serde(skip_serializing_if = "Option::is_none")]

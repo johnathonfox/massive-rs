@@ -1,5 +1,6 @@
 use massive::rest::{GetMacdParams, IndicatorsApi};
 use massive::Client;
+use rust_decimal_macros::dec;
 use wiremock::matchers::{header, method, path, query_param};
 use wiremock::{Mock, MockServer, ResponseTemplate};
 
@@ -83,9 +84,13 @@ async fn get_sma_hits_expected_path_and_unwraps_results() {
     let values = results.values.as_ref().unwrap();
     assert_eq!(values.len(), 2);
     assert_eq!(values[0].timestamp, Some(1683057600000));
-    assert_eq!(values[0].value, Some(129.42));
+    assert_eq!(values[0].value, Some(dec!(129.42)));
     let underlying = results.underlying.as_ref().unwrap();
-    assert!(underlying.url.as_ref().unwrap().contains("/v2/aggs/ticker/AAPL"));
+    assert!(underlying
+        .url
+        .as_ref()
+        .unwrap()
+        .contains("/v2/aggs/ticker/AAPL"));
 }
 
 #[tokio::test]
@@ -124,7 +129,7 @@ async fn get_ema_hits_expected_path() {
 
     let values = results.values.as_ref().unwrap();
     assert_eq!(values.len(), 2);
-    assert_eq!(values[1].value, Some(130.05));
+    assert_eq!(values[1].value, Some(dec!(130.05)));
 }
 
 #[tokio::test]
@@ -205,11 +210,15 @@ async fn get_macd_hits_expected_path_and_unwraps_results() {
 
     let values = results.values.as_ref().unwrap();
     assert_eq!(values.len(), 2);
-    assert_eq!(values[0].value, Some(1.234));
-    assert_eq!(values[0].signal, Some(1.001));
-    assert_eq!(values[0].histogram, Some(0.233));
+    assert_eq!(values[0].value, Some(dec!(1.234)));
+    assert_eq!(values[0].signal, Some(dec!(1.001)));
+    assert_eq!(values[0].histogram, Some(dec!(0.233)));
     let underlying = results.underlying.as_ref().unwrap();
-    assert!(underlying.url.as_ref().unwrap().contains("/v2/aggs/ticker/MSFT"));
+    assert!(underlying
+        .url
+        .as_ref()
+        .unwrap()
+        .contains("/v2/aggs/ticker/MSFT"));
 }
 
 #[tokio::test]

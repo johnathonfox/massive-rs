@@ -1,6 +1,7 @@
 use futures::TryStreamExt;
 use massive::rest::{ListUniversalSnapshotsParams, SnapshotApi};
 use massive::Client;
+use rust_decimal_macros::dec;
 use wiremock::matchers::{header, method, path, query_param};
 use wiremock::{Mock, MockServer, ResponseTemplate};
 
@@ -96,7 +97,7 @@ async fn list_universal_snapshots_hits_expected_path() {
     assert_eq!(snapshots[0].market_status.as_deref(), Some("open"));
     assert_eq!(
         snapshots[0].session.as_ref().unwrap().change_percent,
-        Some(0.8)
+        Some(dec!(0.8))
     );
 }
 
@@ -123,11 +124,8 @@ async fn get_snapshot_all_hits_expected_path() {
         .unwrap();
     assert_eq!(snapshots.len(), 2);
     assert_eq!(snapshots[0].ticker.as_deref(), Some("AAPL"));
-    assert_eq!(snapshots[0].todays_change, Some(1.23));
-    assert_eq!(
-        snapshots[0].day.as_ref().unwrap().close,
-        Some(151.8)
-    );
+    assert_eq!(snapshots[0].todays_change, Some(dec!(1.23)));
+    assert_eq!(snapshots[0].day.as_ref().unwrap().close, Some(dec!(151.8)));
 }
 
 #[tokio::test]
@@ -150,7 +148,7 @@ async fn get_snapshot_direction_hits_expected_path() {
         .unwrap();
     assert_eq!(snapshots.len(), 1);
     assert_eq!(snapshots[0].ticker.as_deref(), Some("TSLA"));
-    assert_eq!(snapshots[0].todays_change_percent, Some(0.82));
+    assert_eq!(snapshots[0].todays_change_percent, Some(dec!(0.82)));
 }
 
 #[tokio::test]
@@ -172,10 +170,10 @@ async fn get_snapshot_ticker_hits_expected_path() {
         .await
         .unwrap();
     assert_eq!(snapshot.ticker.as_deref(), Some("AAPL"));
-    assert_eq!(snapshot.day.as_ref().unwrap().vwap, Some(151.2));
+    assert_eq!(snapshot.day.as_ref().unwrap().vwap, Some(dec!(151.2)));
     assert_eq!(
         snapshot.last_trade.as_ref().unwrap().price,
-        Some(151.8)
+        Some(dec!(151.8))
     );
 }
 
@@ -197,15 +195,15 @@ async fn get_snapshot_option_hits_expected_path() {
         .get_snapshot_option("AAPL", "O:AAPL230120C00155000", None)
         .await
         .unwrap();
-    assert_eq!(snapshot.break_even_price, Some(179.075));
+    assert_eq!(snapshot.break_even_price, Some(dec!(179.075)));
     assert_eq!(
         snapshot.details.as_ref().unwrap().contract_type.as_deref(),
         Some("call")
     );
-    assert_eq!(snapshot.greeks.as_ref().unwrap().delta, Some(0.552));
+    assert_eq!(snapshot.greeks.as_ref().unwrap().delta, Some(dec!(0.552)));
     assert_eq!(
         snapshot.underlying_asset.as_ref().unwrap().price,
-        Some(173.15)
+        Some(dec!(173.15))
     );
 }
 
@@ -235,9 +233,9 @@ async fn list_snapshot_options_chain_hits_expected_path() {
     assert_eq!(chain.len(), 2);
     assert_eq!(
         chain[0].details.as_ref().unwrap().strike_price,
-        Some(155.0)
+        Some(dec!(155.0))
     );
-    assert_eq!(chain[1].open_interest, Some(8921.0));
+    assert_eq!(chain[1].open_interest, Some(dec!(8921.0)));
 }
 
 #[tokio::test]
@@ -269,12 +267,9 @@ async fn get_snapshot_crypto_book_hits_expected_path() {
         .await
         .unwrap();
     assert_eq!(book.ticker.as_deref(), Some("X:BTCUSD"));
-    assert_eq!(book.spread, Some(483.61));
+    assert_eq!(book.spread, Some(dec!(483.61)));
     assert_eq!(book.bids.as_ref().unwrap().len(), 2);
-    assert_eq!(
-        book.bids.as_ref().unwrap()[0].price,
-        Some(16354.17)
-    );
+    assert_eq!(book.bids.as_ref().unwrap()[0].price, Some(dec!(16354.17)));
 }
 
 #[tokio::test]
@@ -305,10 +300,10 @@ async fn get_snapshot_indices_hits_expected_path() {
         .unwrap();
     assert_eq!(snapshots.len(), 1);
     assert_eq!(snapshots[0].ticker.as_deref(), Some("I:SPX"));
-    assert_eq!(snapshots[0].value, Some(4401.05));
+    assert_eq!(snapshots[0].value, Some(dec!(4401.05)));
     assert_eq!(
         snapshots[0].session.as_ref().unwrap().change_percent,
-        Some(0.35)
+        Some(dec!(0.35))
     );
 }
 
