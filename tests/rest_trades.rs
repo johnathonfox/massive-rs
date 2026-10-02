@@ -1,5 +1,6 @@
 use futures::TryStreamExt;
 use massive::{rest::TradesApi, Client};
+use rust_decimal_macros::dec;
 use wiremock::matchers::{header, method, path, query_param};
 use wiremock::{Mock, MockServer, ResponseTemplate};
 
@@ -44,8 +45,8 @@ async fn list_trades_streams_single_page() {
 
     assert_eq!(trades.len(), 2);
     assert_eq!(trades[0].id.as_deref(), Some("1"));
-    assert_eq!(trades[0].price, Some(125.5));
-    assert_eq!(trades[1].size, Some(200.0));
+    assert_eq!(trades[0].price, Some(dec!(125.5)));
+    assert_eq!(trades[1].size, Some(dec!(200.0)));
 }
 
 #[tokio::test]
@@ -87,7 +88,16 @@ async fn list_trades_follows_next_url_with_auth_header() {
     let client = Client::new("test-key").unwrap().with_base(server.uri());
     let trades: Vec<_> = client
         .list_trades(
-            "AAPL", None, None, None, None, None, Some(2), None, None, None,
+            "AAPL",
+            None,
+            None,
+            None,
+            None,
+            None,
+            Some(2),
+            None,
+            None,
+            None,
         )
         .try_collect()
         .await
@@ -97,7 +107,7 @@ async fn list_trades_follows_next_url_with_auth_header() {
     // verifies the follow-up request carried the Authorization: Bearer header.
     let ids: Vec<&str> = trades.iter().map(|t| t.id.as_deref().unwrap()).collect();
     assert_eq!(ids, vec!["p1-a", "p1-b", "p2-a", "p2-b"]);
-    assert_eq!(trades[2].price, Some(125.6));
+    assert_eq!(trades[2].price, Some(dec!(125.6)));
 }
 
 #[tokio::test]
@@ -130,7 +140,16 @@ async fn list_trades_pagination_disabled_stops_after_first_page() {
         .with_pagination(false);
     let trades: Vec<_> = client
         .list_trades(
-            "AAPL", None, None, None, None, None, Some(2), None, None, None,
+            "AAPL",
+            None,
+            None,
+            None,
+            None,
+            None,
+            Some(2),
+            None,
+            None,
+            None,
         )
         .try_collect()
         .await
@@ -170,8 +189,8 @@ async fn get_last_trade_unwraps_results() {
     let trade = client.get_last_trade("AAPL", None).await.unwrap();
 
     assert_eq!(trade.ticker.as_deref(), Some("AAPL"));
-    assert_eq!(trade.price, Some(130.15));
-    assert_eq!(trade.size, Some(250.0));
+    assert_eq!(trade.price, Some(dec!(130.15)));
+    assert_eq!(trade.size, Some(dec!(250.0)));
     assert_eq!(trade.exchange, Some(4));
     assert_eq!(trade.conditions, Some(vec![12, 37]));
 }
@@ -198,10 +217,13 @@ async fn get_last_crypto_trade_unwraps_last() {
         .await;
 
     let client = Client::new("test-key").unwrap().with_base(server.uri());
-    let trade = client.get_last_crypto_trade("BTC", "USD", None).await.unwrap();
+    let trade = client
+        .get_last_crypto_trade("BTC", "USD", None)
+        .await
+        .unwrap();
 
-    assert_eq!(trade.price, Some(16808.5));
-    assert_eq!(trade.size, Some(0.0025));
+    assert_eq!(trade.price, Some(dec!(16808.5)));
+    assert_eq!(trade.size, Some(dec!(0.0025)));
     assert_eq!(trade.exchange, Some(1));
     assert_eq!(trade.timestamp, Some(1672750800000));
 }

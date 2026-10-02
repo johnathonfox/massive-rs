@@ -1,5 +1,6 @@
 use futures::TryStreamExt;
 use massive::{rest::QuotesApi, Client};
+use rust_decimal_macros::dec;
 use wiremock::matchers::{header, method, path, query_param};
 use wiremock::{Mock, MockServer, ResponseTemplate};
 
@@ -43,8 +44,8 @@ async fn list_quotes_streams_single_page() {
         .unwrap();
 
     assert_eq!(quotes.len(), 2);
-    assert_eq!(quotes[0].bid_price, Some(125.4));
-    assert_eq!(quotes[0].ask_price, Some(125.45));
+    assert_eq!(quotes[0].bid_price, Some(dec!(125.4)));
+    assert_eq!(quotes[0].ask_price, Some(dec!(125.45)));
     assert_eq!(quotes[1].sequence_number, Some(11));
 }
 
@@ -80,8 +81,8 @@ async fn get_last_quote_unwraps_results() {
     let quote = client.get_last_quote("AAPL", None).await.unwrap();
 
     assert_eq!(quote.ticker.as_deref(), Some("AAPL"));
-    assert_eq!(quote.bid_price, Some(130.14));
-    assert_eq!(quote.ask_price, Some(130.16));
+    assert_eq!(quote.bid_price, Some(dec!(130.14)));
+    assert_eq!(quote.ask_price, Some(dec!(130.16)));
     assert_eq!(quote.bid_size, Some(2));
     assert_eq!(quote.ask_size, Some(5));
 }
@@ -114,8 +115,8 @@ async fn get_last_forex_quote_returns_top_level_object() {
 
     assert_eq!(quote.symbol.as_deref(), Some("USD/EUR"));
     let last = quote.last.unwrap();
-    assert_eq!(last.ask, Some(0.9369));
-    assert_eq!(last.bid, Some(0.9366));
+    assert_eq!(last.ask, Some(dec!(0.9369)));
+    assert_eq!(last.bid, Some(dec!(0.9366)));
     assert_eq!(last.exchange, Some(48));
 }
 
@@ -152,8 +153,8 @@ async fn get_real_time_currency_conversion_sends_amount_and_precision() {
 
     assert_eq!(conversion.from_.as_deref(), Some("USD"));
     assert_eq!(conversion.to.as_deref(), Some("EUR"));
-    assert_eq!(conversion.initial_amount, Some(100.0));
-    assert_eq!(conversion.converted, Some(93.66));
+    assert_eq!(conversion.initial_amount, Some(dec!(100.0)));
+    assert_eq!(conversion.converted, Some(dec!(93.66)));
 }
 
 #[tokio::test]

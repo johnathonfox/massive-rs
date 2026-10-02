@@ -1,3 +1,4 @@
+use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
 use super::aggs::Agg;
@@ -6,16 +7,20 @@ use super::aggs::Agg;
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct IndicatorValue {
     pub timestamp: Option<i64>,
-    pub value: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub value: Option<Decimal>,
 }
 
 /// One datum for all MACD values.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct MacdIndicatorValue {
     pub timestamp: Option<i64>,
-    pub value: Option<f64>,
-    pub signal: Option<f64>,
-    pub histogram: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub value: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub signal: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub histogram: Option<Decimal>,
 }
 
 /// URL to call to get the aggs used for building the indicator.

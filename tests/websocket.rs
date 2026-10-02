@@ -163,7 +163,11 @@ async fn accept_ws(listener: &TcpListener) -> ServerWs {
 }
 
 fn status_frame(status: &str, message: &str) -> Message {
-    Message::Text(json!([{"ev":"status","status":status,"message":message}]).to_string())
+    Message::Text(
+        json!([{"ev":"status","status":status,"message":message}])
+            .to_string()
+            .into(),
+    )
 }
 
 /// Read the next text frame as JSON, skipping non-text frames.

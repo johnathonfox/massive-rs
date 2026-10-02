@@ -1,5 +1,6 @@
 use futures::TryStreamExt;
 use massive::{rest::AggsApi, Client};
+use rust_decimal_macros::dec;
 use wiremock::matchers::{header, method, path, query_param};
 use wiremock::{Mock, MockServer, ResponseTemplate};
 
@@ -46,8 +47,8 @@ async fn list_aggs_streams_single_page() {
         .unwrap();
 
     assert_eq!(aggs.len(), 2);
-    assert_eq!(aggs[0].close, Some(125.07));
-    assert_eq!(aggs[1].open, Some(126.89));
+    assert_eq!(aggs[0].close, Some(dec!(125.07)));
+    assert_eq!(aggs[1].open, Some(dec!(126.89)));
     assert_eq!(aggs[0].timestamp, Some(1672723200000));
 }
 
@@ -86,8 +87,8 @@ async fn get_aggs_unwraps_results() {
         .unwrap();
 
     assert_eq!(aggs.len(), 1);
-    assert_eq!(aggs[0].high, Some(240.1));
-    assert_eq!(aggs[0].volume, Some(12345.0));
+    assert_eq!(aggs[0].high, Some(dec!(240.1)));
+    assert_eq!(aggs[0].volume, Some(dec!(12345.0)));
 }
 
 #[tokio::test]
@@ -119,7 +120,7 @@ async fn get_grouped_daily_aggs_hits_grouped_path() {
 
     assert_eq!(aggs.len(), 2);
     assert_eq!(aggs[0].ticker.as_deref(), Some("AAPL"));
-    assert_eq!(aggs[0].close, Some(130.15));
+    assert_eq!(aggs[0].close, Some(dec!(130.15)));
     assert_eq!(aggs[1].ticker.as_deref(), Some("MSFT"));
 }
 
@@ -153,10 +154,10 @@ async fn get_daily_open_close_agg_returns_top_level_object() {
         .unwrap();
 
     assert_eq!(agg.symbol.as_deref(), Some("AAPL"));
-    assert_eq!(agg.open, Some(130.465));
-    assert_eq!(agg.close, Some(130.15));
-    assert_eq!(agg.after_hours, Some(129.85));
-    assert_eq!(agg.pre_market, Some(129.6));
+    assert_eq!(agg.open, Some(dec!(130.465)));
+    assert_eq!(agg.close, Some(dec!(130.15)));
+    assert_eq!(agg.after_hours, Some(dec!(129.85)));
+    assert_eq!(agg.pre_market, Some(dec!(129.6)));
 }
 
 #[tokio::test]
@@ -187,6 +188,6 @@ async fn get_previous_close_agg_unwraps_results() {
 
     assert_eq!(aggs.len(), 1);
     assert_eq!(aggs[0].ticker.as_deref(), Some("AAPL"));
-    assert_eq!(aggs[0].close, Some(130.15));
-    assert_eq!(aggs[0].vwap, Some(131.0));
+    assert_eq!(aggs[0].close, Some(dec!(130.15)));
+    assert_eq!(aggs[0].vwap, Some(dec!(131.0)));
 }

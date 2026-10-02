@@ -223,9 +223,7 @@ impl SnapshotApi for Client {
             struct Resp {
                 tickers: Option<Vec<TickerSnapshot>>,
             }
-            let resp: Resp = self
-                .get(&path, &query, params.options.as_ref())
-                .await?;
+            let resp: Resp = self.get(&path, &query, params.options.as_ref()).await?;
             Ok(resp.tickers.unwrap_or_default())
         })
     }
@@ -264,9 +262,7 @@ impl SnapshotApi for Client {
             struct Resp {
                 tickers: Option<Vec<TickerSnapshot>>,
             }
-            let resp: Resp = self
-                .get(&path, &query, params.options.as_ref())
-                .await?;
+            let resp: Resp = self.get(&path, &query, params.options.as_ref()).await?;
             Ok(resp.tickers.unwrap_or_default())
         })
     }
@@ -303,9 +299,7 @@ impl SnapshotApi for Client {
             struct Resp {
                 ticker: TickerSnapshot,
             }
-            let resp: Resp = self
-                .get(&path, &query, params.options.as_ref())
-                .await?;
+            let resp: Resp = self.get(&path, &query, params.options.as_ref()).await?;
             Ok(resp.ticker)
         })
     }
@@ -341,9 +335,7 @@ impl SnapshotApi for Client {
             struct Resp {
                 results: OptionContractSnapshot,
             }
-            let resp: Resp = self
-                .get(&path, &query, params.options.as_ref())
-                .await?;
+            let resp: Resp = self.get(&path, &query, params.options.as_ref()).await?;
             Ok(resp.results)
         })
     }
@@ -401,9 +393,7 @@ impl SnapshotApi for Client {
             struct Resp {
                 data: SnapshotTickerFullBook,
             }
-            let resp: Resp = self
-                .get(&path, &query, params.options.as_ref())
-                .await?;
+            let resp: Resp = self.get(&path, &query, params.options.as_ref()).await?;
             Ok(resp.data)
         })
     }
@@ -430,9 +420,7 @@ impl SnapshotApi for Client {
             struct Resp {
                 results: Option<Vec<IndicesSnapshot>>,
             }
-            let resp: Resp = self
-                .get(&path, &query, params.options.as_ref())
-                .await?;
+            let resp: Resp = self.get(&path, &query, params.options.as_ref()).await?;
             Ok(resp.results.unwrap_or_default())
         })
     }

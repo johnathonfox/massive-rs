@@ -6,6 +6,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-10-02
+
+### Changed (breaking)
+
+- Every numeric REST response model field is now `rust_decimal::Decimal`
+  instead of `f64` (454 fields across `src/models/`, including the
+  `HashMap<String, f64>` exposure maps). Values are read from the raw JSON
+  token text, so a price like `125.07` arrives exactly as sent rather than as
+  the nearest binary float. Decimals serialize as JSON strings.
+- Integer fields (`timestamp`, `transactions`, ...) are unchanged.
+
+### Fixed
+
+- Builds again against `tokio-tungstenite` 0.30: `Message::Text` takes
+  `Utf8Bytes` (the dependabot bump in #4 left `main` not compiling).
+
+### Not changed
+
+- WebSocket models still decode numbers as `f64`: the stream parser goes
+  through `serde_json::Value`, which has already rounded them. Fixing that
+  needs the parser to keep raw frames; tracked separately.
+- `f64` query parameters (filters such as `eps_surprise_percent_gt`) are
+  inputs and stay `f64`.
+
 ## [0.2.0] - 2026-08-22
 
 ### Added

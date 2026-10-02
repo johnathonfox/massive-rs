@@ -42,9 +42,7 @@ impl SummariesApi for Client {
             struct Resp {
                 results: Option<Vec<SummaryResult>>,
             }
-            let resp: Resp = self
-                .get(&path, &query, params.options.as_ref())
-                .await?;
+            let resp: Resp = self.get(&path, &query, params.options.as_ref()).await?;
             Ok(resp.results.unwrap_or_default())
         })
     }

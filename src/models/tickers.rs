@@ -1,3 +1,4 @@
+use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
 /// Contains address data for a ticker detail.
@@ -112,7 +113,8 @@ pub struct TickerDetails {
     pub locale: Option<String>,
     pub market: Option<String>,
     #[serde(rename = "market_cap")]
-    pub market_cap: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub market_cap: Option<Decimal>,
     pub name: Option<String>,
     #[serde(rename = "phone_number")]
     pub phone_number: Option<String>,
@@ -203,9 +205,11 @@ pub struct IPOListing {
     #[serde(rename = "currency_code")]
     pub currency_code: Option<String>,
     #[serde(rename = "final_issue_price")]
-    pub final_issue_price: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub final_issue_price: Option<Decimal>,
     #[serde(rename = "highest_offer_price")]
-    pub highest_offer_price: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub highest_offer_price: Option<Decimal>,
     #[serde(rename = "ipo_status")]
     pub ipo_status: Option<String>,
     pub isin: Option<String>,
@@ -218,7 +222,8 @@ pub struct IPOListing {
     #[serde(rename = "lot_size")]
     pub lot_size: Option<i64>,
     #[serde(rename = "lowest_offer_price")]
-    pub lowest_offer_price: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub lowest_offer_price: Option<Decimal>,
     #[serde(rename = "max_shares_offered")]
     pub max_shares_offered: Option<i64>,
     #[serde(rename = "min_shares_offered")]
@@ -233,7 +238,8 @@ pub struct IPOListing {
     pub shares_outstanding: Option<i64>,
     pub ticker: Option<String>,
     #[serde(rename = "total_offer_size")]
-    pub total_offer_size: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub total_offer_size: Option<Decimal>,
     #[serde(rename = "us_code")]
     pub us_code: Option<String>,
 }
@@ -244,7 +250,8 @@ pub struct ShortInterest {
     #[serde(rename = "avg_daily_volume")]
     pub avg_daily_volume: Option<i64>,
     #[serde(rename = "days_to_cover")]
-    pub days_to_cover: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub days_to_cover: Option<Decimal>,
     #[serde(rename = "settlement_date")]
     pub settlement_date: Option<String>,
     #[serde(rename = "short_interest")]
@@ -279,7 +286,8 @@ pub struct ShortVolume {
     #[serde(rename = "short_volume")]
     pub short_volume: Option<i64>,
     #[serde(rename = "short_volume_ratio")]
-    pub short_volume_ratio: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub short_volume_ratio: Option<Decimal>,
     pub ticker: Option<String>,
     #[serde(rename = "total_volume")]
     pub total_volume: Option<i64>,

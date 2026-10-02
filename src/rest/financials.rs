@@ -961,34 +961,72 @@ pub struct ListFinancialsBalanceSheetsParams {
     #[serde(rename = "filing_date.lte", skip_serializing_if = "Option::is_none")]
     pub filing_date_lte: Option<String>,
     /// The `fiscal_year` argument.
-    #[serde(skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub fiscal_year: Option<f64>,
     /// The `fiscal_year_gt` argument.
-    #[serde(rename = "fiscal_year.gt", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "fiscal_year.gt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub fiscal_year_gt: Option<f64>,
     /// The `fiscal_year_gte` argument.
-    #[serde(rename = "fiscal_year.gte", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "fiscal_year.gte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub fiscal_year_gte: Option<f64>,
     /// The `fiscal_year_lt` argument.
-    #[serde(rename = "fiscal_year.lt", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "fiscal_year.lt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub fiscal_year_lt: Option<f64>,
     /// The `fiscal_year_lte` argument.
-    #[serde(rename = "fiscal_year.lte", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "fiscal_year.lte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub fiscal_year_lte: Option<f64>,
     /// The `fiscal_quarter` argument.
-    #[serde(skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub fiscal_quarter: Option<f64>,
     /// The `fiscal_quarter_gt` argument.
-    #[serde(rename = "fiscal_quarter.gt", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "fiscal_quarter.gt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub fiscal_quarter_gt: Option<f64>,
     /// The `fiscal_quarter_gte` argument.
-    #[serde(rename = "fiscal_quarter.gte", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "fiscal_quarter.gte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub fiscal_quarter_gte: Option<f64>,
     /// The `fiscal_quarter_lt` argument.
-    #[serde(rename = "fiscal_quarter.lt", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "fiscal_quarter.lt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub fiscal_quarter_lt: Option<f64>,
     /// The `fiscal_quarter_lte` argument.
-    #[serde(rename = "fiscal_quarter.lte", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "fiscal_quarter.lte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub fiscal_quarter_lte: Option<f64>,
     /// The `timeframe` argument.
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -1315,34 +1353,72 @@ pub struct ListFinancialsCashFlowStatementsParams {
     #[serde(rename = "tickers.any_of", skip_serializing_if = "Option::is_none")]
     pub tickers_any_of: Option<String>,
     /// The `fiscal_year` argument.
-    #[serde(skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub fiscal_year: Option<f64>,
     /// The `fiscal_year_gt` argument.
-    #[serde(rename = "fiscal_year.gt", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "fiscal_year.gt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub fiscal_year_gt: Option<f64>,
     /// The `fiscal_year_gte` argument.
-    #[serde(rename = "fiscal_year.gte", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "fiscal_year.gte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub fiscal_year_gte: Option<f64>,
     /// The `fiscal_year_lt` argument.
-    #[serde(rename = "fiscal_year.lt", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "fiscal_year.lt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub fiscal_year_lt: Option<f64>,
     /// The `fiscal_year_lte` argument.
-    #[serde(rename = "fiscal_year.lte", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "fiscal_year.lte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub fiscal_year_lte: Option<f64>,
     /// The `fiscal_quarter` argument.
-    #[serde(skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub fiscal_quarter: Option<f64>,
     /// The `fiscal_quarter_gt` argument.
-    #[serde(rename = "fiscal_quarter.gt", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "fiscal_quarter.gt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub fiscal_quarter_gt: Option<f64>,
     /// The `fiscal_quarter_gte` argument.
-    #[serde(rename = "fiscal_quarter.gte", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "fiscal_quarter.gte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub fiscal_quarter_gte: Option<f64>,
     /// The `fiscal_quarter_lt` argument.
-    #[serde(rename = "fiscal_quarter.lt", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "fiscal_quarter.lt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub fiscal_quarter_lt: Option<f64>,
     /// The `fiscal_quarter_lte` argument.
-    #[serde(rename = "fiscal_quarter.lte", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "fiscal_quarter.lte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub fiscal_quarter_lte: Option<f64>,
     /// The `timeframe` argument.
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -1669,34 +1745,72 @@ pub struct ListFinancialsIncomeStatementsParams {
     #[serde(rename = "filing_date.lte", skip_serializing_if = "Option::is_none")]
     pub filing_date_lte: Option<String>,
     /// The `fiscal_year` argument.
-    #[serde(skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub fiscal_year: Option<f64>,
     /// The `fiscal_year_gt` argument.
-    #[serde(rename = "fiscal_year.gt", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "fiscal_year.gt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub fiscal_year_gt: Option<f64>,
     /// The `fiscal_year_gte` argument.
-    #[serde(rename = "fiscal_year.gte", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "fiscal_year.gte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub fiscal_year_gte: Option<f64>,
     /// The `fiscal_year_lt` argument.
-    #[serde(rename = "fiscal_year.lt", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "fiscal_year.lt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub fiscal_year_lt: Option<f64>,
     /// The `fiscal_year_lte` argument.
-    #[serde(rename = "fiscal_year.lte", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "fiscal_year.lte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub fiscal_year_lte: Option<f64>,
     /// The `fiscal_quarter` argument.
-    #[serde(skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub fiscal_quarter: Option<f64>,
     /// The `fiscal_quarter_gt` argument.
-    #[serde(rename = "fiscal_quarter.gt", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "fiscal_quarter.gt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub fiscal_quarter_gt: Option<f64>,
     /// The `fiscal_quarter_gte` argument.
-    #[serde(rename = "fiscal_quarter.gte", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "fiscal_quarter.gte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub fiscal_quarter_gte: Option<f64>,
     /// The `fiscal_quarter_lt` argument.
-    #[serde(rename = "fiscal_quarter.lt", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "fiscal_quarter.lt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub fiscal_quarter_lt: Option<f64>,
     /// The `fiscal_quarter_lte` argument.
-    #[serde(rename = "fiscal_quarter.lte", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "fiscal_quarter.lte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub fiscal_quarter_lte: Option<f64>,
     /// The `timeframe` argument.
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -2002,304 +2116,684 @@ pub struct ListFinancialsRatiosParams {
     #[serde(rename = "cik.lte", skip_serializing_if = "Option::is_none")]
     pub cik_lte: Option<String>,
     /// The `price` argument.
-    #[serde(skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub price: Option<f64>,
     /// The `price_gt` argument.
-    #[serde(rename = "price.gt", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "price.gt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub price_gt: Option<f64>,
     /// The `price_gte` argument.
-    #[serde(rename = "price.gte", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "price.gte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub price_gte: Option<f64>,
     /// The `price_lt` argument.
-    #[serde(rename = "price.lt", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "price.lt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub price_lt: Option<f64>,
     /// The `price_lte` argument.
-    #[serde(rename = "price.lte", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "price.lte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub price_lte: Option<f64>,
     /// The `average_volume` argument.
-    #[serde(skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub average_volume: Option<f64>,
     /// The `average_volume_gt` argument.
-    #[serde(rename = "average_volume.gt", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "average_volume.gt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub average_volume_gt: Option<f64>,
     /// The `average_volume_gte` argument.
-    #[serde(rename = "average_volume.gte", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "average_volume.gte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub average_volume_gte: Option<f64>,
     /// The `average_volume_lt` argument.
-    #[serde(rename = "average_volume.lt", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "average_volume.lt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub average_volume_lt: Option<f64>,
     /// The `average_volume_lte` argument.
-    #[serde(rename = "average_volume.lte", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "average_volume.lte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub average_volume_lte: Option<f64>,
     /// The `market_cap` argument.
-    #[serde(skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub market_cap: Option<f64>,
     /// The `market_cap_gt` argument.
-    #[serde(rename = "market_cap.gt", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "market_cap.gt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub market_cap_gt: Option<f64>,
     /// The `market_cap_gte` argument.
-    #[serde(rename = "market_cap.gte", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "market_cap.gte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub market_cap_gte: Option<f64>,
     /// The `market_cap_lt` argument.
-    #[serde(rename = "market_cap.lt", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "market_cap.lt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub market_cap_lt: Option<f64>,
     /// The `market_cap_lte` argument.
-    #[serde(rename = "market_cap.lte", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "market_cap.lte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub market_cap_lte: Option<f64>,
     /// The `earnings_per_share` argument.
-    #[serde(skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub earnings_per_share: Option<f64>,
     /// The `earnings_per_share_gt` argument.
-    #[serde(rename = "earnings_per_share.gt", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "earnings_per_share.gt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub earnings_per_share_gt: Option<f64>,
     /// The `earnings_per_share_gte` argument.
-    #[serde(rename = "earnings_per_share.gte", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "earnings_per_share.gte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub earnings_per_share_gte: Option<f64>,
     /// The `earnings_per_share_lt` argument.
-    #[serde(rename = "earnings_per_share.lt", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "earnings_per_share.lt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub earnings_per_share_lt: Option<f64>,
     /// The `earnings_per_share_lte` argument.
-    #[serde(rename = "earnings_per_share.lte", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "earnings_per_share.lte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub earnings_per_share_lte: Option<f64>,
     /// The `price_to_earnings` argument.
-    #[serde(skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub price_to_earnings: Option<f64>,
     /// The `price_to_earnings_gt` argument.
-    #[serde(rename = "price_to_earnings.gt", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "price_to_earnings.gt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub price_to_earnings_gt: Option<f64>,
     /// The `price_to_earnings_gte` argument.
-    #[serde(rename = "price_to_earnings.gte", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "price_to_earnings.gte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub price_to_earnings_gte: Option<f64>,
     /// The `price_to_earnings_lt` argument.
-    #[serde(rename = "price_to_earnings.lt", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "price_to_earnings.lt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub price_to_earnings_lt: Option<f64>,
     /// The `price_to_earnings_lte` argument.
-    #[serde(rename = "price_to_earnings.lte", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "price_to_earnings.lte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub price_to_earnings_lte: Option<f64>,
     /// The `price_to_book` argument.
-    #[serde(skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub price_to_book: Option<f64>,
     /// The `price_to_book_gt` argument.
-    #[serde(rename = "price_to_book.gt", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "price_to_book.gt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub price_to_book_gt: Option<f64>,
     /// The `price_to_book_gte` argument.
-    #[serde(rename = "price_to_book.gte", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "price_to_book.gte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub price_to_book_gte: Option<f64>,
     /// The `price_to_book_lt` argument.
-    #[serde(rename = "price_to_book.lt", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "price_to_book.lt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub price_to_book_lt: Option<f64>,
     /// The `price_to_book_lte` argument.
-    #[serde(rename = "price_to_book.lte", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "price_to_book.lte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub price_to_book_lte: Option<f64>,
     /// The `price_to_sales` argument.
-    #[serde(skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub price_to_sales: Option<f64>,
     /// The `price_to_sales_gt` argument.
-    #[serde(rename = "price_to_sales.gt", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "price_to_sales.gt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub price_to_sales_gt: Option<f64>,
     /// The `price_to_sales_gte` argument.
-    #[serde(rename = "price_to_sales.gte", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "price_to_sales.gte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub price_to_sales_gte: Option<f64>,
     /// The `price_to_sales_lt` argument.
-    #[serde(rename = "price_to_sales.lt", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "price_to_sales.lt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub price_to_sales_lt: Option<f64>,
     /// The `price_to_sales_lte` argument.
-    #[serde(rename = "price_to_sales.lte", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "price_to_sales.lte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub price_to_sales_lte: Option<f64>,
     /// The `price_to_cash_flow` argument.
-    #[serde(skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub price_to_cash_flow: Option<f64>,
     /// The `price_to_cash_flow_gt` argument.
-    #[serde(rename = "price_to_cash_flow.gt", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "price_to_cash_flow.gt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub price_to_cash_flow_gt: Option<f64>,
     /// The `price_to_cash_flow_gte` argument.
-    #[serde(rename = "price_to_cash_flow.gte", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "price_to_cash_flow.gte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub price_to_cash_flow_gte: Option<f64>,
     /// The `price_to_cash_flow_lt` argument.
-    #[serde(rename = "price_to_cash_flow.lt", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "price_to_cash_flow.lt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub price_to_cash_flow_lt: Option<f64>,
     /// The `price_to_cash_flow_lte` argument.
-    #[serde(rename = "price_to_cash_flow.lte", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "price_to_cash_flow.lte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub price_to_cash_flow_lte: Option<f64>,
     /// The `price_to_free_cash_flow` argument.
-    #[serde(skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub price_to_free_cash_flow: Option<f64>,
     /// The `price_to_free_cash_flow_gt` argument.
-    #[serde(rename = "price_to_free_cash_flow.gt", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "price_to_free_cash_flow.gt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub price_to_free_cash_flow_gt: Option<f64>,
     /// The `price_to_free_cash_flow_gte` argument.
-    #[serde(rename = "price_to_free_cash_flow.gte", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "price_to_free_cash_flow.gte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub price_to_free_cash_flow_gte: Option<f64>,
     /// The `price_to_free_cash_flow_lt` argument.
-    #[serde(rename = "price_to_free_cash_flow.lt", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "price_to_free_cash_flow.lt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub price_to_free_cash_flow_lt: Option<f64>,
     /// The `price_to_free_cash_flow_lte` argument.
-    #[serde(rename = "price_to_free_cash_flow.lte", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "price_to_free_cash_flow.lte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub price_to_free_cash_flow_lte: Option<f64>,
     /// The `dividend_yield` argument.
-    #[serde(skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub dividend_yield: Option<f64>,
     /// The `dividend_yield_gt` argument.
-    #[serde(rename = "dividend_yield.gt", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "dividend_yield.gt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub dividend_yield_gt: Option<f64>,
     /// The `dividend_yield_gte` argument.
-    #[serde(rename = "dividend_yield.gte", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "dividend_yield.gte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub dividend_yield_gte: Option<f64>,
     /// The `dividend_yield_lt` argument.
-    #[serde(rename = "dividend_yield.lt", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "dividend_yield.lt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub dividend_yield_lt: Option<f64>,
     /// The `dividend_yield_lte` argument.
-    #[serde(rename = "dividend_yield.lte", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "dividend_yield.lte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub dividend_yield_lte: Option<f64>,
     /// The `return_on_assets` argument.
-    #[serde(skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub return_on_assets: Option<f64>,
     /// The `return_on_assets_gt` argument.
-    #[serde(rename = "return_on_assets.gt", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "return_on_assets.gt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub return_on_assets_gt: Option<f64>,
     /// The `return_on_assets_gte` argument.
-    #[serde(rename = "return_on_assets.gte", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "return_on_assets.gte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub return_on_assets_gte: Option<f64>,
     /// The `return_on_assets_lt` argument.
-    #[serde(rename = "return_on_assets.lt", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "return_on_assets.lt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub return_on_assets_lt: Option<f64>,
     /// The `return_on_assets_lte` argument.
-    #[serde(rename = "return_on_assets.lte", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "return_on_assets.lte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub return_on_assets_lte: Option<f64>,
     /// The `return_on_equity` argument.
-    #[serde(skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub return_on_equity: Option<f64>,
     /// The `return_on_equity_gt` argument.
-    #[serde(rename = "return_on_equity.gt", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "return_on_equity.gt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub return_on_equity_gt: Option<f64>,
     /// The `return_on_equity_gte` argument.
-    #[serde(rename = "return_on_equity.gte", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "return_on_equity.gte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub return_on_equity_gte: Option<f64>,
     /// The `return_on_equity_lt` argument.
-    #[serde(rename = "return_on_equity.lt", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "return_on_equity.lt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub return_on_equity_lt: Option<f64>,
     /// The `return_on_equity_lte` argument.
-    #[serde(rename = "return_on_equity.lte", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "return_on_equity.lte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub return_on_equity_lte: Option<f64>,
     /// The `debt_to_equity` argument.
-    #[serde(skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub debt_to_equity: Option<f64>,
     /// The `debt_to_equity_gt` argument.
-    #[serde(rename = "debt_to_equity.gt", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "debt_to_equity.gt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub debt_to_equity_gt: Option<f64>,
     /// The `debt_to_equity_gte` argument.
-    #[serde(rename = "debt_to_equity.gte", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "debt_to_equity.gte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub debt_to_equity_gte: Option<f64>,
     /// The `debt_to_equity_lt` argument.
-    #[serde(rename = "debt_to_equity.lt", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "debt_to_equity.lt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub debt_to_equity_lt: Option<f64>,
     /// The `debt_to_equity_lte` argument.
-    #[serde(rename = "debt_to_equity.lte", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "debt_to_equity.lte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub debt_to_equity_lte: Option<f64>,
     /// The `current` argument.
-    #[serde(skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub current: Option<f64>,
     /// The `current_gt` argument.
-    #[serde(rename = "current.gt", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "current.gt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub current_gt: Option<f64>,
     /// The `current_gte` argument.
-    #[serde(rename = "current.gte", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "current.gte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub current_gte: Option<f64>,
     /// The `current_lt` argument.
-    #[serde(rename = "current.lt", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "current.lt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub current_lt: Option<f64>,
     /// The `current_lte` argument.
-    #[serde(rename = "current.lte", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "current.lte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub current_lte: Option<f64>,
     /// The `quick` argument.
-    #[serde(skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub quick: Option<f64>,
     /// The `quick_gt` argument.
-    #[serde(rename = "quick.gt", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "quick.gt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub quick_gt: Option<f64>,
     /// The `quick_gte` argument.
-    #[serde(rename = "quick.gte", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "quick.gte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub quick_gte: Option<f64>,
     /// The `quick_lt` argument.
-    #[serde(rename = "quick.lt", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "quick.lt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub quick_lt: Option<f64>,
     /// The `quick_lte` argument.
-    #[serde(rename = "quick.lte", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "quick.lte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub quick_lte: Option<f64>,
     /// The `cash` argument.
-    #[serde(skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub cash: Option<f64>,
     /// The `cash_gt` argument.
-    #[serde(rename = "cash.gt", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "cash.gt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub cash_gt: Option<f64>,
     /// The `cash_gte` argument.
-    #[serde(rename = "cash.gte", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "cash.gte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub cash_gte: Option<f64>,
     /// The `cash_lt` argument.
-    #[serde(rename = "cash.lt", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "cash.lt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub cash_lt: Option<f64>,
     /// The `cash_lte` argument.
-    #[serde(rename = "cash.lte", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "cash.lte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub cash_lte: Option<f64>,
     /// The `ev_to_sales` argument.
-    #[serde(skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub ev_to_sales: Option<f64>,
     /// The `ev_to_sales_gt` argument.
-    #[serde(rename = "ev_to_sales.gt", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "ev_to_sales.gt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub ev_to_sales_gt: Option<f64>,
     /// The `ev_to_sales_gte` argument.
-    #[serde(rename = "ev_to_sales.gte", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "ev_to_sales.gte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub ev_to_sales_gte: Option<f64>,
     /// The `ev_to_sales_lt` argument.
-    #[serde(rename = "ev_to_sales.lt", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "ev_to_sales.lt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub ev_to_sales_lt: Option<f64>,
     /// The `ev_to_sales_lte` argument.
-    #[serde(rename = "ev_to_sales.lte", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "ev_to_sales.lte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub ev_to_sales_lte: Option<f64>,
     /// The `ev_to_ebitda` argument.
-    #[serde(skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub ev_to_ebitda: Option<f64>,
     /// The `ev_to_ebitda_gt` argument.
-    #[serde(rename = "ev_to_ebitda.gt", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "ev_to_ebitda.gt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub ev_to_ebitda_gt: Option<f64>,
     /// The `ev_to_ebitda_gte` argument.
-    #[serde(rename = "ev_to_ebitda.gte", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "ev_to_ebitda.gte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub ev_to_ebitda_gte: Option<f64>,
     /// The `ev_to_ebitda_lt` argument.
-    #[serde(rename = "ev_to_ebitda.lt", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "ev_to_ebitda.lt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub ev_to_ebitda_lt: Option<f64>,
     /// The `ev_to_ebitda_lte` argument.
-    #[serde(rename = "ev_to_ebitda.lte", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "ev_to_ebitda.lte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub ev_to_ebitda_lte: Option<f64>,
     /// The `enterprise_value` argument.
-    #[serde(skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub enterprise_value: Option<f64>,
     /// The `enterprise_value_gt` argument.
-    #[serde(rename = "enterprise_value.gt", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "enterprise_value.gt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub enterprise_value_gt: Option<f64>,
     /// The `enterprise_value_gte` argument.
-    #[serde(rename = "enterprise_value.gte", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "enterprise_value.gte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub enterprise_value_gte: Option<f64>,
     /// The `enterprise_value_lt` argument.
-    #[serde(rename = "enterprise_value.lt", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "enterprise_value.lt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub enterprise_value_lt: Option<f64>,
     /// The `enterprise_value_lte` argument.
-    #[serde(rename = "enterprise_value.lte", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "enterprise_value.lte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub enterprise_value_lte: Option<f64>,
     /// The `free_cash_flow` argument.
-    #[serde(skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub free_cash_flow: Option<f64>,
     /// The `free_cash_flow_gt` argument.
-    #[serde(rename = "free_cash_flow.gt", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "free_cash_flow.gt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub free_cash_flow_gt: Option<f64>,
     /// The `free_cash_flow_gte` argument.
-    #[serde(rename = "free_cash_flow.gte", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "free_cash_flow.gte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub free_cash_flow_gte: Option<f64>,
     /// The `free_cash_flow_lt` argument.
-    #[serde(rename = "free_cash_flow.lt", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "free_cash_flow.lt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub free_cash_flow_lt: Option<f64>,
     /// The `free_cash_flow_lte` argument.
-    #[serde(rename = "free_cash_flow.lte", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "free_cash_flow.lte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub free_cash_flow_lte: Option<f64>,
     /// The `limit` argument.
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -3031,19 +3525,38 @@ pub struct ListStocksFloatsParams {
     #[serde(rename = "ticker.lte", skip_serializing_if = "Option::is_none")]
     pub ticker_lte: Option<String>,
     /// The `free_float_percent` argument.
-    #[serde(skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub free_float_percent: Option<f64>,
     /// The `free_float_percent_gt` argument.
-    #[serde(rename = "free_float_percent.gt", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "free_float_percent.gt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub free_float_percent_gt: Option<f64>,
     /// The `free_float_percent_gte` argument.
-    #[serde(rename = "free_float_percent.gte", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "free_float_percent.gte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub free_float_percent_gte: Option<f64>,
     /// The `free_float_percent_lt` argument.
-    #[serde(rename = "free_float_percent.lt", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "free_float_percent.lt",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub free_float_percent_lt: Option<f64>,
     /// The `free_float_percent_lte` argument.
-    #[serde(rename = "free_float_percent.lte", skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        rename = "free_float_percent.lte",
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub free_float_percent_lte: Option<f64>,
     /// The `limit` argument.
     #[serde(skip_serializing_if = "Option::is_none")]

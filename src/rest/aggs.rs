@@ -204,9 +204,7 @@ impl AggsApi for Client {
             struct Resp {
                 results: Option<Vec<Agg>>,
             }
-            let resp: Resp = self
-                .get(&path, &query, params.options.as_ref())
-                .await?;
+            let resp: Resp = self.get(&path, &query, params.options.as_ref()).await?;
             Ok(resp.results.unwrap_or_default())
         })
     }
@@ -251,9 +249,7 @@ impl AggsApi for Client {
             struct Resp {
                 results: Option<Vec<GroupedDailyAgg>>,
             }
-            let resp: Resp = self
-                .get(&path, &query, params.options.as_ref())
-                .await?;
+            let resp: Resp = self.get(&path, &query, params.options.as_ref()).await?;
             Ok(resp.results.unwrap_or_default())
         })
     }
@@ -315,9 +311,7 @@ impl AggsApi for Client {
             struct Resp {
                 results: Option<Vec<PreviousCloseAgg>>,
             }
-            let resp: Resp = self
-                .get(&path, &query, params.options.as_ref())
-                .await?;
+            let resp: Resp = self.get(&path, &query, params.options.as_ref()).await?;
             Ok(resp.results.unwrap_or_default())
         })
     }

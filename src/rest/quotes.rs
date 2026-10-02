@@ -146,9 +146,7 @@ impl QuotesApi for Client {
             struct Resp {
                 results: LastQuote,
             }
-            let resp: Resp = self
-                .get(&path, &query, params.options.as_ref())
-                .await?;
+            let resp: Resp = self.get(&path, &query, params.options.as_ref()).await?;
             Ok(resp.results)
         })
     }
@@ -355,7 +353,10 @@ impl GetLastForexQuoteParams {
 #[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct GetRealTimeCurrencyConversionParams {
     /// The `amount` argument.
-    #[serde(skip_serializing_if = "Option::is_none", serialize_with = "super::ser_opt_f64")]
+    #[serde(
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "super::ser_opt_f64"
+    )]
     pub amount: Option<f64>,
     /// The `precision` argument.
     #[serde(skip_serializing_if = "Option::is_none")]

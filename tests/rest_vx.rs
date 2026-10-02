@@ -1,5 +1,7 @@
 //! Wiremock integration tests for the experimental vX API (src/rest/vx.rs).
 
+use rust_decimal_macros::dec;
+
 use futures::TryStreamExt;
 use massive::rest::VxApi;
 use massive::Client;
@@ -53,27 +55,27 @@ async fn list_stock_financials_hits_expected_path_and_params() {
     let client = Client::new("test-key").unwrap().with_base(server.uri());
     let financials = client
         .list_stock_financials(
-            Some("AAPL"), // ticker
-            None,         // cik
-            None,         // company_name
-            None,         // company_name_search
-            None,         // sic
-            None,         // filing_date
-            None,         // filing_date.lt
-            None,         // filing_date.lte
-            None,         // filing_date.gt
+            Some("AAPL"),       // ticker
+            None,               // cik
+            None,               // company_name
+            None,               // company_name_search
+            None,               // sic
+            None,               // filing_date
+            None,               // filing_date.lt
+            None,               // filing_date.lte
+            None,               // filing_date.gt
             Some("2023-01-01"), // filing_date.gte
-            None,         // period_of_report_date
-            None,         // period_of_report_date.lt
-            None,         // period_of_report_date.lte
-            None,         // period_of_report_date.gt
-            None,         // period_of_report_date.gte
-            Some("quarterly"), // timeframe
-            Some(true),   // include_sources
-            Some(10),     // limit
-            None,         // sort
-            None,         // order
-            None,         // options
+            None,               // period_of_report_date
+            None,               // period_of_report_date.lt
+            None,               // period_of_report_date.lte
+            None,               // period_of_report_date.gt
+            None,               // period_of_report_date.gte
+            Some("quarterly"),  // timeframe
+            Some(true),         // include_sources
+            Some(10),           // limit
+            None,               // sort
+            None,               // order
+            None,               // options
         )
         .try_collect::<Vec<_>>()
         .await
@@ -90,7 +92,7 @@ async fn list_stock_financials_hits_expected_path_and_params() {
         .and_then(|f| f.balance_sheet.as_ref())
         .and_then(|bs| bs.assets.as_ref())
         .expect("balance sheet assets data point");
-    assert_eq!(assets.value, Some(352583000000.0));
+    assert_eq!(assets.value, Some(dec!(352583000000.0)));
 }
 
 #[tokio::test]
@@ -131,19 +133,19 @@ async fn list_ipos_hits_expected_path_and_params() {
     let client = Client::new("test-key").unwrap().with_base(server.uri());
     let ipos = client
         .list_ipos(
-            None,               // ticker
-            None,               // us_code
-            None,               // isin
-            None,               // listing_date
-            None,               // listing_date.lt
-            None,               // listing_date.lte
-            None,               // listing_date.gt
-            Some("2023-01-01"), // listing_date.gte
-            Some("history"),    // ipo_status
-            Some(10),           // limit
+            None,                 // ticker
+            None,                 // us_code
+            None,                 // isin
+            None,                 // listing_date
+            None,                 // listing_date.lt
+            None,                 // listing_date.lte
+            None,                 // listing_date.gt
+            Some("2023-01-01"),   // listing_date.gte
+            Some("history"),      // ipo_status
+            Some(10),             // limit
             Some("listing_date"), // sort
-            Some("asc"),        // order
-            None,               // options
+            Some("asc"),          // order
+            None,                 // options
         )
         .try_collect::<Vec<_>>()
         .await
@@ -154,7 +156,7 @@ async fn list_ipos_hits_expected_path_and_params() {
     assert_eq!(ipo.ticker.as_deref(), Some("ARM"));
     assert_eq!(ipo.issuer_name.as_deref(), Some("Arm Holdings plc"));
     assert_eq!(ipo.ipo_status.as_deref(), Some("history"));
-    assert_eq!(ipo.final_issue_price, Some(51.0));
+    assert_eq!(ipo.final_issue_price, Some(dec!(51.0)));
     assert_eq!(ipo.shares_outstanding, Some(1025544118));
 }
 

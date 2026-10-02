@@ -1,3 +1,4 @@
+use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
 use super::tickers::Branding;
@@ -5,18 +6,30 @@ use super::tickers::Branding;
 /// Session data for the summaries endpoint.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct Session {
-    pub change: Option<f64>,
-    pub change_percent: Option<f64>,
-    pub early_trading_change: Option<f64>,
-    pub early_trading_change_percent: Option<f64>,
-    pub late_trading_change: Option<f64>,
-    pub late_trading_change_percent: Option<f64>,
-    pub close: Option<f64>,
-    pub high: Option<f64>,
-    pub low: Option<f64>,
-    pub open: Option<f64>,
-    pub previous_close: Option<f64>,
-    pub volume: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub change: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub change_percent: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub early_trading_change: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub early_trading_change_percent: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub late_trading_change: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub late_trading_change_percent: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub close: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub high: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub low: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub open: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub previous_close: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub volume: Option<Decimal>,
 }
 
 /// Options data for the summaries endpoint.
@@ -25,15 +38,19 @@ pub struct Options {
     pub contract_type: Option<String>,
     pub exercise_style: Option<String>,
     pub expiration_date: Option<String>,
-    pub shares_per_contract: Option<f64>,
-    pub strike_price: Option<f64>,
-    pub underlying_ticker: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub shares_per_contract: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub strike_price: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub underlying_ticker: Option<Decimal>,
 }
 
 /// Summary result data for a list of tickers.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct SummaryResult {
-    pub price: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub price: Option<Decimal>,
     pub name: Option<String>,
     pub ticker: Option<String>,
     pub branding: Option<Branding>,

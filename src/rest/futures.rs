@@ -868,7 +868,10 @@ pub struct ListFuturesContractsParams {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub product_code: Option<String>,
     /// The `product_code_any_of` argument.
-    #[serde(rename = "product_code.any_of", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "product_code.any_of",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub product_code_any_of: Option<String>,
     /// The `product_code_gt` argument.
     #[serde(rename = "product_code.gt", skip_serializing_if = "Option::is_none")]
@@ -913,16 +916,28 @@ pub struct ListFuturesContractsParams {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub first_trade_date: Option<String>,
     /// The `first_trade_date_gt` argument.
-    #[serde(rename = "first_trade_date.gt", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "first_trade_date.gt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub first_trade_date_gt: Option<String>,
     /// The `first_trade_date_gte` argument.
-    #[serde(rename = "first_trade_date.gte", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "first_trade_date.gte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub first_trade_date_gte: Option<String>,
     /// The `first_trade_date_lt` argument.
-    #[serde(rename = "first_trade_date.lt", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "first_trade_date.lt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub first_trade_date_lt: Option<String>,
     /// The `first_trade_date_lte` argument.
-    #[serde(rename = "first_trade_date.lte", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "first_trade_date.lte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub first_trade_date_lte: Option<String>,
     /// The `last_trade_date` argument.
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -931,13 +946,19 @@ pub struct ListFuturesContractsParams {
     #[serde(rename = "last_trade_date.gt", skip_serializing_if = "Option::is_none")]
     pub last_trade_date_gt: Option<String>,
     /// The `last_trade_date_gte` argument.
-    #[serde(rename = "last_trade_date.gte", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "last_trade_date.gte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub last_trade_date_gte: Option<String>,
     /// The `last_trade_date_lt` argument.
     #[serde(rename = "last_trade_date.lt", skip_serializing_if = "Option::is_none")]
     pub last_trade_date_lt: Option<String>,
     /// The `last_trade_date_lte` argument.
-    #[serde(rename = "last_trade_date.lte", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "last_trade_date.lte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub last_trade_date_lte: Option<String>,
     /// The `limit` argument.
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -1180,7 +1201,10 @@ pub struct ListFuturesProductsParams {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub product_code: Option<String>,
     /// The `product_code_any_of` argument.
-    #[serde(rename = "product_code.any_of", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "product_code.any_of",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub product_code_any_of: Option<String>,
     /// The `product_code_gt` argument.
     #[serde(rename = "product_code.gt", skip_serializing_if = "Option::is_none")]
@@ -1213,7 +1237,10 @@ pub struct ListFuturesProductsParams {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub trading_venue: Option<String>,
     /// The `trading_venue_any_of` argument.
-    #[serde(rename = "trading_venue.any_of", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "trading_venue.any_of",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub trading_venue_any_of: Option<String>,
     /// The `trading_venue_gt` argument.
     #[serde(rename = "trading_venue.gt", skip_serializing_if = "Option::is_none")]
@@ -1249,7 +1276,10 @@ pub struct ListFuturesProductsParams {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub asset_sub_class: Option<String>,
     /// The `asset_sub_class_any_of` argument.
-    #[serde(rename = "asset_sub_class.any_of", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "asset_sub_class.any_of",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub asset_sub_class_any_of: Option<String>,
     /// The `type_` argument.
     #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
@@ -1513,16 +1543,28 @@ pub struct ListFuturesQuotesParams {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub session_end_date: Option<String>,
     /// The `session_end_date_lt` argument.
-    #[serde(rename = "session_end_date.lt", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "session_end_date.lt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub session_end_date_lt: Option<String>,
     /// The `session_end_date_lte` argument.
-    #[serde(rename = "session_end_date.lte", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "session_end_date.lte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub session_end_date_lte: Option<String>,
     /// The `session_end_date_gt` argument.
-    #[serde(rename = "session_end_date.gt", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "session_end_date.gt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub session_end_date_gt: Option<String>,
     /// The `session_end_date_gte` argument.
-    #[serde(rename = "session_end_date.gte", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "session_end_date.gte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub session_end_date_gte: Option<String>,
     /// The `limit` argument.
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -1642,16 +1684,28 @@ pub struct ListFuturesTradesParams {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub session_end_date: Option<String>,
     /// The `session_end_date_lt` argument.
-    #[serde(rename = "session_end_date.lt", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "session_end_date.lt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub session_end_date_lt: Option<String>,
     /// The `session_end_date_lte` argument.
-    #[serde(rename = "session_end_date.lte", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "session_end_date.lte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub session_end_date_lte: Option<String>,
     /// The `session_end_date_gt` argument.
-    #[serde(rename = "session_end_date.gt", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "session_end_date.gt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub session_end_date_gt: Option<String>,
     /// The `session_end_date_gte` argument.
-    #[serde(rename = "session_end_date.gte", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "session_end_date.gte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub session_end_date_gte: Option<String>,
     /// The `limit` argument.
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -1756,7 +1810,10 @@ pub struct ListFuturesSchedulesParams {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub product_code: Option<String>,
     /// The `product_code_any_of` argument.
-    #[serde(rename = "product_code.any_of", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "product_code.any_of",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub product_code_any_of: Option<String>,
     /// The `product_code_gt` argument.
     #[serde(rename = "product_code.gt", skip_serializing_if = "Option::is_none")]
@@ -1774,22 +1831,37 @@ pub struct ListFuturesSchedulesParams {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub session_end_date: Option<String>,
     /// The `session_end_date_gt` argument.
-    #[serde(rename = "session_end_date.gt", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "session_end_date.gt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub session_end_date_gt: Option<String>,
     /// The `session_end_date_gte` argument.
-    #[serde(rename = "session_end_date.gte", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "session_end_date.gte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub session_end_date_gte: Option<String>,
     /// The `session_end_date_lt` argument.
-    #[serde(rename = "session_end_date.lt", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "session_end_date.lt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub session_end_date_lt: Option<String>,
     /// The `session_end_date_lte` argument.
-    #[serde(rename = "session_end_date.lte", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "session_end_date.lte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub session_end_date_lte: Option<String>,
     /// The `trading_venue` argument.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub trading_venue: Option<String>,
     /// The `trading_venue_any_of` argument.
-    #[serde(rename = "trading_venue.any_of", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "trading_venue.any_of",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub trading_venue_any_of: Option<String>,
     /// The `trading_venue_gt` argument.
     #[serde(rename = "trading_venue.gt", skip_serializing_if = "Option::is_none")]
@@ -1948,7 +2020,10 @@ pub struct ListFuturesMarketStatusesParams {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub product_code: Option<String>,
     /// The `product_code_any_of` argument.
-    #[serde(rename = "product_code.any_of", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "product_code.any_of",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub product_code_any_of: Option<String>,
     /// The `product_code_gt` argument.
     #[serde(rename = "product_code.gt", skip_serializing_if = "Option::is_none")]
@@ -2050,7 +2125,10 @@ pub struct GetFuturesSnapshotParams {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub product_code: Option<String>,
     /// The `product_code_any_of` argument.
-    #[serde(rename = "product_code.any_of", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "product_code.any_of",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub product_code_any_of: Option<String>,
     /// The `product_code_gt` argument.
     #[serde(rename = "product_code.gt", skip_serializing_if = "Option::is_none")]

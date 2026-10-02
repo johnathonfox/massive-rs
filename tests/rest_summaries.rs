@@ -1,5 +1,6 @@
 use massive::rest::SummariesApi;
 use massive::Client;
+use rust_decimal_macros::dec;
 use wiremock::matchers::{header, method, path, query_param};
 use wiremock::{Mock, MockServer, ResponseTemplate};
 
@@ -47,11 +48,11 @@ async fn get_summaries_hits_expected_path() {
         .unwrap();
     assert_eq!(summaries.len(), 2);
     assert_eq!(summaries[0].ticker.as_deref(), Some("AAPL"));
-    assert_eq!(summaries[0].price, Some(173.15));
+    assert_eq!(summaries[0].price, Some(dec!(173.15)));
     assert_eq!(summaries[0].market_status.as_deref(), Some("open"));
     assert_eq!(
         summaries[0].session.as_ref().unwrap().change_percent,
-        Some(0.7)
+        Some(dec!(0.7))
     );
     assert!(summaries[1].branding.is_none());
 }
@@ -87,7 +88,7 @@ async fn get_summaries_without_tickers_sends_no_filter() {
     assert_eq!(summaries[0].type_.as_deref(), Some("options"));
     assert_eq!(
         summaries[0].options.as_ref().unwrap().strike_price,
-        Some(155.0)
+        Some(dec!(155.0))
     );
 }
 
@@ -106,8 +107,7 @@ async fn get_summaries_with_params_all_fields() {
         .mount(&server)
         .await;
     let client = Client::new("test-key").unwrap().with_base(server.uri());
-    let params = massive::rest::GetSummariesParams::new()
-        .ticker_any_of(&["AAPL", "MSFT", "NVDA"]);
+    let params = massive::rest::GetSummariesParams::new().ticker_any_of(&["AAPL", "MSFT", "NVDA"]);
     let summaries = client.get_summaries_with_params(params).await.unwrap();
     assert!(summaries.is_empty());
 }

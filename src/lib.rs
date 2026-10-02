@@ -7,6 +7,7 @@
 #![allow(clippy::too_many_arguments)]
 
 pub mod client;
+mod de;
 pub mod error;
 pub mod models;
 pub mod paginate;

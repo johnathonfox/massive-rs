@@ -300,19 +300,13 @@ pub struct ListTmxCorporateEventsParams {
     #[serde(rename = "trading_venue.gt", skip_serializing_if = "Option::is_none")]
     pub trading_venue_gt: Option<String>,
     /// The `trading_venue_gte` argument.
-    #[serde(
-        rename = "trading_venue.gte",
-        skip_serializing_if = "Option::is_none"
-    )]
+    #[serde(rename = "trading_venue.gte", skip_serializing_if = "Option::is_none")]
     pub trading_venue_gte: Option<String>,
     /// The `trading_venue_lt` argument.
     #[serde(rename = "trading_venue.lt", skip_serializing_if = "Option::is_none")]
     pub trading_venue_lt: Option<String>,
     /// The `trading_venue_lte` argument.
-    #[serde(
-        rename = "trading_venue.lte",
-        skip_serializing_if = "Option::is_none"
-    )]
+    #[serde(rename = "trading_venue.lte", skip_serializing_if = "Option::is_none")]
     pub trading_venue_lte: Option<String>,
     /// The `tmx_company_id` argument.
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -324,28 +318,16 @@ pub struct ListTmxCorporateEventsParams {
     )]
     pub tmx_company_id_any_of: Option<String>,
     /// The `tmx_company_id_gt` argument.
-    #[serde(
-        rename = "tmx_company_id.gt",
-        skip_serializing_if = "Option::is_none"
-    )]
+    #[serde(rename = "tmx_company_id.gt", skip_serializing_if = "Option::is_none")]
     pub tmx_company_id_gt: Option<i64>,
     /// The `tmx_company_id_gte` argument.
-    #[serde(
-        rename = "tmx_company_id.gte",
-        skip_serializing_if = "Option::is_none"
-    )]
+    #[serde(rename = "tmx_company_id.gte", skip_serializing_if = "Option::is_none")]
     pub tmx_company_id_gte: Option<i64>,
     /// The `tmx_company_id_lt` argument.
-    #[serde(
-        rename = "tmx_company_id.lt",
-        skip_serializing_if = "Option::is_none"
-    )]
+    #[serde(rename = "tmx_company_id.lt", skip_serializing_if = "Option::is_none")]
     pub tmx_company_id_lt: Option<i64>,
     /// The `tmx_company_id_lte` argument.
-    #[serde(
-        rename = "tmx_company_id.lte",
-        skip_serializing_if = "Option::is_none"
-    )]
+    #[serde(rename = "tmx_company_id.lte", skip_serializing_if = "Option::is_none")]
     pub tmx_company_id_lte: Option<i64>,
     /// The `tmx_record_id` argument.
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -360,19 +342,13 @@ pub struct ListTmxCorporateEventsParams {
     #[serde(rename = "tmx_record_id.gt", skip_serializing_if = "Option::is_none")]
     pub tmx_record_id_gt: Option<String>,
     /// The `tmx_record_id_gte` argument.
-    #[serde(
-        rename = "tmx_record_id.gte",
-        skip_serializing_if = "Option::is_none"
-    )]
+    #[serde(rename = "tmx_record_id.gte", skip_serializing_if = "Option::is_none")]
     pub tmx_record_id_gte: Option<String>,
     /// The `tmx_record_id_lt` argument.
     #[serde(rename = "tmx_record_id.lt", skip_serializing_if = "Option::is_none")]
     pub tmx_record_id_lt: Option<String>,
     /// The `tmx_record_id_lte` argument.
-    #[serde(
-        rename = "tmx_record_id.lte",
-        skip_serializing_if = "Option::is_none"
-    )]
+    #[serde(rename = "tmx_record_id.lte", skip_serializing_if = "Option::is_none")]
     pub tmx_record_id_lte: Option<String>,
     /// The `limit` argument.
     #[serde(skip_serializing_if = "Option::is_none")]

@@ -853,16 +853,28 @@ pub struct ListEuMerchantAggregatesParams {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub transaction_date: Option<String>,
     /// The `transaction_date_gt` argument.
-    #[serde(rename = "transaction_date.gt", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "transaction_date.gt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub transaction_date_gt: Option<String>,
     /// The `transaction_date_gte` argument.
-    #[serde(rename = "transaction_date.gte", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "transaction_date.gte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub transaction_date_gte: Option<String>,
     /// The `transaction_date_lt` argument.
-    #[serde(rename = "transaction_date.lt", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "transaction_date.lt",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub transaction_date_lt: Option<String>,
     /// The `transaction_date_lte` argument.
-    #[serde(rename = "transaction_date.lte", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "transaction_date.lte",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub transaction_date_lte: Option<String>,
     /// The `name` argument.
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -886,7 +898,10 @@ pub struct ListEuMerchantAggregatesParams {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub user_country: Option<String>,
     /// The `user_country_any_of` argument.
-    #[serde(rename = "user_country.any_of", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "user_country.any_of",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub user_country_any_of: Option<String>,
     /// The `channel` argument.
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -898,7 +913,10 @@ pub struct ListEuMerchantAggregatesParams {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub consumer_type: Option<String>,
     /// The `consumer_type_any_of` argument.
-    #[serde(rename = "consumer_type.any_of", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "consumer_type.any_of",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub consumer_type_any_of: Option<String>,
     /// The `parent_name` argument.
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -1135,7 +1153,10 @@ pub struct ListEuMerchantHierarchyParams {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub listing_status: Option<String>,
     /// The `listing_status_any_of` argument.
-    #[serde(rename = "listing_status.any_of", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "listing_status.any_of",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub listing_status_any_of: Option<String>,
     /// The `active_from` argument.
     #[serde(skip_serializing_if = "Option::is_none")]

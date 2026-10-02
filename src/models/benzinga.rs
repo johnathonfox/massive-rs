@@ -1,3 +1,4 @@
+use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
 /// A Benzinga analyst insight for a ticker.
@@ -11,7 +12,8 @@ pub struct BenzingaAnalystInsight {
     pub firm: Option<String>,
     pub insight: Option<String>,
     pub last_updated: Option<String>,
-    pub price_target: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub price_target: Option<Decimal>,
     pub rating: Option<String>,
     pub rating_action: Option<String>,
     pub ticker: Option<String>,
@@ -25,24 +27,34 @@ pub struct BenzingaAnalyst {
     pub firm_name: Option<String>,
     pub full_name: Option<String>,
     pub last_updated: Option<String>,
-    pub overall_avg_return: Option<f64>,
-    pub overall_avg_return_percentile: Option<f64>,
-    pub overall_success_rate: Option<f64>,
-    pub smart_score: Option<f64>,
-    pub total_ratings: Option<f64>,
-    pub total_ratings_percentile: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub overall_avg_return: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub overall_avg_return_percentile: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub overall_success_rate: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub smart_score: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub total_ratings: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub total_ratings_percentile: Option<Decimal>,
 }
 
 /// A Benzinga consensus rating for a ticker.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct BenzingaConsensusRating {
     pub buy_ratings: Option<i64>,
-    pub consensus_price_target: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub consensus_price_target: Option<Decimal>,
     pub consensus_rating: Option<String>,
-    pub consensus_rating_value: Option<f64>,
-    pub high_price_target: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub consensus_rating_value: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub high_price_target: Option<Decimal>,
     pub hold_ratings: Option<i64>,
-    pub low_price_target: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub low_price_target: Option<Decimal>,
     pub price_target_contributors: Option<i64>,
     pub ratings_contributors: Option<i64>,
     pub sell_ratings: Option<i64>,
@@ -54,28 +66,38 @@ pub struct BenzingaConsensusRating {
 /// A Benzinga earnings report.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct BenzingaEarning {
-    pub actual_eps: Option<f64>,
-    pub actual_revenue: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub actual_eps: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub actual_revenue: Option<Decimal>,
     pub benzinga_id: Option<String>,
     pub company_name: Option<String>,
     pub currency: Option<String>,
     pub date: Option<String>,
     pub date_status: Option<String>,
     pub eps_method: Option<String>,
-    pub eps_surprise: Option<f64>,
-    pub eps_surprise_percent: Option<f64>,
-    pub estimated_eps: Option<f64>,
-    pub estimated_revenue: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub eps_surprise: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub eps_surprise_percent: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub estimated_eps: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub estimated_revenue: Option<Decimal>,
     pub fiscal_period: Option<String>,
     pub fiscal_year: Option<i64>,
     pub importance: Option<i64>,
     pub last_updated: Option<String>,
     pub notes: Option<String>,
-    pub previous_eps: Option<f64>,
-    pub previous_revenue: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub previous_eps: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub previous_revenue: Option<Decimal>,
     pub revenue_method: Option<String>,
-    pub revenue_surprise: Option<f64>,
-    pub revenue_surprise_percent: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub revenue_surprise: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub revenue_surprise_percent: Option<Decimal>,
     pub ticker: Option<String>,
     pub time: Option<String>,
 }
@@ -97,22 +119,32 @@ pub struct BenzingaGuidance {
     pub currency: Option<String>,
     pub date: Option<String>,
     pub eps_method: Option<String>,
-    pub estimated_eps_guidance: Option<f64>,
-    pub estimated_revenue_guidance: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub estimated_eps_guidance: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub estimated_revenue_guidance: Option<Decimal>,
     pub fiscal_period: Option<String>,
     pub fiscal_year: Option<i64>,
     pub importance: Option<i64>,
     pub last_updated: Option<String>,
-    pub max_eps_guidance: Option<f64>,
-    pub max_revenue_guidance: Option<f64>,
-    pub min_eps_guidance: Option<f64>,
-    pub min_revenue_guidance: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub max_eps_guidance: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub max_revenue_guidance: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub min_eps_guidance: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub min_revenue_guidance: Option<Decimal>,
     pub notes: Option<String>,
     pub positioning: Option<String>,
-    pub previous_max_eps_guidance: Option<f64>,
-    pub previous_max_revenue_guidance: Option<f64>,
-    pub previous_min_eps_guidance: Option<f64>,
-    pub previous_min_revenue_guidance: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub previous_max_eps_guidance: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub previous_max_revenue_guidance: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub previous_min_eps_guidance: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub previous_min_revenue_guidance: Option<Decimal>,
     pub release_type: Option<String>,
     pub revenue_method: Option<String>,
     pub ticker: Option<String>,
@@ -139,7 +171,8 @@ pub struct BenzingaNews {
 /// A Benzinga analyst rating change.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct BenzingaRating {
-    pub adjusted_price_target: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub adjusted_price_target: Option<Decimal>,
     pub analyst: Option<String>,
     pub benzinga_analyst_id: Option<String>,
     pub benzinga_calendar_url: Option<String>,
@@ -153,11 +186,15 @@ pub struct BenzingaRating {
     pub importance: Option<i64>,
     pub last_updated: Option<String>,
     pub notes: Option<String>,
-    pub previous_adjusted_price_target: Option<f64>,
-    pub previous_price_target: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub previous_adjusted_price_target: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub previous_price_target: Option<Decimal>,
     pub previous_rating: Option<String>,
-    pub price_percent_change: Option<f64>,
-    pub price_target: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub price_percent_change: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub price_target: Option<Decimal>,
     pub price_target_action: Option<String>,
     pub rating: Option<String>,
     pub rating_action: Option<String>,

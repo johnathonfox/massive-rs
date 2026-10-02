@@ -1,3 +1,4 @@
+use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
 /// A single numeric or textual data point in the financials.
@@ -6,7 +7,8 @@ pub struct DataPoint {
     pub label: Option<String>,
     pub order: Option<i64>,
     pub unit: Option<String>,
-    pub value: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub value: Option<Decimal>,
     #[serde(rename = "derived_from")]
     pub derived_from: Option<Vec<String>>,
     pub formula: Option<String>,
@@ -169,14 +171,21 @@ pub struct IncomeStatement {
     pub income_loss_from_continuing_operations_before_tax: Option<DataPoint>,
     #[serde(rename = "income_loss_from_discontinued_operations_net_of_tax")]
     pub income_loss_from_discontinued_operations_net_of_tax: Option<DataPoint>,
-    #[serde(rename = "income_loss_from_discontinued_operations_net_of_tax_adjustment_to_prior_year_gain_loss_on_disposal")]
-    pub income_loss_from_discontinued_operations_net_of_tax_adjustment_to_prior_year_gain_loss_on_disposal: Option<DataPoint>,
+    #[serde(
+        rename = "income_loss_from_discontinued_operations_net_of_tax_adjustment_to_prior_year_gain_loss_on_disposal"
+    )]
+    pub income_loss_from_discontinued_operations_net_of_tax_adjustment_to_prior_year_gain_loss_on_disposal:
+        Option<DataPoint>,
     #[serde(rename = "income_loss_from_discontinued_operations_net_of_tax_during_phase_out")]
     pub income_loss_from_discontinued_operations_net_of_tax_during_phase_out: Option<DataPoint>,
     #[serde(rename = "income_loss_from_discontinued_operations_net_of_tax_gain_loss_on_disposal")]
-    pub income_loss_from_discontinued_operations_net_of_tax_gain_loss_on_disposal: Option<DataPoint>,
-    #[serde(rename = "income_loss_from_discontinued_operations_net_of_tax_provision_for_gain_loss_on_disposal")]
-    pub income_loss_from_discontinued_operations_net_of_tax_provision_for_gain_loss_on_disposal: Option<DataPoint>,
+    pub income_loss_from_discontinued_operations_net_of_tax_gain_loss_on_disposal:
+        Option<DataPoint>,
+    #[serde(
+        rename = "income_loss_from_discontinued_operations_net_of_tax_provision_for_gain_loss_on_disposal"
+    )]
+    pub income_loss_from_discontinued_operations_net_of_tax_provision_for_gain_loss_on_disposal:
+        Option<DataPoint>,
     #[serde(rename = "income_loss_from_equity_method_investments")]
     pub income_loss_from_equity_method_investments: Option<DataPoint>,
     #[serde(rename = "income_tax_expense_benefit")]
@@ -214,7 +223,8 @@ pub struct IncomeStatement {
     #[serde(rename = "net_income_loss_available_to_common_stockholders_basic")]
     pub net_income_loss_available_to_common_stockholders_basic: Option<DataPoint>,
     #[serde(rename = "participating_securities_distributed_and_undistributed_earnings_loss_basic")]
-    pub participating_securities_distributed_and_undistributed_earnings_loss_basic: Option<DataPoint>,
+    pub participating_securities_distributed_and_undistributed_earnings_loss_basic:
+        Option<DataPoint>,
     #[serde(rename = "undistributed_earnings_loss_allocated_to_participating_securities_basic")]
     pub undistributed_earnings_loss_allocated_to_participating_securities_basic: Option<DataPoint>,
     #[serde(rename = "preferred_stock_dividends_and_other_adjustments")]
@@ -270,137 +280,197 @@ pub struct StockFinancial {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct FinancialBalanceSheet {
     #[serde(rename = "accounts_payable")]
-    pub accounts_payable: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub accounts_payable: Option<Decimal>,
     #[serde(rename = "accrued_and_other_current_liabilities")]
-    pub accrued_and_other_current_liabilities: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub accrued_and_other_current_liabilities: Option<Decimal>,
     #[serde(rename = "accumulated_other_comprehensive_income")]
-    pub accumulated_other_comprehensive_income: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub accumulated_other_comprehensive_income: Option<Decimal>,
     #[serde(rename = "additional_paid_in_capital")]
-    pub additional_paid_in_capital: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub additional_paid_in_capital: Option<Decimal>,
     #[serde(rename = "cash_and_equivalents")]
-    pub cash_and_equivalents: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub cash_and_equivalents: Option<Decimal>,
     pub cik: Option<String>,
     #[serde(rename = "commitments_and_contingencies")]
-    pub commitments_and_contingencies: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub commitments_and_contingencies: Option<Decimal>,
     #[serde(rename = "common_stock")]
-    pub common_stock: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub common_stock: Option<Decimal>,
     #[serde(rename = "debt_current")]
-    pub debt_current: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub debt_current: Option<Decimal>,
     #[serde(rename = "deferred_revenue_current")]
-    pub deferred_revenue_current: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub deferred_revenue_current: Option<Decimal>,
     #[serde(rename = "filing_date")]
     pub filing_date: Option<String>,
     #[serde(rename = "fiscal_quarter")]
-    pub fiscal_quarter: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub fiscal_quarter: Option<Decimal>,
     #[serde(rename = "fiscal_year")]
-    pub fiscal_year: Option<f64>,
-    pub goodwill: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub fiscal_year: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub goodwill: Option<Decimal>,
     #[serde(rename = "intangible_assets_net")]
-    pub intangible_assets_net: Option<f64>,
-    pub inventories: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub intangible_assets_net: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub inventories: Option<Decimal>,
     #[serde(rename = "long_term_debt_and_capital_lease_obligations")]
-    pub long_term_debt_and_capital_lease_obligations: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub long_term_debt_and_capital_lease_obligations: Option<Decimal>,
     #[serde(rename = "noncontrolling_interest")]
-    pub noncontrolling_interest: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub noncontrolling_interest: Option<Decimal>,
     #[serde(rename = "other_assets")]
-    pub other_assets: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub other_assets: Option<Decimal>,
     #[serde(rename = "other_current_assets")]
-    pub other_current_assets: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub other_current_assets: Option<Decimal>,
     #[serde(rename = "other_equity")]
-    pub other_equity: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub other_equity: Option<Decimal>,
     #[serde(rename = "other_noncurrent_liabilities")]
-    pub other_noncurrent_liabilities: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub other_noncurrent_liabilities: Option<Decimal>,
     #[serde(rename = "period_end")]
     pub period_end: Option<String>,
     #[serde(rename = "preferred_stock")]
-    pub preferred_stock: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub preferred_stock: Option<Decimal>,
     #[serde(rename = "property_plant_equipment_net")]
-    pub property_plant_equipment_net: Option<f64>,
-    pub receivables: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub property_plant_equipment_net: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub receivables: Option<Decimal>,
     #[serde(rename = "retained_earnings_deficit")]
-    pub retained_earnings_deficit: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub retained_earnings_deficit: Option<Decimal>,
     #[serde(rename = "short_term_investments")]
-    pub short_term_investments: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub short_term_investments: Option<Decimal>,
     pub tickers: Option<Vec<String>>,
     pub timeframe: Option<String>,
     #[serde(rename = "total_assets")]
-    pub total_assets: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub total_assets: Option<Decimal>,
     #[serde(rename = "total_current_assets")]
-    pub total_current_assets: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub total_current_assets: Option<Decimal>,
     #[serde(rename = "total_current_liabilities")]
-    pub total_current_liabilities: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub total_current_liabilities: Option<Decimal>,
     #[serde(rename = "total_equity")]
-    pub total_equity: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub total_equity: Option<Decimal>,
     #[serde(rename = "total_equity_attributable_to_parent")]
-    pub total_equity_attributable_to_parent: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub total_equity_attributable_to_parent: Option<Decimal>,
     #[serde(rename = "total_liabilities")]
-    pub total_liabilities: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub total_liabilities: Option<Decimal>,
     #[serde(rename = "total_liabilities_and_equity")]
-    pub total_liabilities_and_equity: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub total_liabilities_and_equity: Option<Decimal>,
     #[serde(rename = "treasury_stock")]
-    pub treasury_stock: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub treasury_stock: Option<Decimal>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct FinancialCashFlowStatement {
     #[serde(rename = "cash_from_operating_activities_continuing_operations")]
-    pub cash_from_operating_activities_continuing_operations: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub cash_from_operating_activities_continuing_operations: Option<Decimal>,
     #[serde(rename = "change_in_cash_and_equivalents")]
-    pub change_in_cash_and_equivalents: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub change_in_cash_and_equivalents: Option<Decimal>,
     #[serde(rename = "change_in_other_operating_assets_and_liabilities_net")]
-    pub change_in_other_operating_assets_and_liabilities_net: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub change_in_other_operating_assets_and_liabilities_net: Option<Decimal>,
     pub cik: Option<String>,
     #[serde(rename = "depreciation_depletion_and_amortization")]
-    pub depreciation_depletion_and_amortization: Option<f64>,
-    pub dividends: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub depreciation_depletion_and_amortization: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub dividends: Option<Decimal>,
     #[serde(rename = "effect_of_currency_exchange_rate")]
-    pub effect_of_currency_exchange_rate: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub effect_of_currency_exchange_rate: Option<Decimal>,
     #[serde(rename = "filing_date")]
     pub filing_date: Option<String>,
     #[serde(rename = "fiscal_quarter")]
-    pub fiscal_quarter: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub fiscal_quarter: Option<Decimal>,
     #[serde(rename = "fiscal_year")]
-    pub fiscal_year: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub fiscal_year: Option<Decimal>,
     #[serde(rename = "income_loss_from_discontinued_operations")]
-    pub income_loss_from_discontinued_operations: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub income_loss_from_discontinued_operations: Option<Decimal>,
     #[serde(rename = "long_term_debt_issuances_repayments")]
-    pub long_term_debt_issuances_repayments: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub long_term_debt_issuances_repayments: Option<Decimal>,
     #[serde(rename = "net_cash_from_financing_activities")]
-    pub net_cash_from_financing_activities: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub net_cash_from_financing_activities: Option<Decimal>,
     #[serde(rename = "net_cash_from_financing_activities_continuing_operations")]
-    pub net_cash_from_financing_activities_continuing_operations: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub net_cash_from_financing_activities_continuing_operations: Option<Decimal>,
     #[serde(rename = "net_cash_from_financing_activities_discontinued_operations")]
-    pub net_cash_from_financing_activities_discontinued_operations: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub net_cash_from_financing_activities_discontinued_operations: Option<Decimal>,
     #[serde(rename = "net_cash_from_investing_activities")]
-    pub net_cash_from_investing_activities: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub net_cash_from_investing_activities: Option<Decimal>,
     #[serde(rename = "net_cash_from_investing_activities_continuing_operations")]
-    pub net_cash_from_investing_activities_continuing_operations: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub net_cash_from_investing_activities_continuing_operations: Option<Decimal>,
     #[serde(rename = "net_cash_from_investing_activities_discontinued_operations")]
-    pub net_cash_from_investing_activities_discontinued_operations: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub net_cash_from_investing_activities_discontinued_operations: Option<Decimal>,
     #[serde(rename = "net_cash_from_operating_activities")]
-    pub net_cash_from_operating_activities: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub net_cash_from_operating_activities: Option<Decimal>,
     #[serde(rename = "net_cash_from_operating_activities_discontinued_operations")]
-    pub net_cash_from_operating_activities_discontinued_operations: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub net_cash_from_operating_activities_discontinued_operations: Option<Decimal>,
     #[serde(rename = "net_income")]
-    pub net_income: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub net_income: Option<Decimal>,
     #[serde(rename = "noncontrolling_interests")]
-    pub noncontrolling_interests: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub noncontrolling_interests: Option<Decimal>,
     #[serde(rename = "other_cash_adjustments")]
-    pub other_cash_adjustments: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub other_cash_adjustments: Option<Decimal>,
     #[serde(rename = "other_financing_activities")]
-    pub other_financing_activities: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub other_financing_activities: Option<Decimal>,
     #[serde(rename = "other_investing_activities")]
-    pub other_investing_activities: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub other_investing_activities: Option<Decimal>,
     #[serde(rename = "other_operating_activities")]
-    pub other_operating_activities: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub other_operating_activities: Option<Decimal>,
     #[serde(rename = "period_end")]
     pub period_end: Option<String>,
     #[serde(rename = "purchase_of_property_plant_and_equipment")]
-    pub purchase_of_property_plant_and_equipment: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub purchase_of_property_plant_and_equipment: Option<Decimal>,
     #[serde(rename = "sale_of_property_plant_and_equipment")]
-    pub sale_of_property_plant_and_equipment: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub sale_of_property_plant_and_equipment: Option<Decimal>,
     #[serde(rename = "short_term_debt_issuances_repayments")]
-    pub short_term_debt_issuances_repayments: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub short_term_debt_issuances_repayments: Option<Decimal>,
     pub tickers: Option<Vec<String>>,
     pub timeframe: Option<String>,
 }
@@ -408,110 +478,159 @@ pub struct FinancialCashFlowStatement {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct FinancialIncomeStatement {
     #[serde(rename = "basic_earnings_per_share")]
-    pub basic_earnings_per_share: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub basic_earnings_per_share: Option<Decimal>,
     #[serde(rename = "basic_shares_outstanding")]
-    pub basic_shares_outstanding: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub basic_shares_outstanding: Option<Decimal>,
     pub cik: Option<String>,
     #[serde(rename = "consolidated_net_income_loss")]
-    pub consolidated_net_income_loss: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub consolidated_net_income_loss: Option<Decimal>,
     #[serde(rename = "cost_of_revenue")]
-    pub cost_of_revenue: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub cost_of_revenue: Option<Decimal>,
     #[serde(rename = "depreciation_depletion_amortization")]
-    pub depreciation_depletion_amortization: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub depreciation_depletion_amortization: Option<Decimal>,
     #[serde(rename = "diluted_earnings_per_share")]
-    pub diluted_earnings_per_share: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub diluted_earnings_per_share: Option<Decimal>,
     #[serde(rename = "diluted_shares_outstanding")]
-    pub diluted_shares_outstanding: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub diluted_shares_outstanding: Option<Decimal>,
     #[serde(rename = "discontinued_operations")]
-    pub discontinued_operations: Option<f64>,
-    pub ebitda: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub discontinued_operations: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub ebitda: Option<Decimal>,
     #[serde(rename = "equity_in_affiliates")]
-    pub equity_in_affiliates: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub equity_in_affiliates: Option<Decimal>,
     #[serde(rename = "extraordinary_items")]
-    pub extraordinary_items: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub extraordinary_items: Option<Decimal>,
     #[serde(rename = "filing_date")]
     pub filing_date: Option<String>,
     #[serde(rename = "fiscal_quarter")]
-    pub fiscal_quarter: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub fiscal_quarter: Option<Decimal>,
     #[serde(rename = "fiscal_year")]
-    pub fiscal_year: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub fiscal_year: Option<Decimal>,
     #[serde(rename = "gross_profit")]
-    pub gross_profit: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub gross_profit: Option<Decimal>,
     #[serde(rename = "income_before_income_taxes")]
-    pub income_before_income_taxes: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub income_before_income_taxes: Option<Decimal>,
     #[serde(rename = "income_taxes")]
-    pub income_taxes: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub income_taxes: Option<Decimal>,
     #[serde(rename = "interest_expense")]
-    pub interest_expense: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub interest_expense: Option<Decimal>,
     #[serde(rename = "interest_income")]
-    pub interest_income: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub interest_income: Option<Decimal>,
     #[serde(rename = "net_income_loss_attributable_common_shareholders")]
-    pub net_income_loss_attributable_common_shareholders: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub net_income_loss_attributable_common_shareholders: Option<Decimal>,
     #[serde(rename = "noncontrolling_interest")]
-    pub noncontrolling_interest: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub noncontrolling_interest: Option<Decimal>,
     #[serde(rename = "operating_income")]
-    pub operating_income: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub operating_income: Option<Decimal>,
     #[serde(rename = "other_income_expense")]
-    pub other_income_expense: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub other_income_expense: Option<Decimal>,
     #[serde(rename = "other_operating_expenses")]
-    pub other_operating_expenses: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub other_operating_expenses: Option<Decimal>,
     #[serde(rename = "period_end")]
     pub period_end: Option<String>,
     #[serde(rename = "preferred_stock_dividends_declared")]
-    pub preferred_stock_dividends_declared: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub preferred_stock_dividends_declared: Option<Decimal>,
     #[serde(rename = "research_development")]
-    pub research_development: Option<f64>,
-    pub revenue: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub research_development: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub revenue: Option<Decimal>,
     #[serde(rename = "selling_general_administrative")]
-    pub selling_general_administrative: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub selling_general_administrative: Option<Decimal>,
     pub tickers: Option<Vec<String>>,
     pub timeframe: Option<String>,
     #[serde(rename = "total_operating_expenses")]
-    pub total_operating_expenses: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub total_operating_expenses: Option<Decimal>,
     #[serde(rename = "total_other_income_expense")]
-    pub total_other_income_expense: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub total_other_income_expense: Option<Decimal>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct FinancialRatio {
     #[serde(rename = "average_volume")]
-    pub average_volume: Option<f64>,
-    pub cash: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub average_volume: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub cash: Option<Decimal>,
     pub cik: Option<String>,
-    pub current: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub current: Option<Decimal>,
     pub date: Option<String>,
     #[serde(rename = "debt_to_equity")]
-    pub debt_to_equity: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub debt_to_equity: Option<Decimal>,
     #[serde(rename = "dividend_yield")]
-    pub dividend_yield: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub dividend_yield: Option<Decimal>,
     #[serde(rename = "earnings_per_share")]
-    pub earnings_per_share: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub earnings_per_share: Option<Decimal>,
     #[serde(rename = "enterprise_value")]
-    pub enterprise_value: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub enterprise_value: Option<Decimal>,
     #[serde(rename = "ev_to_ebitda")]
-    pub ev_to_ebitda: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub ev_to_ebitda: Option<Decimal>,
     #[serde(rename = "ev_to_sales")]
-    pub ev_to_sales: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub ev_to_sales: Option<Decimal>,
     #[serde(rename = "free_cash_flow")]
-    pub free_cash_flow: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub free_cash_flow: Option<Decimal>,
     #[serde(rename = "market_cap")]
-    pub market_cap: Option<f64>,
-    pub price: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub market_cap: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub price: Option<Decimal>,
     #[serde(rename = "price_to_book")]
-    pub price_to_book: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub price_to_book: Option<Decimal>,
     #[serde(rename = "price_to_cash_flow")]
-    pub price_to_cash_flow: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub price_to_cash_flow: Option<Decimal>,
     #[serde(rename = "price_to_earnings")]
-    pub price_to_earnings: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub price_to_earnings: Option<Decimal>,
     #[serde(rename = "price_to_free_cash_flow")]
-    pub price_to_free_cash_flow: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub price_to_free_cash_flow: Option<Decimal>,
     #[serde(rename = "price_to_sales")]
-    pub price_to_sales: Option<f64>,
-    pub quick: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub price_to_sales: Option<Decimal>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub quick: Option<Decimal>,
     #[serde(rename = "return_on_assets")]
-    pub return_on_assets: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub return_on_assets: Option<Decimal>,
     #[serde(rename = "return_on_equity")]
-    pub return_on_equity: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub return_on_equity: Option<Decimal>,
     pub ticker: Option<String>,
 }
 
@@ -522,7 +641,8 @@ pub struct FinancialFloat {
     #[serde(rename = "free_float")]
     pub free_float: Option<i64>,
     #[serde(rename = "free_float_percent")]
-    pub free_float_percent: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub free_float_percent: Option<Decimal>,
     pub ticker: Option<String>,
 }
 
@@ -549,7 +669,8 @@ pub struct RiskFactorTaxonomy {
     pub primary_category: Option<String>,
     #[serde(rename = "secondary_category")]
     pub secondary_category: Option<String>,
-    pub taxonomy: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub taxonomy: Option<Decimal>,
     #[serde(rename = "tertiary_category")]
     pub tertiary_category: Option<String>,
 }
@@ -667,7 +788,8 @@ pub struct FilingForm3 {
     #[serde(rename = "exercise_date")]
     pub exercise_date: Option<String>,
     #[serde(rename = "exercise_price")]
-    pub exercise_price: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub exercise_price: Option<Decimal>,
     #[serde(rename = "filing_date")]
     pub filing_date: Option<String>,
     #[serde(rename = "filing_url")]
@@ -705,10 +827,12 @@ pub struct FilingForm3 {
     #[serde(rename = "security_type")]
     pub security_type: Option<String>,
     #[serde(rename = "shares_owned")]
-    pub shares_owned: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub shares_owned: Option<Decimal>,
     pub tickers: Option<Vec<String>>,
     #[serde(rename = "underlying_security_shares")]
-    pub underlying_security_shares: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub underlying_security_shares: Option<Decimal>,
     #[serde(rename = "underlying_security_title")]
     pub underlying_security_title: Option<String>,
 }
@@ -731,7 +855,8 @@ pub struct FilingForm4 {
     #[serde(rename = "exercise_date")]
     pub exercise_date: Option<String>,
     #[serde(rename = "exercise_price")]
-    pub exercise_price: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub exercise_price: Option<Decimal>,
     #[serde(rename = "expiration_date")]
     pub expiration_date: Option<String>,
     #[serde(rename = "filing_date")]
@@ -773,7 +898,8 @@ pub struct FilingForm4 {
     #[serde(rename = "security_type")]
     pub security_type: Option<String>,
     #[serde(rename = "shares_owned_following_transaction")]
-    pub shares_owned_following_transaction: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub shares_owned_following_transaction: Option<Decimal>,
     pub tickers: Option<Vec<String>>,
     #[serde(rename = "transaction_acquired_disposed")]
     pub transaction_acquired_disposed: Option<String>,
@@ -782,15 +908,19 @@ pub struct FilingForm4 {
     #[serde(rename = "transaction_date")]
     pub transaction_date: Option<String>,
     #[serde(rename = "transaction_price_per_share")]
-    pub transaction_price_per_share: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub transaction_price_per_share: Option<Decimal>,
     #[serde(rename = "transaction_shares")]
-    pub transaction_shares: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub transaction_shares: Option<Decimal>,
     #[serde(rename = "transaction_timeliness")]
     pub transaction_timeliness: Option<String>,
     #[serde(rename = "transaction_value")]
-    pub transaction_value: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub transaction_value: Option<Decimal>,
     #[serde(rename = "underlying_security_shares")]
-    pub underlying_security_shares: Option<f64>,
+    #[serde(default, deserialize_with = "crate::de::decimal_opt")]
+    pub underlying_security_shares: Option<Decimal>,
     #[serde(rename = "underlying_security_title")]
     pub underlying_security_title: Option<String>,
 }

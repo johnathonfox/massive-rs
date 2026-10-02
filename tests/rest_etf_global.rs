@@ -3,6 +3,7 @@ use massive::{
     rest::{EtfGlobalApi, GetEtfGlobalAnalyticsParams},
     Client,
 };
+use rust_decimal_macros::dec;
 use wiremock::matchers::{header, method, path, query_param};
 use wiremock::{Mock, MockServer, ResponseTemplate};
 
@@ -127,7 +128,7 @@ async fn get_etf_global_analytics_hits_expected_path() {
     assert_eq!(rows.len(), 1);
     assert_eq!(rows[0].composite_ticker.as_deref(), Some("SPY"));
     assert_eq!(rows[0].quant_grade.as_deref(), Some("A"));
-    assert_eq!(rows[0].risk_total_score, Some(4.2));
+    assert_eq!(rows[0].risk_total_score, Some(dec!(4.2)));
 }
 
 #[tokio::test]
@@ -223,7 +224,7 @@ async fn get_etf_global_constituents_hits_expected_path() {
         .unwrap();
     assert_eq!(rows.len(), 1);
     assert_eq!(rows[0].constituent_ticker.as_deref(), Some("AAPL"));
-    assert_eq!(rows[0].weight, Some(8.75));
+    assert_eq!(rows[0].weight, Some(dec!(8.75)));
     assert_eq!(rows[0].isin.as_deref(), Some("US0378331005"));
 }
 
@@ -283,8 +284,8 @@ async fn get_etf_global_fund_flows_hits_expected_path() {
         .unwrap();
     assert_eq!(rows.len(), 1);
     assert_eq!(rows[0].composite_ticker.as_deref(), Some("SPY"));
-    assert_eq!(rows[0].fund_flow, Some(1234567.89));
-    assert_eq!(rows[0].nav, Some(545.23));
+    assert_eq!(rows[0].fund_flow, Some(dec!(1234567.89)));
+    assert_eq!(rows[0].nav, Some(dec!(545.23)));
 }
 
 #[tokio::test]
@@ -346,8 +347,8 @@ async fn get_etf_global_profiles_hits_expected_path() {
         .unwrap();
     assert_eq!(rows.len(), 1);
     assert_eq!(rows[0].issuer.as_deref(), Some("Vanguard"));
-    assert_eq!(rows[0].management_fee, Some(0.0003));
-    assert_eq!(rows[0].num_holdings, Some(3700.0));
+    assert_eq!(rows[0].management_fee, Some(dec!(0.0003)));
+    assert_eq!(rows[0].num_holdings, Some(dec!(3700.0)));
 }
 
 #[tokio::test]

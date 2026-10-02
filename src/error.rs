@@ -6,10 +6,7 @@ pub enum Error {
     Auth(String),
 
     #[error("HTTP error {status}: {body}")]
-    Http {
-        status: StatusCode,
-        body: String,
-    },
+    Http { status: StatusCode, body: String },
 
     #[error("JSON deserialization error: {0}")]
     Json(#[from] serde_json::Error),

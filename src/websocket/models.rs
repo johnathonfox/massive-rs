@@ -551,7 +551,10 @@ pub fn parse_single(value: &Value, market: Market) -> Option<WebSocketMessage> {
 
 /// Warn about an unrecognized event type.
 fn warn_unknown(event_type: &str, market: Market) -> Option<WebSocketMessage> {
-    warn!("Unknown event type '{}' for market {:?}", event_type, market);
+    warn!(
+        "Unknown event type '{}' for market {:?}",
+        event_type, market
+    );
     None
 }
 

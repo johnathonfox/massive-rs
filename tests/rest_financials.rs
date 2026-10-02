@@ -1,5 +1,7 @@
 //! Wiremock integration tests for the Stocks Financials API (src/rest/financials.rs).
 
+use rust_decimal_macros::dec;
+
 use futures::TryStreamExt;
 use massive::rest::{FinancialsApi, ListFinancialsRatiosParams};
 use massive::Client;
@@ -44,15 +46,15 @@ async fn list_balance_sheets_hits_expected_path_and_params() {
             None,
             None,
             None,
-            None,             // cik group
-            Some("AAPL"),     // tickers
+            None,         // cik group
+            Some("AAPL"), // tickers
             None,
-            None,             // tickers_all_of, tickers_any_of
+            None, // tickers_all_of, tickers_any_of
             None,
             None,
             Some("2023-01-01"), // period_end, period_end.gt, period_end.gte
             None,
-            None,             // period_end.lt, period_end.lte
+            None, // period_end.lt, period_end.lte
             None,
             None,
             None,
@@ -86,7 +88,7 @@ async fn list_balance_sheets_hits_expected_path_and_params() {
     let sheet = &sheets[0];
     assert_eq!(sheet.cik.as_deref(), Some("0000320193"));
     assert_eq!(sheet.tickers.as_deref(), Some(&["AAPL".to_string()][..]));
-    assert_eq!(sheet.total_assets, Some(352583000000.0));
+    assert_eq!(sheet.total_assets, Some(dec!(352583000000.0)));
     assert_eq!(sheet.period_end.as_deref(), Some("2023-09-30"));
 }
 
@@ -166,8 +168,14 @@ async fn list_cash_flow_statements_hits_expected_path_and_params() {
 
     assert_eq!(statements.len(), 1);
     let stmt = &statements[0];
-    assert_eq!(stmt.net_cash_from_operating_activities, Some(30543000000.0));
-    assert_eq!(stmt.net_cash_from_financing_activities, Some(-29633000000.0));
+    assert_eq!(
+        stmt.net_cash_from_operating_activities,
+        Some(dec!(30543000000.0))
+    );
+    assert_eq!(
+        stmt.net_cash_from_financing_activities,
+        Some(dec!(-29633000000.0))
+    );
     assert_eq!(stmt.period_end.as_deref(), Some("2023-09-30"));
 }
 
@@ -251,11 +259,11 @@ async fn list_income_statements_hits_expected_path_and_params() {
 
     assert_eq!(statements.len(), 1);
     let stmt = &statements[0];
-    assert_eq!(stmt.revenue, Some(89498000000.0));
-    assert_eq!(stmt.basic_earnings_per_share, Some(1.47));
+    assert_eq!(stmt.revenue, Some(dec!(89498000000.0)));
+    assert_eq!(stmt.basic_earnings_per_share, Some(dec!(1.47)));
     assert_eq!(
         stmt.net_income_loss_attributable_common_shareholders,
-        Some(22956000000.0)
+        Some(dec!(22956000000.0))
     );
 }
 
@@ -416,9 +424,9 @@ async fn list_ratios_hits_expected_path_and_params() {
     assert_eq!(ratios.len(), 1);
     let ratio = &ratios[0];
     assert_eq!(ratio.ticker.as_deref(), Some("AAPL"));
-    assert_eq!(ratio.price, Some(176.65));
-    assert_eq!(ratio.price_to_earnings, Some(28.9));
-    assert_eq!(ratio.debt_to_equity, Some(1.79));
+    assert_eq!(ratio.price, Some(dec!(176.65)));
+    assert_eq!(ratio.price_to_earnings, Some(dec!(28.9)));
+    assert_eq!(ratio.debt_to_equity, Some(dec!(1.79)));
 }
 
 #[tokio::test]
@@ -451,7 +459,7 @@ async fn list_stocks_floats_hits_expected_path_and_params() {
             None,
             Some("A"), // ticker, ticker.any_of, ticker.gt, ticker.gte
             None,
-            None,      // ticker.lt, ticker.lte
+            None, // ticker.lt, ticker.lte
             None,
             None,
             Some(50.0), // free_float_percent, .gt, .gte
@@ -469,7 +477,7 @@ async fn list_stocks_floats_hits_expected_path_and_params() {
     let float = &floats[0];
     assert_eq!(float.ticker.as_deref(), Some("AAPL"));
     assert_eq!(float.free_float, Some(15400000000));
-    assert_eq!(float.free_float_percent, Some(99.87));
+    assert_eq!(float.free_float_percent, Some(dec!(99.87)));
 }
 
 #[tokio::test]

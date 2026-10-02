@@ -190,7 +190,7 @@ impl WebSocketClient {
     async fn send_action(&mut self, action: &str, params: &str) -> Result<()> {
         if let Some(sink) = self.sink.as_mut() {
             let frame = serde_json::json!({"action": action, "params": params}).to_string();
-            sink.send(Message::Text(frame))
+            sink.send(Message::Text(frame.into()))
                 .await
                 .map_err(|e| Error::WebSocket(e.to_string()))?;
         }

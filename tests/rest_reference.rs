@@ -3,6 +3,7 @@ use massive::{
     rest::{ListDividendsParams, ReferenceApi},
     Client,
 };
+use rust_decimal_macros::dec;
 use wiremock::matchers::{header, method, path, query_param};
 use wiremock::{Mock, MockServer, ResponseTemplate};
 
@@ -183,7 +184,7 @@ async fn get_ticker_details_unwraps_results() {
         .unwrap();
     assert_eq!(details.ticker.as_deref(), Some("AAPL"));
     assert_eq!(details.name.as_deref(), Some("Apple Inc."));
-    assert_eq!(details.market_cap, Some(3000000000000.0));
+    assert_eq!(details.market_cap, Some(dec!(3000000000000.0)));
     assert_eq!(
         details.sic_description.as_deref(),
         Some("ELECTRONIC COMPUTERS")
@@ -419,7 +420,7 @@ async fn list_dividends_collects_page_and_sends_filters() {
 
     assert_eq!(dividends.len(), 1);
     assert_eq!(dividends[0].ticker.as_deref(), Some("AAPL"));
-    assert_eq!(dividends[0].cash_amount, Some(0.24));
+    assert_eq!(dividends[0].cash_amount, Some(dec!(0.24)));
     assert_eq!(dividends[0].frequency, Some(4));
     assert_eq!(dividends[0].dividend_type.as_deref(), Some("CD"));
 }
@@ -528,7 +529,9 @@ async fn get_exchanges_unwraps_results_list() {
 async fn get_options_contract_unwraps_results() {
     let server = MockServer::start().await;
     Mock::given(method("GET"))
-        .and(path("/v3/reference/options/contracts/O:AAPL241220C00170500"))
+        .and(path(
+            "/v3/reference/options/contracts/O:AAPL241220C00170500",
+        ))
         .and(header(AUTH.0, AUTH.1))
         .and(query_param("as_of", "2024-06-14"))
         .respond_with(ResponseTemplate::new(200).set_body_json(serde_json::json!({
@@ -555,9 +558,9 @@ async fn get_options_contract_unwraps_results() {
         .await
         .unwrap();
     assert_eq!(contract.contract_type.as_deref(), Some("call"));
-    assert_eq!(contract.strike_price, Some(170.5));
+    assert_eq!(contract.strike_price, Some(dec!(170.5)));
     assert_eq!(contract.underlying_ticker.as_deref(), Some("AAPL"));
-    assert_eq!(contract.shares_per_contract, Some(100.0));
+    assert_eq!(contract.shares_per_contract, Some(dec!(100.0)));
 }
 
 #[tokio::test]
@@ -691,7 +694,7 @@ async fn list_short_interest_collects_page_and_sends_filters() {
     assert_eq!(rows.len(), 1);
     assert_eq!(rows[0].ticker.as_deref(), Some("GME"));
     assert_eq!(rows[0].short_interest, Some(75000000));
-    assert_eq!(rows[0].days_to_cover, Some(1.5));
+    assert_eq!(rows[0].days_to_cover, Some(dec!(1.5)));
 }
 
 #[tokio::test]
@@ -751,7 +754,7 @@ async fn list_short_volume_collects_page_and_sends_filters() {
     assert_eq!(rows.len(), 1);
     assert_eq!(rows[0].ticker.as_deref(), Some("AAPL"));
     assert_eq!(rows[0].short_volume, Some(10000000));
-    assert_eq!(rows[0].short_volume_ratio, Some(32.5));
+    assert_eq!(rows[0].short_volume_ratio, Some(dec!(32.5)));
     assert_eq!(rows[0].total_volume, Some(30000000));
 }
 
@@ -1004,6 +1007,6 @@ async fn list_dividends_with_params_sends_every_filter() {
 
     assert_eq!(dividends.len(), 1);
     assert_eq!(dividends[0].ticker.as_deref(), Some("AAPL"));
-    assert_eq!(dividends[0].cash_amount, Some(0.5));
+    assert_eq!(dividends[0].cash_amount, Some(dec!(0.5)));
     assert_eq!(dividends[0].dividend_type.as_deref(), Some("CD"));
 }

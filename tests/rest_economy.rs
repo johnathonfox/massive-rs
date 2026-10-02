@@ -1,5 +1,6 @@
 use futures::TryStreamExt;
 use massive::{rest::EconomyApi, Client};
+use rust_decimal_macros::dec;
 use wiremock::matchers::{header, method, path, query_param};
 use wiremock::{Mock, MockServer, ResponseTemplate};
 
@@ -46,8 +47,8 @@ async fn list_treasury_yields_hits_expected_path() {
         .unwrap();
     assert_eq!(yields.len(), 1);
     assert_eq!(yields[0].date.as_deref(), Some("2024-01-02"));
-    assert_eq!(yields[0].yield_10_year, Some(3.95));
-    assert_eq!(yields[0].yield_2_year, Some(4.25));
+    assert_eq!(yields[0].yield_10_year, Some(dec!(3.95)));
+    assert_eq!(yields[0].yield_2_year, Some(dec!(4.25)));
 }
 
 #[tokio::test]
@@ -90,8 +91,8 @@ async fn list_inflation_hits_expected_path() {
         .unwrap();
     assert_eq!(rows.len(), 1);
     assert_eq!(rows[0].date.as_deref(), Some("2024-01-01"));
-    assert_eq!(rows[0].cpi, Some(308.417));
-    assert_eq!(rows[0].cpi_year_over_year, Some(3.1));
+    assert_eq!(rows[0].cpi, Some(dec!(308.417)));
+    assert_eq!(rows[0].cpi_year_over_year, Some(dec!(3.1)));
 }
 
 #[tokio::test]
@@ -134,8 +135,8 @@ async fn list_inflation_expectations_hits_expected_path() {
         .await
         .unwrap();
     assert_eq!(rows.len(), 1);
-    assert_eq!(rows[0].market_5_year, Some(2.31));
-    assert_eq!(rows[0].forward_years_5_to_10, Some(2.24));
+    assert_eq!(rows[0].market_5_year, Some(dec!(2.31)));
+    assert_eq!(rows[0].forward_years_5_to_10, Some(dec!(2.24)));
 }
 
 #[tokio::test]
@@ -177,8 +178,8 @@ async fn list_labor_market_indicators_hits_expected_path() {
         .await
         .unwrap();
     assert_eq!(rows.len(), 1);
-    assert_eq!(rows[0].unemployment_rate, Some(4.0));
-    assert_eq!(rows[0].job_openings, Some(8059.0));
+    assert_eq!(rows[0].unemployment_rate, Some(dec!(4.0)));
+    assert_eq!(rows[0].job_openings, Some(dec!(8059.0)));
 }
 
 #[tokio::test]
@@ -244,7 +245,7 @@ async fn list_eu_merchant_aggregates_hits_expected_path() {
     assert_eq!(rows.len(), 1);
     assert_eq!(rows[0].name.as_deref(), Some("Tesco"));
     assert_eq!(rows[0].type_.as_deref(), Some("merchant"));
-    assert_eq!(rows[0].total_spend, Some(1234567.89));
+    assert_eq!(rows[0].total_spend, Some(dec!(1234567.89)));
 }
 
 #[tokio::test]
