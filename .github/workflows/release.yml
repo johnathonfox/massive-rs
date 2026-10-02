@@ -1,0 +1,63 @@
+name: Release
+
+# Publishes the crate when a version tag is pushed. The full CI gate runs
+# first — a red suite means nothing is published. Requires the
+# CARGO_REGISTRY_TOKEN repository secret (crates.io token with publish rights).
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  publish:
+    name: verify and publish to crates.io
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # for the GitHub Release
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - name: Cache cargo registry and target
+        uses: Swatinem/rust-cache@v2
+
+      # The tag (vX.Y.Z) must match the version in Cargo.toml, so a mistyped
+      # tag can never publish a mismatched crate version.
+      - name: Check tag matches Cargo.toml version
+        run: |
+          manifest_version=$(grep -m1 '^version' Cargo.toml | cut -d'"' -f2)
+          if [ "$manifest_version" != "${GITHUB_REF_NAME#v}" ]; then
+            echo "::error::tag ${GITHUB_REF_NAME} does not match Cargo.toml version ${manifest_version}"
+            exit 1
+          fi
+
+      - name: Format
+        run: cargo fmt --check
+
+      - name: Clippy
+        run: cargo clippy --all-targets -- -D warnings
+
+      - name: Test
+        run: cargo test --all-targets
+
+      - name: Doc tests
+        run: cargo test --doc
+
+      - name: Publish to crates.io
+        if: github.event_name == 'push'
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+        run: cargo publish
+
+      - name: Create GitHub Release
+        if: github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release create "$GITHUB_REF_NAME" --generate-notes --verify-tag
